@@ -11,4 +11,6 @@
     <string name="UnknownSettingsLink">It seems that such a setting does not exist.</string>
     <string name="ShowFullNumbers">Show full numbers</string>
     <string name="ShowFullNumbersInfo">1.2K → 1,234</string>
+    <string name="Profile">Profile</string>
+    <string name="ShowFullAbout">Expand bio and description</string>
 </resources>

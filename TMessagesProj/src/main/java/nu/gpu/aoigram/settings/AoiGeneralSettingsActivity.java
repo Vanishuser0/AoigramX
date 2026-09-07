@@ -26,5 +26,8 @@ public final class AoiGeneralSettingsActivity extends BaseAoiSettingsActivity {
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
         items.add(asConfigCheck(AoiConfig.showFullNumbers, R.string.ShowFullNumbers, R.string.ShowFullNumbersInfo));
         items.add(UItem.asShadow(null));
+        items.add(UItem.asHeader(getString(R.string.Profile)));
+        items.add(asConfigCheck(AoiConfig.showFullAbout, R.string.ShowFullAbout));
+        items.add(UItem.asShadow(null));
     }
 }

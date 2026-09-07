@@ -14,6 +14,7 @@ public final class AoiConfig {
     static final SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
 
     public static final BoolConfig showFullNumbers = register(new BoolConfig("showFullNumbers", false));
+    public static final BoolConfig showFullAbout = register(new BoolConfig("showFullAbout", false));
 
     private AoiConfig() {
     }

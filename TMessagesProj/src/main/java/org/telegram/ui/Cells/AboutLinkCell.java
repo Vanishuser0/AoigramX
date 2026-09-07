@@ -66,6 +66,8 @@ import org.telegram.ui.Components.URLSpanNoUnderline;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import nu.gpu.aoigram.config.AoiConfig;
+
 public class AboutLinkCell extends FrameLayout {
 
     private StaticLayout textLayout;
@@ -705,7 +707,7 @@ public class AboutLinkCell extends FrameLayout {
         }
         if (stringBuilder != null && (maxWidth != lastMaxWidth || force)) {
             textLayout = makeTextLayout(stringBuilder, maxWidth);
-            shouldExpand = textLayout.getLineCount() >= 4; // && valueTextView.getVisibility() != View.VISIBLE;
+            shouldExpand = textLayout.getLineCount() >= 4 && !AoiConfig.showFullAbout.get();
 
             if (textLayout.getLineCount() >= 3 && shouldExpand) {
                 int end = Math.max(textLayout.getLineStart(2), textLayout.getLineEnd(2));

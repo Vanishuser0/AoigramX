@@ -13,4 +13,5 @@
     <string name="ShowFullNumbersInfo">1.2K → 1,234</string>
     <string name="Profile">Profile</string>
     <string name="ShowFullAbout">Expand bio and description</string>
+    <string name="HideKeyboardOnScroll">Hide keyboard on scroll</string>
 </resources>

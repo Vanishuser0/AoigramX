@@ -368,6 +368,8 @@ import me.vkryl.android.animator.FactorAnimator;
 import me.vkryl.core.BitwiseUtils;
 import me.vkryl.core.reference.ReferenceList;
 
+import nu.gpu.aoigram.config.AoiConfig;
+
 @SuppressWarnings("unchecked")
 public class ChatActivity extends BaseFragment implements
         NotificationCenter.NotificationCenterDelegate,
@@ -6858,6 +6860,13 @@ public class ChatActivity extends BaseFragment implements
                         wasManualScroll = true;
                         scrollingChatListView = true;
                     } else if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                        if (AoiConfig.hideKeyboardOnScroll.get()) {
+                            if (isKeyboardVisible()) {
+                                AndroidUtilities.hideKeyboard(getParentActivity().getCurrentFocus());
+                            } else if (chatActivityEnterView != null) {
+                                chatActivityEnterView.hidePopup(true);
+                            }
+                        }
                         pollHintCell = null;
                         wasManualScroll = true;
                         scrollingFloatingDate = true;

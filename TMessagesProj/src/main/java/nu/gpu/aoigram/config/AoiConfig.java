@@ -16,6 +16,8 @@ public final class AoiConfig {
     public static final BoolConfig showFullNumbers = register(new BoolConfig("showFullNumbers", false));
     public static final BoolConfig showFullAbout = register(new BoolConfig("showFullAbout", false));
 
+    public static final BoolConfig hideKeyboardOnScroll = register(new BoolConfig("hideKeyboardOnScroll", false));
+
     private AoiConfig() {
     }
 

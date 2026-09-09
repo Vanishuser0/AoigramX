@@ -29,6 +29,7 @@ public final class AoiGeneralSettingsActivity extends BaseAoiSettingsActivity {
     @Override
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
         items.add(asConfigCheck(AoiConfig.showFullNumbers, R.string.ShowFullNumbers, R.string.ShowFullNumbersInfo));
+        items.add(asConfigCheck(AoiConfig.formatTimeWithSeconds, R.string.FormatTimeWithSeconds));
         items.add(UItem.asShadow(null));
         items.add(UItem.asHeader(getString(R.string.Profile)));
         items.add(asConfigCheck(AoiConfig.hidePhone, R.string.HidePhone));
@@ -39,7 +40,9 @@ public final class AoiGeneralSettingsActivity extends BaseAoiSettingsActivity {
     @Override
     protected void onItemClick(UItem item, View view, int position, float x, float y) {
         super.onItemClick(item, view, position, x, y);
-        if (item.object == AoiConfig.hidePhone) {
+        if (item.object == AoiConfig.formatTimeWithSeconds) {
+            parentLayout.rebuildFragments(0);
+        } else if (item.object == AoiConfig.hidePhone) {
             getNotificationCenter().postNotificationName(NotificationCenter.updateInterfaces, MessagesController.UPDATE_MASK_PHONE);
         }
     }

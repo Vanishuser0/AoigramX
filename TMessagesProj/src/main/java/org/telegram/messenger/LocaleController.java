@@ -80,6 +80,9 @@ public class LocaleController {
 
     private volatile FastDateFormat formatterDay;
     public FastDateFormat getFormatterDay() {
+        if (AoiConfig.formatTimeWithSeconds.get()) {
+            return getFormatterDayWithSeconds();
+        }
         if (formatterDay == null) {
             synchronized (this) {
                 if (formatterDay == null) {

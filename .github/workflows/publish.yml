@@ -1,0 +1,72 @@
+name: Publish
+
+on:
+  repository_dispatch:
+    types:
+      - release
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency: publish
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RUN_ID: ${{ github.event.client_payload.run_id }}
+      CHANNEL: ${{ github.event.client_payload.channel }}
+      SHA: ${{ github.event.client_payload.sha }}
+      BASE: ${{ github.event.client_payload.base }}
+      VERSION: ${{ github.event.client_payload.version }}
+      TAG: ${{ github.event.client_payload.channel }}/${{ github.event.client_payload.build_timestamp }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Download Artifacts
+        uses: actions/download-artifact@v8
+        with:
+          run-id: ${{ github.event.client_payload.run_id }}
+          github-token: ${{ github.token }}
+          path: artifacts
+          merge-multiple: true
+      - name: Send to Telegram
+        env:
+          APP_ID: ${{ secrets.APP_ID }}
+          APP_HASH: ${{ secrets.APP_HASH }}
+          HELPER_BOT_TOKEN: ${{ secrets.HELPER_BOT_TOKEN }}
+          CHAT_ID: ${{ github.event.client_payload.channel == 'stable' && vars.STABLE_CHAT || vars.BETA_CHAT }}
+          CHANGELOG: ${{ github.event.client_payload.changelog }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.event.client_payload.run_id }}
+          RELEASE_HOOK_URL: ${{ secrets.RELEASE_HOOK_URL }}
+          RELEASE_HOOK_SECRET: ${{ secrets.RELEASE_HOOK_SECRET }}
+        run: |
+          sha256sum artifacts/*.apk
+          python3 -m pip install --break-system-packages -r Tools/scripts/requirements.txt
+          python3 Tools/scripts/upload.py
+      - name: Create GitHub Release
+        if: env.CHANNEL == 'stable'
+        env:
+          NOTES: ${{ github.event.client_payload.notes }}
+        run: gh release create "$TAG" artifacts/*.apk --repo "$GITHUB_REPOSITORY" --title "$VERSION" --notes "$NOTES"
+      - name: Notify failure
+        if: failure()
+        env:
+          RELEASE_HOOK_URL: ${{ secrets.RELEASE_HOOK_URL }}
+          RELEASE_HOOK_SECRET: ${{ secrets.RELEASE_HOOK_SECRET }}
+        run: |
+          BODY=$(jq -nc --argjson run_id "$RUN_ID" --argjson publish_run_id "$GITHUB_RUN_ID" '$ARGS.named')
+          SIGNATURE=$(printf '%s' "$BODY" | openssl dgst -sha256 -hmac "$RELEASE_HOOK_SECRET" | cut -d ' ' -f 2)
+          curl --fail-with-body -sS -X POST \
+            -H 'Content-Type: application/json' \
+            -H "X-Signature-256: sha256=$SIGNATURE" \
+            --data-binary "$BODY" \
+            "$RELEASE_HOOK_URL/failed"

@@ -80,10 +80,11 @@ android {
         }
 
         release {
+            def minify = !providers.gradleProperty('skipR8').isPresent()
             debuggable false
             jniDebuggable false
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled minify
+            shrinkResources minify
         }
     }
 

@@ -1,3 +1,5 @@
+import groovy.xml.XmlSlurper
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     repositories {
@@ -6,14 +8,37 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.13.2'
-        classpath 'com.google.gms:google-services:4.3.15'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.0'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.0"
+        classpath 'com.google.gms:google-services:4.5.0'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.8'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.0'
     }
 }
 repositories {
     google()
 }
+
+def localBuildProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withInputStream { localBuildProperties.load(it) }
+}
+
+ext.envOrLocal = { String name -> providers.environmentVariable(name).orElse(localBuildProperties.getProperty(name, '')).get() }
+ext.appId = envOrLocal('APP_ID').trim().toInteger()
+ext.appHash = envOrLocal('APP_HASH').trim()
+ext.commitId = providers.environmentVariable('COMMIT_ID').orElse(providers.exec {
+    workingDir rootDir
+    commandLine 'git', 'rev-parse', 'HEAD'
+}.standardOutput.asText).get().trim()
+ext.versionCode = providers.exec {
+    workingDir rootDir
+    commandLine 'git', 'rev-list', '--count', '--first-parent', 'HEAD'
+}.standardOutput.asText.get().trim().toInteger() + VERSION_CODE_OFFSET.toInteger()
+ext.buildTimestamp = providers.environmentVariable('BUILD_TIMESTAMP').orElse(System.currentTimeMillis().intdiv(1000).toString()).get()
+
+def supportedAbis = ['armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64']
+def selectedAbi = providers.environmentVariable('AOI_ABI').orElse('arm64-v8a').get()
+ext.aoiAbis = selectedAbi == 'universal' ? supportedAbis : [selectedAbi]
 
 // Strip JLatexMath fonts we don't ship (transitive AAR assets from
 // io.noties.markwon:ext-latex -> ru.noties:jlatexmath-android, ~764 KB total under
@@ -24,6 +49,30 @@ repositories {
 //   drop:  latin/optional/, maths/optional/  (~290 KB; \textbf/\textit/\mathds fall back)
 //          licences/                          (~20 KB; pure license text files)
 subprojects {
+    ['com.android.application', 'com.android.library'].each { pluginId ->
+        plugins.withId(pluginId) {
+            java {
+                toolchain.languageVersion = JavaLanguageVersion.of(21)
+            }
+
+            androidComponents.finalizeDsl { android ->
+                android.compileSdk = 36
+                android.buildToolsVersion = '36.0.0'
+                android.ndkVersion = '27.3.13750724'
+                android.defaultConfig.minSdk = 31
+                android.compileOptions.sourceCompatibility = JavaVersion.VERSION_21
+                android.compileOptions.targetCompatibility = JavaVersion.VERSION_21
+
+                if (pluginId == 'com.android.application') {
+                    android.defaultConfig.targetSdk = 36
+                }
+                if (android.externalNativeBuild.cmake.path != null) {
+                    android.externalNativeBuild.cmake.version = '4.1.2'
+                }
+            }
+        }
+    }
+
     plugins.withId('com.android.application') {
         android {
             androidResources {
@@ -46,6 +95,12 @@ subprojects {
                             namespace manifestPackage
                         }
                     }
+                }
+            }
+            project.afterEvaluate {
+                def dangling = project.android.defaultConfig.consumerProguardFiles.findAll { !it.exists() }
+                if (!dangling.isEmpty()) {
+                    project.android.defaultConfig.consumerProguardFiles -= dangling
                 }
             }
         }

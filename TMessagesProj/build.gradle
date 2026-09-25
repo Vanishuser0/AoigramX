@@ -1,4 +1,5 @@
-import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+import groovy.json.JsonOutput
+import org.gradle.internal.os.OperatingSystem
 
 apply plugin: 'com.android.library'
 apply plugin: 'org.telegram.build-plugin'
@@ -32,16 +33,14 @@ repositories {
     google()
 }
 
-configurations {
-    compile.exclude module: 'support-v4'
-}
-
-configurations.all {
+configurations.configureEach {
+    exclude group: 'com.android.support', module: 'support-v4'
     exclude group: 'com.google.firebase', module: 'firebase-core'
     exclude group: 'androidx.recyclerview', module: 'recyclerview'
 }
 
 dependencies {
+    implementation 'androidx.collection:collection:1.4.5'
     implementation 'androidx.core:core:1.16.0'
     implementation 'androidx.palette:palette:1.0.0'
     implementation 'androidx.exifinterface:exifinterface:1.3.6'
@@ -104,42 +103,48 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 36
-    buildToolsVersion '36.0.0'
-    ndkVersion "27.2.12479018"
-
-
     externalNativeBuild {
         cmake {
             path 'jni/CMakeLists.txt'
         }
     }
 
-    lintOptions {
-        disable 'MissingTranslation'
-        disable 'ExtraTranslation'
-        disable 'BlockedPrivateApi'
+    lint {
+        disable += ['MissingTranslation', 'ExtraTranslation', 'BlockedPrivateApi']
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-
         coreLibraryDesugaringEnabled true
     }
 
     defaultConfig {
-        minSdkVersion 23
-        targetSdkVersion 36
+        buildConfigField "int", "APP_ID", "${rootProject.appId}"
+        buildConfigField "String", "APP_HASH", JsonOutput.toJson(rootProject.appHash)
+        buildConfigField "String", "COMMIT_ID", JsonOutput.toJson(rootProject.commitId)
+        buildConfigField "long", "BUILD_TIMESTAMP", "${rootProject.buildTimestamp}L"
+        buildConfigField "String", "BUILD_VERSION_STRING", "\"${APP_VERSION_NAME}\""
+        buildConfigField "boolean", "BUNDLE", "false"
+
+        ndk.abiFilters.addAll(rootProject.aoiAbis)
+        ndk.debugSymbolLevel = 'FULL'
 
         vectorDrawables.generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']
 
-        multiDexEnabled true
-
         externalNativeBuild {
             cmake {
-                version '3.22.1'
-                arguments '-DANDROID_STL=c++_static', '-DANDROID_PLATFORM=android-23' //, '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
+                arguments '-DANDROID_STL=c++_static' //, '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
+                def ccacheName = OperatingSystem.current().windows ? 'ccache.exe' : 'ccache'
+                def ccache = providers.environmentVariable('PATH')
+                        .get()
+                        .split(File.pathSeparator)
+                        .findResult { path ->
+                            def file = new File(path, ccacheName)
+                            file.isFile() && file.canExecute() ? file : null
+                        }
+                if (ccache) {
+                    println "Using ccache ${ccache.absolutePath}"
+                    arguments "-DANDROID_CCACHE=${ccache.absolutePath}"
+                }
                 targets 'tmessages.49'
             }
         }
@@ -148,39 +153,20 @@ android {
     buildTypes {
         debug {
             jniDebuggable true
-            shrinkResources false
-            multiDexEnabled true
-            ndk.debugSymbolLevel = 'FULL'
-            buildConfigField "String", "BUILD_VERSION_STRING", "\"" + APP_VERSION_NAME + "\""
             buildConfigField "boolean", "DEBUG_VERSION", "true"
             buildConfigField "boolean", "DEBUG_PRIVATE_VERSION", "true"
-            buildConfigField "boolean", "BUNDLE", "false"
         }
 
         release {
             jniDebuggable false
-            shrinkResources false
-            multiDexEnabled true
-            ndk.debugSymbolLevel = 'FULL'
-            buildConfigField "String", "BUILD_VERSION_STRING", "\"" + APP_VERSION_NAME + "\""
             buildConfigField "boolean", "DEBUG_VERSION", "false"
             buildConfigField "boolean", "DEBUG_PRIVATE_VERSION", "false"
-            buildConfigField "boolean", "BUNDLE", "false"
         }
+    }
+
+    buildFeatures {
+        buildConfig true
     }
 
     namespace 'org.telegram.messenger'
 }
-
-
-def getProps(String propName) {
-    def propsFile = rootProject.file('local.properties')
-    if (propsFile.exists()) {
-        def props = new Properties()
-        props.load(new FileInputStream(propsFile))
-        return props[propName]
-    } else {
-        return "";
-    }
-}
-apply plugin: 'com.google.gms.google-services'

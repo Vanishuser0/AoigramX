@@ -557,7 +557,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
         }
         subtitleView.setText(sb);
 
-        versionView.setText(getVersionName());
+        versionView.setText(AndroidUtilities.getBuildVersionInfo());
     }
 
 

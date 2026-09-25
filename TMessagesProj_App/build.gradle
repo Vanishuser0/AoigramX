@@ -1,3 +1,5 @@
+import com.android.build.api.variant.FilterConfiguration
+
 apply plugin: 'com.android.application'
 apply plugin: 'org.telegram.build-app-plugin'
 
@@ -6,11 +8,8 @@ repositories {
     google()
 }
 
-configurations {
-    compile.exclude module: 'support-v4'
-}
-
-configurations.all {
+configurations.configureEach {
+    exclude group: 'com.android.support', module: 'support-v4'
     exclude group: 'com.google.firebase', module: 'firebase-core'
     exclude group: 'androidx.recyclerview', module: 'recyclerview'
 }
@@ -18,26 +17,38 @@ configurations.all {
 dependencies {
     implementation project(':TMessagesProj')
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
-    implementation files('../TMessagesProj/libs/libgsaverification-client.aar')
 }
 
 android {
-    compileSdkVersion 36
-    buildToolsVersion '36.0.0'
-
     defaultConfig.applicationId = APP_PACKAGE
 
+    packaging {
+        dex {
+            useLegacyPackaging = true
+        }
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
 
-    lintOptions {
-        disable 'MissingTranslation'
-        disable 'ExtraTranslation'
-        disable 'BlockedPrivateApi'
+    splits.abi {
+        enable true
+        universalApk false
+        reset()
+        if (rootProject.aoiAbis.size() > 1) {
+            universalApk true
+            include(*rootProject.aoiAbis)
+        } else {
+            include rootProject.aoiAbis.first()
+        }
+    }
+
+    lint {
+        disable += ['MissingTranslation', 'ExtraTranslation', 'BlockedPrivateApi']
+        checkReleaseBuilds false
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-
         coreLibraryDesugaringEnabled true
     }
 
@@ -47,131 +58,60 @@ android {
     }
 
     signingConfigs {
-        debug {
-            storeFile file("../TMessagesProj/config/release.keystore")
-            storePassword RELEASE_STORE_PASSWORD
-            keyAlias RELEASE_KEY_ALIAS
-            keyPassword RELEASE_KEY_PASSWORD
-        }
-
         release {
-            storeFile file("../TMessagesProj/config/release.keystore")
-            storePassword RELEASE_STORE_PASSWORD
-            keyAlias RELEASE_KEY_ALIAS
-            keyPassword RELEASE_KEY_PASSWORD
-        }
-    }
-
-    packagingOptions {
-        jniLibs {
-            useLegacyPackaging = true
+            storeFile file("../TMessagesProj_App/release.keystore")
+            storePassword rootProject.envOrLocal('RELEASE_STORE_PASSWORD')
+            keyAlias rootProject.envOrLocal('RELEASE_KEY_ALIAS')
+            keyPassword rootProject.envOrLocal('RELEASE_KEY_PASSWORD')
         }
     }
 
     buildTypes {
+        configureEach {
+            signingConfig signingConfigs.release
+        }
+
         debug {
+            applicationIdSuffix '.debug'
             debuggable true
             jniDebuggable true
-            signingConfig signingConfigs.debug
-            applicationIdSuffix ".beta"
             minifyEnabled false
             shrinkResources false
-            multiDexEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../TMessagesProj/proguard-rules.pro'
-            ndk.debugSymbolLevel = 'FULL'
         }
 
         release {
             debuggable false
             jniDebuggable false
-            signingConfig signingConfigs.release
             minifyEnabled true
             shrinkResources true
-            multiDexEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../TMessagesProj/proguard-rules.pro'
-            ndk.debugSymbolLevel = 'FULL'
         }
     }
 
-    sourceSets.debug {
-        manifest.srcFile '../TMessagesProj/config/debug/AndroidManifest.xml'
-    }
-
-    sourceSets.release {
-        manifest.srcFile '../TMessagesProj/config/release/AndroidManifest.xml'
-    }
-
-    flavorDimensions "minApi"
-
-    productFlavors {
-        bundleAfat {
-            ndk {
-                abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
-            }
-            ext {
-                abiVersionCode = 1
-            }
-            buildConfigField "boolean", "BUNDLE", "true"
-        }
-        afat {
-            ndk {
-                abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
-            }
-            sourceSets.debug {
-                manifest.srcFile '../TMessagesProj/config/debug/AndroidManifest_SDK23.xml'
-            }
-            sourceSets.release {
-                manifest.srcFile '../TMessagesProj/config/release/AndroidManifest_SDK23.xml'
-            }
-            ext {
-                abiVersionCode = 9
-            }
-            buildConfigField "boolean", "BUNDLE", "false"
-        }
-    }
-
-    defaultConfig.versionCode = Integer.parseInt(APP_VERSION_CODE)
-
-    applicationVariants.all { variant ->
-        variant.outputs.all { output ->
-            outputFileName = "app.apk"
-            output.versionCodeOverride = defaultConfig.versionCode * 10 + variant.productFlavors.get(0).abiVersionCode
-        }
-    }
-
-    variantFilter { variant ->
-        def names = variant.flavors*.name
-        if (variant.buildType.name != "release" && !names.contains("afat")) {
-            setIgnore(true)
-        }
-    }
+    defaultConfig.versionCode = rootProject.versionCode
 
     defaultConfig {
-        minSdkVersion 23
-        targetSdkVersion 36
         versionName APP_VERSION_NAME
-        ndkVersion "27.2.12479018"
 
-        multiDexEnabled true
+        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../TMessagesProj/proguard-rules.pro'
+        ndk.debugSymbolLevel = 'FULL'
 
         vectorDrawables.generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']
-
-        externalNativeBuild {
-            cmake {
-                version '3.22.1'
-                arguments '-DANDROID_STL=c++_static', '-DANDROID_PLATFORM=android-23' // , '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
-                targets 'tmessages.49'
-            }
-        }
     }
 
     buildFeatures {
         buildConfig = true
     }
     namespace 'org.telegram.messenger.regular'
+}
 
-    lintOptions {
-        checkReleaseBuilds false
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.outputs.each { output ->
+            def abi = output.filters.find { it.filterType == FilterConfiguration.FilterType.ABI }?.identifier ?: 'universal'
+            output.outputFileName.set(output.versionName.zip(output.versionCode) { versionName, versionCode ->
+                "Aoigram-${versionName}-${versionCode}-${abi}.apk".toString()
+            })
+        }
     }
 }
 

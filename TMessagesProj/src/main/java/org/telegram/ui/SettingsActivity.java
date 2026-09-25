@@ -64,6 +64,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.settings.AoiDeveloperSettingsActivity;
 import nu.gpu.aoigram.settings.AoiSettingsActivity;
 
 import org.telegram.PhoneFormat.PhoneFormat;
@@ -933,6 +934,10 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
     }
 
     private boolean onLongClick(UItem item, View view, int position, float x, float y) {
+        if (item.id == AOI_SETTINGS_ROW) {
+            presentSettingFragment(new AoiDeveloperSettingsActivity());
+            return true;
+        }
         if (item.object instanceof TLRPC.TL_attachMenuBot) {
             TLRPC.TL_attachMenuBot attachMenuBot = (TLRPC.TL_attachMenuBot) item.object;
             BotWebViewSheet.deleteBot(currentAccount, attachMenuBot.bot_id, () -> listView.adapter.update(true));

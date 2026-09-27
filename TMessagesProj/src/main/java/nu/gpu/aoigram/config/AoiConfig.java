@@ -14,6 +14,7 @@ public final class AoiConfig {
     static final SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
 
     public static final BoolConfig disableAds = register(new BoolConfig("disableAds", true));
+    public static final BoolConfig dontSendTyping = register(new BoolConfig("dontSendTyping", false));
 
     public static final BoolConfig showFullNumbers = register(new BoolConfig("showFullNumbers", false));
     public static final BoolConfig formatTimeWithSeconds = register(new BoolConfig("formatTimeWithSeconds", false));

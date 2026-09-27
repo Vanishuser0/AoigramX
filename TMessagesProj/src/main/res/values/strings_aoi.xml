@@ -11,6 +11,7 @@
     <string name="AoiAbout">About</string>
     <string name="UnknownSettingsLink">It seems that such a setting does not exist.</string>
     <string name="DisableAds">Disable ads</string>
+    <string name="DontSendTyping">Don\'t send typing status</string>
     <string name="ShowFullNumbers">Show full numbers</string>
     <string name="ShowFullNumbersInfo">1.2K → 1,234</string>
     <string name="FormatTimeWithSeconds">Format time with seconds</string>

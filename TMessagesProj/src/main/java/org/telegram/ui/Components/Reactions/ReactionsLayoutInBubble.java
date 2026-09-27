@@ -67,6 +67,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Objects;
 
+import nu.gpu.aoigram.config.AoiConfig;
+
 public class ReactionsLayoutInBubble {
 
     private final static int ANIMATION_TYPE_IN = 1;
@@ -215,7 +217,7 @@ public class ReactionsLayoutInBubble {
                 }
 
                 ArrayList<TLRPC.Reaction> forcedReactions = new ArrayList<>();
-                if (includeEmptyStarButton) {
+                if (includeEmptyStarButton && !AoiConfig.hideEmptyStarButton.get()) {
                     forcedReactions.add(new TLRPC.TL_reactionPaid());
                 }
                 if (includeEmptyLikeButton) {

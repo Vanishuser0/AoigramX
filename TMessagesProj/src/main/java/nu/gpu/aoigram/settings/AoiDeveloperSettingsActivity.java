@@ -12,6 +12,8 @@ import org.telegram.ui.Components.UniversalAdapter;
 
 import java.util.ArrayList;
 
+import nu.gpu.aoigram.config.AoiConfig;
+
 public final class AoiDeveloperSettingsActivity extends BaseAoiSettingsActivity {
 
     @Override
@@ -23,6 +25,7 @@ public final class AoiDeveloperSettingsActivity extends BaseAoiSettingsActivity 
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
         items.add(asConfigCheck(AoiConfig.disableAds, R.string.DisableAds));
         items.add(asConfigCheck(AoiConfig.dontSendTyping, R.string.DontSendTyping));
+        items.add(asConfigCheck(AoiConfig.hideEmptyStarButton, R.string.HideEmptyStarButton));
         items.add(UItem.asShadow(null));
     }
 

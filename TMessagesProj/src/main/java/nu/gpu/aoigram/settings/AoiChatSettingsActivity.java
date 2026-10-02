@@ -26,6 +26,7 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
     private static final Option[] MESSAGE_MENU_OPTIONS = {
             new Option(AoiConfig.showCopyPhoto, R.string.CopyPhoto),
             new Option(AoiConfig.showRepeat, R.string.Repeat),
+            new Option(AoiConfig.showReport, R.string.ReportChat),
     };
     private static final Option[] CONFIRMATION_OPTIONS = {
             new Option(AoiConfig.repeatConfirm, R.string.RepeatConfirm),

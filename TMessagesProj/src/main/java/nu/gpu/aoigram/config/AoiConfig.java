@@ -65,6 +65,7 @@ public final class AoiConfig {
     public static final StringConfig pinnedReactionsChannels = register(new StringConfig("pinnedReactionsChannels", ""));
     public static final BoolConfig showCopyPhoto = register(new BoolConfig("showCopyPhoto", true));
     public static final BoolConfig showRepeat = register(new BoolConfig("showRepeat", true));
+    public static final BoolConfig showReport = register(new BoolConfig("showReport", false));
     public static final BoolConfig repeatConfirm = register(new BoolConfig("repeatConfirm", true));
 
     private AoiConfig() {

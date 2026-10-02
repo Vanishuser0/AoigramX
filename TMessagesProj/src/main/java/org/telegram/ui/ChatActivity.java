@@ -370,6 +370,7 @@ import me.vkryl.core.reference.ReferenceList;
 
 import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.media.PhotoClipboard;
+import nu.gpu.aoigram.messages.QuickActions;
 import nu.gpu.aoigram.messages.Repeat;
 import nu.gpu.aoigram.translate.TranslationMenu;
 import nu.gpu.aoigram.translate.TranslationOptions;
@@ -390,6 +391,7 @@ public class ChatActivity extends BaseFragment implements
     private static final int OPTION_REPEAT = 1001;
     private static final int OPTION_REPEAT_AS_COPY = 1002;
     private ChatManualTranslation aoiChatManualTranslation;
+    private QuickActions quickActions;
 
     private final static boolean PULL_DOWN_BACK_FRAGMENT = false;
     private final static boolean DISABLE_PROGRESS_VIEW = true;
@@ -32158,14 +32160,22 @@ public class ChatActivity extends BaseFragment implements
                         popupLayout.addView(new ActionBarPopupWindow.GapView(contentView.getContext(), themeDelegate), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8));
                     }
                 }
+                if (showWelcomeMessageRevertOption(selectedObject)) {
+                    int deleteIndex = options.indexOf(OPTION_DELETE);
+                    if (deleteIndex >= 0) {
+                        icons.remove(deleteIndex);
+                        items.remove(deleteIndex);
+                        options.remove(deleteIndex);
+                    }
+                }
+                quickActions = AoiConfig.groupMessageMenu.get() && selectedObject != null
+                    ? QuickActions.create(getParentActivity(), selectedObject, icons, items, options, OPTION_COPY_PHOTO, this::processSelectedOption, themeDelegate)
+                    : null;
                 scrimPopupWindowItems = new ActionBarMenuSubItem[items.size()];
                 for (int a = 0, N = items.size(); a < N; a++) {
                     final Integer option = options.get(a);
-                    if (option == OPTION_DELETE && showWelcomeMessageRevertOption(selectedObject)) {
-                        continue;
-                    }
 
-                    ActionBarMenuSubItem cell = new ActionBarMenuSubItem(getParentActivity(), a == 0, a == N - 1, themeDelegate);
+                    ActionBarMenuSubItem cell = new ActionBarMenuSubItem(getParentActivity(), a == 0, a == N - 1 && quickActions == null, themeDelegate);
                     cell.setMinimumWidth(AndroidUtilities.dp(200));
                     cell.setTextAndIcon(items.get(a), icons.get(a));
 
@@ -32408,6 +32418,9 @@ public class ChatActivity extends BaseFragment implements
                     infoText.setPadding(dp(13), dp(8), dp(13), dp(8));
                     layout.addView(infoText, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.FILL));
                     popupLayout.addView(layout);
+                }
+                if (quickActions != null) {
+                    quickActions.addTo(popupLayout);
                 }
             }
 
@@ -32686,6 +32699,7 @@ public class ChatActivity extends BaseFragment implements
                     scrimPopupWindow = null;
                     menuDeleteItem = null;
                     scrimPopupWindowItems = null;
+                    quickActions = null;
                     chatLayoutManager.setCanScrollVertically(true);
                     if (scrimPopupWindowHideDimOnDismiss) {
                         dimBehindView(false);
@@ -32773,10 +32787,22 @@ public class ChatActivity extends BaseFragment implements
                     finalReactionsLayout.startEnterAnimation(true);
                 }
                 AndroidUtilities.runOnUIThread(() -> {
-                    if (scrimPopupWindowItems != null && scrimPopupWindowItems.length > 0 && scrimPopupWindowItems[0] != null) {
-                        scrimPopupWindowItems[0].requestFocus();
-                        scrimPopupWindowItems[0].performAccessibilityAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null);
-                        scrimPopupWindowItems[0].sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+                    View focusView = null;
+                    if (scrimPopupWindowItems != null) {
+                        for (ActionBarMenuSubItem item : scrimPopupWindowItems) {
+                            if (item.getVisibility() == View.VISIBLE) {
+                                focusView = item;
+                                break;
+                            }
+                        }
+                    }
+                    if (focusView == null && quickActions != null) {
+                        focusView = quickActions.getFirstEnabledButton();
+                    }
+                    if (focusView != null) {
+                        focusView.requestFocus();
+                        focusView.performAccessibilityAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null);
+                        focusView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
                     }
                 }, 420);
             };
@@ -42936,6 +42962,9 @@ public class ChatActivity extends BaseFragment implements
                     scrimPopupWindowItems[a].setColors(getThemedColor(Theme.key_actionBarDefaultSubmenuItem), getThemedColor(Theme.key_actionBarDefaultSubmenuItemIcon));
                     scrimPopupWindowItems[a].setSelectorColor(getThemedColor(Theme.key_dialogButtonSelector));
                 }
+            }
+            if (quickActions != null) {
+                quickActions.updateColors();
             }
             if (scrimPopupWindow != null) {
                 final View contentView = scrimPopupWindow.getContentView();

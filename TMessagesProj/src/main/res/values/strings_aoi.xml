@@ -24,6 +24,8 @@
     <string name="ShowFullAbout">Expand bio and description</string>
     <string name="HideKeyboardOnScroll">Hide keyboard on scroll</string>
     <string name="MessageMenu">Message Menu</string>
+    <string name="GroupMessageMenu">Group Message Menu</string>
+    <string name="GroupMessageMenuInfo">Grouping moves the main actions to the bottom of the message menu.</string>
     <string name="Confirmations">Confirmations</string>
     <string name="Repeat">Repeat</string>
     <string name="RepeatConfirm">Before repeating</string>

@@ -63,6 +63,7 @@ public final class AoiConfig {
     public static final BoolConfig usePinnedReactionsChannels = register(new BoolConfig("usePinnedReactionsChannels", false));
     public static final BoolConfig hideStarReactionChannels = register(new BoolConfig("hideStarReactionChannels", false));
     public static final StringConfig pinnedReactionsChannels = register(new StringConfig("pinnedReactionsChannels", ""));
+    public static final BoolConfig groupMessageMenu = register(new BoolConfig("groupMessageMenu", true));
     public static final BoolConfig showCopyPhoto = register(new BoolConfig("showCopyPhoto", true));
     public static final BoolConfig showRepeat = register(new BoolConfig("showRepeat", true));
     public static final BoolConfig showReport = register(new BoolConfig("showReport", false));

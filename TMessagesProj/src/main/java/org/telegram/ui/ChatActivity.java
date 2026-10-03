@@ -117,6 +117,7 @@ import androidx.core.graphics.ColorUtils;
 import androidx.core.graphics.Insets;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.dynamicanimation.animation.FloatValueHolder;
 import androidx.dynamicanimation.animation.SpringAnimation;
@@ -370,6 +371,8 @@ import me.vkryl.core.reference.ReferenceList;
 
 import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.media.PhotoClipboard;
+import nu.gpu.aoigram.messages.MessageDetailsActivity;
+import nu.gpu.aoigram.messages.MessageJsonActivity;
 import nu.gpu.aoigram.messages.QuickActions;
 import nu.gpu.aoigram.messages.Repeat;
 import nu.gpu.aoigram.translate.TranslationMenu;
@@ -390,6 +393,8 @@ public class ChatActivity extends BaseFragment implements
     private static final int OPTION_COPY_PHOTO = 1000;
     private static final int OPTION_REPEAT = 1001;
     private static final int OPTION_REPEAT_AS_COPY = 1002;
+    public static final int OPTION_MESSAGE_JSON = 1003;
+    public static final int OPTION_MESSAGE_DETAILS = 1004;
     private ChatManualTranslation aoiChatManualTranslation;
     private QuickActions quickActions;
 
@@ -32217,6 +32222,14 @@ public class ChatActivity extends BaseFragment implements
                         }
                         processSelectedOption(options.get(i));
                     });
+                    if (option == OPTION_MESSAGE_DETAILS) {
+                        cell.setOnLongClickListener(v1 -> {
+                            processSelectedOption(OPTION_MESSAGE_JSON);
+                            return true;
+                        });
+                        ViewCompat.replaceAccessibilityAction(cell, AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_LONG_CLICK,
+                            getString(R.string.ViewAsJson), (view, arguments) -> view.performLongClick());
+                    }
                     if (option == OPTION_REPEAT && (!message.hasValidReplyMessageObject() && getThreadMessage() == null || Repeat.canCopy(message))) {
                         cell.setOnLongClickListener(v1 -> {
                             processSelectedOption(OPTION_REPEAT_AS_COPY);
@@ -33692,6 +33705,14 @@ public class ChatActivity extends BaseFragment implements
         }
         boolean preserveDim = false;
         switch (option) {
+            case OPTION_MESSAGE_DETAILS: {
+                presentFragment(new MessageDetailsActivity(this, selectedObject, currentEncryptedChat != null || isPeerNoForwards()));
+                break;
+            }
+            case OPTION_MESSAGE_JSON: {
+                MessageJsonActivity.open(this, selectedObject.messageOwner, currentEncryptedChat != null || isPeerNoForwards());
+                break;
+            }
             case OPTION_REPEAT:
             case OPTION_REPEAT_AS_COPY: {
                 Repeat.send(this, selectedObject, selectedObjectGroup, option == OPTION_REPEAT_AS_COPY);
@@ -46857,6 +46878,11 @@ public class ChatActivity extends BaseFragment implements
             icons.add(sendMoneyIndex, R.drawable.ic_gram);
         }
 
+        if (AoiConfig.showDetails.get() && !message.isSponsored()) {
+            items.add(getString(R.string.MessageDetails));
+            options.add(OPTION_MESSAGE_DETAILS);
+            icons.add(R.drawable.msg_info);
+        }
         if (showWelcomeMessageRevertOption(primaryMessage)) {
             items.add(getString(R.string.WelcomeMessageRevert));
             options.add(OPTION_WELCOME_REVERT);

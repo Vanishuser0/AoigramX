@@ -41,6 +41,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ChatObject;
@@ -677,6 +678,14 @@ public class TodoItemMenu extends Dialog {
                 onOptionClick.run(option);
                 dismiss(option == ChatActivity.OPTION_DELETE || option == ChatActivity.OPTION_PIN);
             });
+            if (option == ChatActivity.OPTION_MESSAGE_DETAILS) {
+                messageOptions.getLast().setOnLongClickListener(v -> {
+                    onOptionClick.run(ChatActivity.OPTION_MESSAGE_JSON);
+                    dismiss(false);
+                    return true;
+                });
+                ViewCompat.replaceAccessibilityAction(messageOptions.getLast(), AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_LONG_CLICK, getString(R.string.ViewAsJson), (view, arguments) -> view.performLongClick());
+            }
         }
 
         messageOptions.setGapBackgroundColor(Theme.multAlpha(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem, resourcesProvider), 0.06f));

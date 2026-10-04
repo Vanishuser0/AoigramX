@@ -8,6 +8,7 @@ import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.ConnectionsManager;
 
 import nu.gpu.aoigram.messages.DoubleTap;
+import nu.gpu.aoigram.profile.PeerIdDc;
 
 public final class AoiConfig {
 
@@ -23,6 +24,7 @@ public final class AoiConfig {
 
     public static final BoolConfig showFullNumbers = register(new BoolConfig("showFullNumbers", false));
     public static final BoolConfig formatTimeWithSeconds = register(new BoolConfig("formatTimeWithSeconds", false));
+    public static final IntConfig idDcType = register(new IntConfig("idDcType", PeerIdDc.TELEGRAM_API));
     public static final BoolConfig hidePhone = register(new BoolConfig("hidePhone", false));
     public static final BoolConfig showFullAbout = register(new BoolConfig("showFullAbout", false));
 

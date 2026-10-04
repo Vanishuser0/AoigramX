@@ -49,6 +49,7 @@ import java.util.HashSet;
 import java.util.Objects;
 
 import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.profile.PeerIdDc;
 import nu.gpu.aoigram.settings.BaseAoiSettingsActivity;
 
 public final class MessageDetailsActivity extends BaseAoiSettingsActivity implements NotificationCenter.NotificationCenterDelegate {
@@ -283,7 +284,10 @@ public final class MessageDetailsActivity extends BaseAoiSettingsActivity implem
         String fileName = document != null ? FileLoader.getDocumentFileName(document) : downloadName;
         add(items, R.string.MessageDetailsFileName, TextUtils.isEmpty(fileName) ? downloadName : fileName);
         add(items, R.string.MessageDetailsMediaId, Long.toString(document != null ? document.id : photo.id));
-        addPositive(items, R.string.MessageDetailsDc, document != null ? document.dc_id : photo.dc_id);
+        int dc = document != null ? document.dc_id : photo.dc_id;
+        if (dc > 0) {
+            add(items, R.string.MessageDetailsDc, PeerIdDc.formatDc(dc));
+        }
         addDate(items, R.string.MessageDetailsCreated, document != null ? document.date : photo.date);
         long size = document != null ? document.size : photoSize == null ? 0 : photoSize.size;
         if (size > 0) {

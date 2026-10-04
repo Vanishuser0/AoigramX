@@ -38,6 +38,7 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
     };
     private static final Option[] CONFIRMATION_OPTIONS = {
             new Option(AoiConfig.repeatConfirm, R.string.RepeatConfirm),
+            new Option(AoiConfig.previewRecording, R.string.PreviewRecording),
     };
 
     private DoubleTapPreview doubleTapPreview;

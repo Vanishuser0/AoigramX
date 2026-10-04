@@ -52,6 +52,7 @@
     <string name="RepeatConfirm">Before repeating</string>
     <string name="RepeatConfirmText">Repeat this message?</string>
     <string name="RepeatMessagesConfirmText">Repeat these messages?</string>
+    <string name="PreviewRecording">Before sending recordings</string>
     <string name="MessageDetails">Details</string>
     <string name="MessageDetailsId">Message ID</string>
     <string name="MessageDetailsChat">Chat</string>

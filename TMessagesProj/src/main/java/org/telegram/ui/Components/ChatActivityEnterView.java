@@ -230,6 +230,7 @@ import java.util.Locale;
 import me.vkryl.android.animator.BoolAnimator;
 import me.vkryl.android.animator.FactorAnimator;
 
+import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.translate.InputTranslation;
 import nu.gpu.aoigram.translate.InputTranslationMenu;
 
@@ -242,6 +243,31 @@ public class ChatActivityEnterView extends FrameLayout implements
 {
     private final InputTranslation aoiInputTranslation = new InputTranslation();
     public ViewGroup aoiStoryMenuContainer;
+
+    private boolean aoiPreviewRecording() {
+        if (!AoiConfig.previewRecording.get()) {
+            return false;
+        }
+        if (recordTimerView == null || !recordTimerView.isRunning || System.currentTimeMillis() - recordTimerView.startTime < 700) {
+            return false;
+        }
+        if (isInVideoMode() ? delegate.isVideoRecordingPaused() : MediaController.getInstance().isRecordingPaused()) {
+            return true;
+        }
+        if (slideText != null) {
+            slideText.setEnabled(false);
+        }
+        if (isInVideoMode()) {
+            delegate.toggleVideoRecordingPause();
+        } else {
+            if (sendButtonVisible) {
+                calledRecordRunnable = true;
+            }
+            MediaController.getInstance().toggleRecordingPause(voiceOnce);
+            delegate.needStartRecordAudio(0);
+        }
+        return true;
+    }
 
     private int commonInputType;
     private boolean stickersEnabled;
@@ -3003,6 +3029,9 @@ public class ChatActivityEnterView extends FrameLayout implements
                     if (recordCircle.isSendButtonVisible()) {
                         if (!hasRecordVideo || calledRecordRunnable) {
                             startedDraggingX = -1;
+                            if (aoiPreviewRecording()) {
+                                return true;
+                            }
                             if (hasRecordVideo && isInVideoMode()) {
                                 if (AlertsCreator.needsPaidMessageAlert(currentAccount, dialog_id)) {
                                     if (slideText != null) {
@@ -3125,6 +3154,9 @@ public class ChatActivityEnterView extends FrameLayout implements
                             sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_CLICKED);
                         } else if (!hasRecordVideo || calledRecordRunnable) {
                             startedDraggingX = -1;
+                            if (aoiPreviewRecording()) {
+                                return true;
+                            }
                             if (hasRecordVideo && isInVideoMode()) {
                                 if (AlertsCreator.needsPaidMessageAlert(currentAccount, dialog_id)) {
                                     if (slideText != null) {

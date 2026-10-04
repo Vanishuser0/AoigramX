@@ -40,6 +40,7 @@
     <string name="ChatCreationDate">%1$s was created on **%2$s**.</string>
     <string name="ShowFullAbout">Expand bio and description</string>
     <string name="HideKeyboardOnScroll">Hide keyboard on scroll</string>
+    <string name="HideChannelBottomBar">Hide channel bottom bar</string>
     <string name="DoubleTapActions">Double Tap Actions</string>
     <string name="IncomingMessages">Incoming messages</string>
     <string name="OutgoingMessages">Outgoing messages</string>

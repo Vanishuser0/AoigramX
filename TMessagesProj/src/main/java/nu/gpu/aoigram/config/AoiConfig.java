@@ -62,6 +62,7 @@ public final class AoiConfig {
     public static final IntConfig llmContextCount = register(new IntConfig("llmContextCount", 5));
 
     public static final BoolConfig hideKeyboardOnScroll = register(new BoolConfig("hideKeyboardOnScroll", false));
+    public static final BoolConfig hideChannelBottomBar = register(new BoolConfig("hideChannelBottomBar", false));
     public static final BoolConfig usePinnedReactionsChats = register(new BoolConfig("usePinnedReactionsChats", false));
     public static final StringConfig pinnedReactionsChats = register(new StringConfig("pinnedReactionsChats", ""));
     public static final BoolConfig usePinnedReactionsChannels = register(new BoolConfig("usePinnedReactionsChannels", false));

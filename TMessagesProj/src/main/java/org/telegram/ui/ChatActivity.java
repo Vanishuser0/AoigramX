@@ -399,6 +399,11 @@ public class ChatActivity extends BaseFragment implements
     private static final int OPTION_SAVE = 1005;
     private ChatManualTranslation aoiChatManualTranslation;
     private QuickActions quickActions;
+    private boolean aoiHideChannelBottomBar;
+
+    private boolean aoiCanOpenDirect() {
+        return ChatObject.isChannel(currentChat) && !ChatObject.isMonoForum(currentChat) && currentChat.linked_monoforum_id != 0 && (ChatObject.canManageMonoForum(currentAccount, -currentChat.linked_monoforum_id) || aoiHideChannelBottomBar && currentChat.broadcast_messages_allowed);
+    }
 
     private int getDoubleTapOption(ChatMessageCell cell, int action) {
         int option = switch (action) {
@@ -5463,7 +5468,7 @@ public class ChatActivity extends BaseFragment implements
                     updateSkeletonColors();
                     updateSkeletonGradient();
 
-                    int lastTop = getHeight() - blurredViewBottomOffset - (int) (windowInsetsStateHolder.getAnimatedMaxBottomInset() + getTopicTabsSideSize(TopicsTabsView.Position.BOTTOM)) - dp(44 + 7 + 9 - 3);
+                    int lastTop = getHeight() - blurredViewBottomOffset - (int) (windowInsetsStateHolder.getAnimatedMaxBottomInset() + getTopicTabsSideSize(TopicsTabsView.Position.BOTTOM)) - dp(44 + 7 + 9 - 3 - (aoiHideChannelBottomBar ? 44 : 0));
                     int j = 0;
 
                     int childMaxTop = Integer.MAX_VALUE;
@@ -16239,7 +16244,7 @@ public class ChatActivity extends BaseFragment implements
         int maxPositiveUnreadId = Integer.MIN_VALUE;
         int maxNegativeUnreadId = Integer.MAX_VALUE;
         int maxUnreadDate = Integer.MIN_VALUE;
-        int recyclerChatViewHeight = (contentView.getMeasuredHeight() - (inPreviewMode || isInsideContainer ? 0 : AndroidUtilities.dp(48)) - chatListView.getTop());
+        int recyclerChatViewHeight = (contentView.getMeasuredHeight() - (inPreviewMode || isInsideContainer || aoiHideChannelBottomBar ? 0 : AndroidUtilities.dp(48)) - chatListView.getTop());
         pollsToCheck.clear();
         float clipTop = chatListViewPaddingTop;
         float clipTopicTop = chatListViewPaddingTop + dp(28);
@@ -18563,7 +18568,7 @@ public class ChatActivity extends BaseFragment implements
                 }
                 canvas.drawRect(0,getMeasuredHeight() - fixedKeyboardHeight, getMeasuredWidth(), getMeasuredHeight(), backgroundPaint);
             }
-            if (pullingDownDrawable != null && pullingDownDrawable.needDrawBottomPanel()) {
+            if (pullingDownDrawable != null && pullingDownDrawable.needDrawBottomPanel() && (!aoiHideChannelBottomBar || bottomViewsVisibilityController.getVisibility(MESSAGE_SEARCH_CONTAINER) > 0)) {
                 int top, bottom;
                 top = (int) chatInputViewsContainer.getInputBubbleTop();
                 bottom = (int) chatInputViewsContainer.getInputBubbleBottom();
@@ -18732,7 +18737,7 @@ public class ChatActivity extends BaseFragment implements
             int childCount = getChildCount();
             measureChildWithMargins(chatActivityEnterView, widthMeasureSpec, 0, heightMeasureSpec, 0);
 
-            if (inPreviewMode || isInsideContainer) {
+            if (inPreviewMode || isInsideContainer || aoiHideChannelBottomBar) {
                 inputFieldHeight = 0;
             } else {
                 inputFieldHeight = chatActivityEnterView.getMeasuredHeight();
@@ -22372,7 +22377,7 @@ public class ChatActivity extends BaseFragment implements
                 updateTopPanel(true);
             }
             if (headerItem != null) {
-                headerItem.setSubItemShown(open_direct, ChatObject.isChannel(currentChat) && !ChatObject.isMonoForum(currentChat) && currentChat.linked_monoforum_id != 0 && ChatObject.canManageMonoForum(currentAccount, -currentChat.linked_monoforum_id));
+                headerItem.setSubItemShown(open_direct, aoiCanOpenDirect());
             }
         } else if (id == NotificationCenter.didReceiveNewMessages) {
             FileLog.d("ChatActivity didReceiveNewMessages start");
@@ -28101,6 +28106,7 @@ public class ChatActivity extends BaseFragment implements
         }
         bottomOverlayChatWaitsReply = false;
         bottomOverlayLinks = false;
+        aoiHideChannelBottomBar = false;
 
         boolean accentTextButton = false;
         boolean forceVisible = false;
@@ -28235,7 +28241,10 @@ public class ChatActivity extends BaseFragment implements
                     bottomOverlayChatText.setTextInfo(LocaleController.getString(R.string.ForumReplyToMessagesInTopic));
                     bottomOverlayChatText.setEnabled(false);
                 } else if (!isThreadChat()) {
-                    if (!getMessagesController().isDialogMuted(dialog_id, getTopicId())) {
+                    aoiHideChannelBottomBar = AoiConfig.hideChannelBottomBar.get() && !chatActivityEnterView.isEditingMessage() && ChatObject.isChannelAndNotMegaGroup(currentChat) && !ChatObject.canWriteToChat(currentChat);
+                    if (aoiHideChannelBottomBar) {
+                        forceNoBottom = true;
+                    } else if (!getMessagesController().isDialogMuted(dialog_id, getTopicId())) {
                         bottomOverlayChatText.setText(LocaleController.getString(R.string.ChannelMuteNoCaps), false);
                         bottomOverlayChatText.setEnabled(true);
                     } else {
@@ -28423,6 +28432,11 @@ public class ChatActivity extends BaseFragment implements
             if (isInsideContainer || forceNoBottom) {
                 bottomChannelButtonsLayout.setVisibility(View.GONE);
                 chatActivityEnterView.setVisibility(View.GONE);
+                if (aoiHideChannelBottomBar) {
+                    chatActivityEnterView.setFieldFocused(false);
+                    chatActivityEnterView.closeKeyboard();
+                    chatActivityEnterView.hidePopup(false);
+                }
             } else if (isReport()) {
                 bottomChannelButtonsLayout.setVisibility(View.VISIBLE);
                 chatActivityEnterView.setVisibility(View.INVISIBLE);
@@ -28487,6 +28501,9 @@ public class ChatActivity extends BaseFragment implements
         bottomChannelButtonsLayout.showButton(ChatActivityChannelButtonsLayout.BUTTON_DIRECT, showSuggestButton && bottomChannelButtonsLayout.getVisibility() == View.VISIBLE, animated);
         bottomChannelButtonsLayout.showButton(ChatActivityChannelButtonsLayout.BUTTON_GIFT, showGiftButton && bottomChannelButtonsLayout.getVisibility() == View.VISIBLE, animated);
         bottomChannelButtonsLayout.showButton(ChatActivityChannelButtonsLayout.BUTTON_GIGA_GROUP_INFO, showGigaGroupButton && bottomChannelButtonsLayout.getVisibility() == View.VISIBLE, animated);
+        if (headerItem != null) {
+            headerItem.setSubItemShown(open_direct, aoiCanOpenDirect());
+        }
 
         checkRaiseSensors();
     }
@@ -47072,7 +47089,7 @@ public class ChatActivity extends BaseFragment implements
             pollAddVisibility = animatorPollAddAnswerVisibility.getFloatValue();
         }
 
-        if (!isInsideContainer && !isInPreviewMode()) {
+        if (!isInsideContainer && !isInPreviewMode() && !aoiHideChannelBottomBar) {
             return lerp(Math.max(lerp(defaultIslandHeight, enterViewIslandHeight, enterViewFactor) * visibility, dp(44)), -dp(7), pollAddVisibility);
         } else {
             return lerp(defaultIslandHeight, enterViewIslandHeight, enterViewFactor) * visibility;
@@ -47390,7 +47407,7 @@ public class ChatActivity extends BaseFragment implements
             bottomOverlay.setTranslationY(dp(54) * hideFactor);
         }
         if (chatInputViewsContainer != null) {
-            chatInputViewsContainer.setInputBubbleAlpha((int) (255 * (1f - hideFactor)));
+            chatInputViewsContainer.setInputBubbleAlpha((int) (255 * (1f - hideFactor) * (aoiHideChannelBottomBar ? bottomViewsVisibilityController.getVisibility(MESSAGE_SEARCH_CONTAINER) : 1f)));
             chatInputViewsContainer.setInputBubbleTranslationY(dp(54) * hideFactor);
         }
 

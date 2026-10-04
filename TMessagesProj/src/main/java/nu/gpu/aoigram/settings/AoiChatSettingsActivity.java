@@ -10,7 +10,6 @@ import android.view.View;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.ui.Components.AlertsCreator;
-import org.telegram.ui.Components.ItemOptions;
 import org.telegram.ui.Components.UItem;
 import org.telegram.ui.Components.UniversalAdapter;
 
@@ -63,6 +62,7 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
     @Override
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
         items.add(asConfigCheck(AoiConfig.hideKeyboardOnScroll, R.string.HideKeyboardOnScroll));
+        items.add(asConfigCheck(AoiConfig.hideChannelBottomBar, R.string.HideChannelBottomBar));
         items.add(UItem.asShadow(null));
         items.add(UItem.asButton(PINNED_REACTIONS, R.drawable.msg_pin, getString(R.string.PinnedReactions), PinnedReactions.getLabel()));
         items.add(UItem.asShadow(null));

@@ -9,4 +9,6 @@
     <string name="AoiOtherSettings">Other</string>
     <string name="AoiAbout">About</string>
     <string name="UnknownSettingsLink">It seems that such a setting does not exist.</string>
+    <string name="ShowFullNumbers">Show full numbers</string>
+    <string name="ShowFullNumbersInfo">1.2K → 1,234</string>
 </resources>

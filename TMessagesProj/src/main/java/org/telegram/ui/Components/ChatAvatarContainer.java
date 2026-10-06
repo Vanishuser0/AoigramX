@@ -71,6 +71,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import me.vkryl.android.animator.BoolAnimator;
 import me.vkryl.android.animator.FactorAnimator;
 
+import nu.gpu.aoigram.config.AoiConfig;
+
 public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.Target, NotificationCenter.NotificationCenterDelegate {
 
     private static final int ANIMATOR_ID_TIME_ITEM_VISIBLE = 0;
@@ -1312,10 +1314,10 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
         if (ChatObject.isChannel(chat)) {
             if (info != null && info.participants_count != 0) {
                 if (chat.megagroup) {
+                    newSubtitle = AoiConfig.showFullNumbers.get() ? LocaleController.formatPluralStringComma("Members", info.participants_count) : LocaleController.formatPluralString("Members", info.participants_count);
                     if (onlineCount > 1) {
-                        newSubtitle = String.format("%s, %s", LocaleController.formatPluralString("Members", info.participants_count), LocaleController.formatPluralString("OnlineCount", Math.min(onlineCount, info.participants_count)));
-                    } else {
-                        newSubtitle = LocaleController.formatPluralString("Members", info.participants_count);
+                        String online = AoiConfig.showFullNumbers.get() ? LocaleController.formatPluralStringComma("OnlineCount", Math.min(onlineCount, info.participants_count)) : LocaleController.formatPluralString("OnlineCount", Math.min(onlineCount, info.participants_count));
+                        newSubtitle = String.format("%s, %s", newSubtitle, online);
                     }
                 } else {
                     int[] result = new int[1];

@@ -350,6 +350,8 @@ import java.util.zip.ZipOutputStream;
 import me.vkryl.android.animator.BoolAnimator;
 import me.vkryl.core.reference.ReferenceList;
 
+import nu.gpu.aoigram.config.AoiConfig;
+
 public class ProfileActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate, SharedMediaLayout.SharedMediaPreloaderDelegate, ImageUpdater.ImageUpdaterDelegate, SharedMediaLayout.Delegate, MainTabsActivity.TabFragmentDelegate {
     private RecyclerListView listView;
     private RecyclerListView searchListView;
@@ -11737,6 +11739,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                                 statusString = LocaleController.formatPluralString("Members", chatInfo.participants_count);
                                 profileStatusString = LocaleController.formatPluralStringComma("Members", chatInfo.participants_count);
                             }
+                        }
+                        if (AoiConfig.showFullNumbers.get()) {
+                            statusString = profileStatusString;
                         }
                     } else {
                         int[] result = new int[1];

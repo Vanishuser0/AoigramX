@@ -63,6 +63,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
 
+import nu.gpu.aoigram.config.AoiConfig;
+
 public class LocaleController {
 
     static final int QUANTITY_OTHER = 0x0000;
@@ -2856,6 +2858,16 @@ public class LocaleController {
     }
 
     public static String formatShortNumber(int number, int[] rounded) {
+        if (AoiConfig.showFullNumbers.get()) {
+            if (rounded != null) {
+                rounded[0] = number;
+            }
+            return formatNumber(number, ',');
+        }
+        return formatShortNumberOriginal(number, rounded);
+    }
+
+    public static String formatShortNumberOriginal(int number, int[] rounded) {
         StringBuilder K = new StringBuilder();
         int lastDec = 0;
         int KCount = 0;

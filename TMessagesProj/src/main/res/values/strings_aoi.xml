@@ -13,6 +13,9 @@
     <string name="DisableAds">Disable ads</string>
     <string name="DontSendTyping">Don\'t send typing status</string>
     <string name="HideEmptyStarButton">Hide empty star button</string>
+    <string name="ForceCopy">Allow copying and saving</string>
+    <string name="ForwardsRestricted">Forwarding is not allowed in this chat.</string>
+    <string name="AllowScreenshots">Allow screenshots</string>
     <string name="ShowFullNumbers">Show full numbers</string>
     <string name="ShowFullNumbersInfo">1.2K → 1,234</string>
     <string name="FormatTimeWithSeconds">Format time with seconds</string>

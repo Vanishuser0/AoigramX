@@ -90,6 +90,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 
+import nu.gpu.aoigram.config.AoiConfig;
+
 /**
  * image filter types
  * suffixes:
@@ -1477,7 +1479,7 @@ public class ImageLoader {
                                     Pair<Integer, Integer> orientationValues = AndroidUtilities.getImageOrientation(is);
                                     orientation = orientationValues.first;
                                     invert = orientationValues.second;
-                                    if (secureDocumentKey != null || cacheImage.encryptionKeyPath != null) {
+                                    if (secureDocumentKey != null || inEncryptedFile) {
                                         is.close();
                                         if (secureDocumentKey != null) {
                                             is = new EncryptedFileInputStream(cacheFileFinal, secureDocumentKey);
@@ -4344,7 +4346,7 @@ public class ImageLoader {
             } else {
                 File file = FileLoader.getInstance(UserConfig.selectedAccount).getPathToAttach(photoSize, true);
                 boolean isEncrypted = false;
-                if (MessageObject.shouldEncryptPhotoOrVideo(UserConfig.selectedAccount, message)) {
+                if (!AoiConfig.forceCopy.get() && MessageObject.shouldEncryptPhotoOrVideo(UserConfig.selectedAccount, message)) {
                     file = new File(file.getAbsolutePath() + ".enc");
                     isEncrypted = true;
                 }
@@ -4435,7 +4437,7 @@ public class ImageLoader {
             } else {
                 File file = FileLoader.getInstance(UserConfig.selectedAccount).getPathToAttach(photoSize, true);
                 boolean isEncrypted = false;
-                if (MessageObject.shouldEncryptPhotoOrVideo(UserConfig.selectedAccount, message)) {
+                if (!AoiConfig.forceCopy.get() && MessageObject.shouldEncryptPhotoOrVideo(UserConfig.selectedAccount, message)) {
                     file = new File(file.getAbsolutePath() + ".enc");
                     isEncrypted = true;
                 }

@@ -26,6 +26,8 @@ public final class AoiDeveloperSettingsActivity extends BaseAoiSettingsActivity 
         items.add(asConfigCheck(AoiConfig.disableAds, R.string.DisableAds));
         items.add(asConfigCheck(AoiConfig.dontSendTyping, R.string.DontSendTyping));
         items.add(asConfigCheck(AoiConfig.hideEmptyStarButton, R.string.HideEmptyStarButton));
+        items.add(asConfigCheck(AoiConfig.forceCopy, R.string.ForceCopy));
+        items.add(asConfigCheck(AoiConfig.allowScreenshots, R.string.AllowScreenshots));
         items.add(UItem.asShadow(null));
     }
 

@@ -16,6 +16,8 @@ public final class AoiConfig {
     public static final BoolConfig disableAds = register(new BoolConfig("disableAds", true));
     public static final BoolConfig dontSendTyping = register(new BoolConfig("dontSendTyping", false));
     public static final BoolConfig hideEmptyStarButton = register(new BoolConfig("hideEmptyStarButton", true));
+    public static final BoolConfig forceCopy = register(new BoolConfig("forceCopy", true));
+    public static final BoolConfig allowScreenshots = register(new BoolConfig("allowScreenshots", true));
 
     public static final BoolConfig showFullNumbers = register(new BoolConfig("showFullNumbers", false));
     public static final BoolConfig formatTimeWithSeconds = register(new BoolConfig("formatTimeWithSeconds", false));

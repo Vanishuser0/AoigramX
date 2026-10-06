@@ -5317,7 +5317,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
             if (userInfo != null) {
                 if (profileActivity.getMessagesController().isUserNoForwards(userInfo)) {
                     if (fwdRestrictedHint != null) {
-                        fwdRestrictedHint.setText(getString(R.string.ForwardsRestrictedInfoUser));
+                        fwdRestrictedHint.setText(getString(AoiConfig.forceCopy.get() ? R.string.ForwardsRestricted : R.string.ForwardsRestrictedInfoUser));
                         fwdRestrictedHint.showForView(v, true);
                     }
                     return;
@@ -5327,7 +5327,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                 TLRPC.Chat chat = profileActivity.getMessagesController().getChat(info.id);
                 if (profileActivity.getMessagesController().isChatNoForwards(chat)) {
                     if (fwdRestrictedHint != null) {
-                        fwdRestrictedHint.setText(ChatObject.isChannel(chat) && !chat.megagroup ? getString(R.string.ForwardsRestrictedInfoChannel) :
+                        fwdRestrictedHint.setText(AoiConfig.forceCopy.get() ? getString(R.string.ForwardsRestricted) : ChatObject.isChannel(chat) && !chat.megagroup ? getString(R.string.ForwardsRestrictedInfoChannel) :
                                 getString(R.string.ForwardsRestrictedInfoGroup));
                         fwdRestrictedHint.showForView(v, true);
                     }
@@ -5336,7 +5336,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
             }
             if (hasNoforwardsMessage()) {
                 if (fwdRestrictedHint != null) {
-                    fwdRestrictedHint.setText(getString("ForwardsRestrictedInfoBot", R.string.ForwardsRestrictedInfoBot));
+                    fwdRestrictedHint.setText(AoiConfig.forceCopy.get() ? getString(R.string.ForwardsRestricted) : getString("ForwardsRestrictedInfoBot", R.string.ForwardsRestrictedInfoBot));
                     fwdRestrictedHint.showForView(v, true);
                 }
                 return;

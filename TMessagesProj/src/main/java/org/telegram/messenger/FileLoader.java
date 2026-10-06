@@ -30,6 +30,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import nu.gpu.aoigram.config.AoiConfig;
+
 public class FileLoader extends BaseController {
 
     private static final int PRIORITY_STREAM = 4;
@@ -979,7 +981,7 @@ public class FileLoader extends BaseController {
             } else {
                 storeDir = getDirectory(type);
             }
-        } else if (cacheType == ImageLoader.CACHE_TYPE_ENCRYPTED) {
+        } else if (cacheType == ImageLoader.CACHE_TYPE_ENCRYPTED && !AoiConfig.forceCopy.get()) {
             operation.setEncryptFile(true);
         }
         operation.setPaths(currentAccount, fileName, loaderQueue, storeDir, tempDir, storeFileName);
@@ -1104,12 +1106,12 @@ public class FileLoader extends BaseController {
         if (metadata != null) {
             int flag;
             long dialogId = metadata.dialogId;
-            if (getMessagesController().isPeerNoForwards(dialogId) || DialogObject.isEncryptedDialog(dialogId)) {
+            if (!AoiConfig.forceCopy.get() && getMessagesController().isPeerNoForwards(dialogId) || DialogObject.isEncryptedDialog(dialogId)) {
                 return false;
             }
             if (parentObject instanceof MessageObject) {
                 messageObject = (MessageObject) parentObject;
-                if (messageObject.isRoundVideo() || messageObject.isVoice() || messageObject.isAnyKindOfSticker() || messageObject.messageOwner.noforwards) {
+                if (messageObject.isRoundVideo() || messageObject.isVoice() || messageObject.isAnyKindOfSticker() || messageObject.messageOwner.noforwards && !AoiConfig.forceCopy.get()) {
                     return false;
                 }
             } else {

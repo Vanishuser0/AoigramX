@@ -219,6 +219,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 
+import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.translate.TranslationSignature;
 import nu.gpu.aoigram.translate.TranslationTask;
 
@@ -1054,7 +1055,7 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
                 BottomSheet.Builder builder = new BottomSheet.Builder(getContext(), false, resourcesProvider);
                 builder.setTitle(formattedUrl);
                 builder.setTitleMultipleLines(true);
-                builder.setItems(currentStory != null && !currentStory.allowScreenshots() ? new CharSequence[] {getString(R.string.Open)} : new CharSequence[]{getString(R.string.Open), getString(R.string.Copy)}, (dialog, which) -> {
+                builder.setItems(currentStory != null && !currentStory.allowScreenshots() && !AoiConfig.forceCopy.get() ? new CharSequence[] {getString(R.string.Open)} : new CharSequence[]{getString(R.string.Open), getString(R.string.Copy)}, (dialog, which) -> {
                     if (which == 0) {
                         onLinkClick(span, spoilersTextView);
                     } else if (which == 1) {
@@ -2092,8 +2093,8 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
                             createQualityItem(popupLayout);
                         }
 
-                        if (!unsupported && allowShare && !currentStory.isLive) {
-                            if (UserConfig.getInstance(currentAccount).isPremium()) {
+                        if (!unsupported && (allowShare || AoiConfig.forceCopy.get()) && !currentStory.isLive) {
+                            if (AoiConfig.forceCopy.get() || UserConfig.getInstance(currentAccount).isPremium()) {
                                 ActionBarMenuItem.addItem(popupLayout, R.drawable.msg_gallery, getString(R.string.SaveToGallery), false, resourcesProvider).setOnClickListener(v -> {
                                     saveToGallery();
                                     if (popupMenu != null) {

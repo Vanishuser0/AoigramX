@@ -1073,9 +1073,9 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
 
     public void setNoforwards(boolean noforwards) {
         if (textView != null) {
-            textView.setTextIsSelectable(!noforwards);
+            textView.setTextIsSelectable(AoiConfig.forceCopy.get() || !noforwards);
         }
-        if (noforwards) {
+        if (noforwards && !AoiConfig.allowScreenshots.get()) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
             AndroidUtilities.logFlagSecure();
         } else {

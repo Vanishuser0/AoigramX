@@ -73,6 +73,8 @@ import org.telegram.ui.PremiumPreviewFragment;
 
 import java.util.ArrayList;
 
+import nu.gpu.aoigram.config.AoiConfig;
+
 public class MessagePreviewView extends FrameLayout {
 
     TLRPC.Peer sendAsPeer;
@@ -310,7 +312,7 @@ public class MessagePreviewView extends FrameLayout {
                 @Override
                 protected boolean canCopy() {
                     if (isReplyToRichMessage()) return false;
-                    return messagePreviewParams == null || !messagePreviewParams.noforwards;
+                    return AoiConfig.forceCopy.get() || messagePreviewParams == null || !messagePreviewParams.noforwards;
                 }
 
                 @Override

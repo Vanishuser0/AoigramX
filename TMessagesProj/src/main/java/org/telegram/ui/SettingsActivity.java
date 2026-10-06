@@ -63,6 +63,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.settings.AoiSettingsActivity;
 
 import org.telegram.PhoneFormat.PhoneFormat;
@@ -551,12 +552,12 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
         avatarView.setForUserOrChat(user, avatarDrawable);
         titleView.setText(UserObject.getUserName(user));
         final StringBuilder sb = new StringBuilder();
-        if (user != null) {
+        if (user != null && !AoiConfig.hidePhone.get()) {
             sb.append(PhoneFormat.getInstance().format("+" + user.phone));
         }
         final String username = UserObject.getPublicUsername(user);
         if (username != null) {
-            sb.append(" • @").append(username);
+            sb.append(sb.length() == 0 ? "@" : " • @").append(username);
         }
         subtitleView.setText(sb);
 

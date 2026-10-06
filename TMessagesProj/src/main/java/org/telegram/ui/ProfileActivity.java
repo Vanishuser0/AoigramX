@@ -13548,7 +13548,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         }
                     } else if (position == phoneRow) {
                         String text;
-                        TLRPC.User user = getMessagesController().getUser(userId);
+                        TLRPC.User user = AoiConfig.hidePhone.get() && myProfile ? null : getMessagesController().getUser(userId);
                         String phoneNumber;
                         if (user != null && !TextUtils.isEmpty(vcardPhone)) {
                             text = PhoneFormat.getInstance().format("+" + vcardPhone);

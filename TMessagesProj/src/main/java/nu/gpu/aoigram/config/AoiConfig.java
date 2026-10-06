@@ -63,6 +63,7 @@ public final class AoiConfig {
     public static final BoolConfig usePinnedReactionsChannels = register(new BoolConfig("usePinnedReactionsChannels", false));
     public static final BoolConfig hideStarReactionChannels = register(new BoolConfig("hideStarReactionChannels", false));
     public static final StringConfig pinnedReactionsChannels = register(new StringConfig("pinnedReactionsChannels", ""));
+    public static final BoolConfig showCopyPhoto = register(new BoolConfig("showCopyPhoto", true));
 
     private AoiConfig() {
     }

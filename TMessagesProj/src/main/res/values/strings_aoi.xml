@@ -23,6 +23,7 @@
     <string name="Profile">Profile</string>
     <string name="ShowFullAbout">Expand bio and description</string>
     <string name="HideKeyboardOnScroll">Hide keyboard on scroll</string>
+    <string name="MessageMenu">Message Menu</string>
     <string name="PinnedReactions">Pinned Reactions</string>
     <string name="PinnedReactionsChats">Enable in chats</string>
     <string name="PinnedReactionsChannels">Enable in channels</string>

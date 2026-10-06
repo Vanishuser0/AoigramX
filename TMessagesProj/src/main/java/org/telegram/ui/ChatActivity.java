@@ -46385,7 +46385,7 @@ public class ChatActivity extends BaseFragment implements
                     options.add(OPTION_COPY);
                     icons.add(R.drawable.msg_copy);
                 }
-                if (!noforwardsOrPaidMedia && PhotoClipboard.canCopy(selectedObject)) {
+                if (AoiConfig.showCopyPhoto.get() && !noforwardsOrPaidMedia && PhotoClipboard.canCopy(selectedObject)) {
                     items.add(getString(selectedObject.isSticker() ? R.string.CopySticker : R.string.CopyPhoto));
                     options.add(OPTION_COPY_PHOTO);
                     icons.add(R.drawable.msg_copy_photo);
@@ -46700,7 +46700,7 @@ public class ChatActivity extends BaseFragment implements
                     options.add(OPTION_COPY);
                     icons.add(R.drawable.msg_copy);
                 }
-                if (!noforwardsOrPaidMedia && PhotoClipboard.canCopy(selectedObject)) {
+                if (AoiConfig.showCopyPhoto.get() && !noforwardsOrPaidMedia && PhotoClipboard.canCopy(selectedObject)) {
                     items.add(getString(selectedObject.isSticker() ? R.string.CopySticker : R.string.CopyPhoto));
                     options.add(OPTION_COPY_PHOTO);
                     icons.add(R.drawable.msg_copy_photo);

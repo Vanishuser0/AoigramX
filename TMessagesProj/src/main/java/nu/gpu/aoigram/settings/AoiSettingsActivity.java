@@ -170,7 +170,7 @@ public class AoiSettingsActivity extends BaseAoiSettingsActivity {
         fragment.fillItems(items, null);
         String section = null;
         for (UItem item : items) {
-            if (item.viewType == UniversalAdapter.VIEW_TYPE_HEADER) {
+            if (item.viewType == UniversalAdapter.VIEW_TYPE_HEADER || item.instanceOf(ExpandableSettingsCell.Factory.class) && item.iconResId != 0) {
                 section = TextUtils.equals(item.text, pageTitle) ? null : item.text.toString();
                 continue;
             }

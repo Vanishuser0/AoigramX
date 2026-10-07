@@ -57,6 +57,7 @@
     <string name="RepeatMessagesConfirmText">Repeat these messages?</string>
     <string name="PreviewRecording">Before sending recordings</string>
     <string name="GlareEffects">Glare effects</string>
+    <string name="PredictiveBack">Predictive back animation</string>
     <string name="MessageDetails">Details</string>
     <string name="MessageDetailsId">Message ID</string>
     <string name="MessageDetailsChat">Chat</string>

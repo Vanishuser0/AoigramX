@@ -260,6 +260,8 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import nu.gpu.aoigram.config.AoiConfig;
+
 public class LaunchActivity extends BasePermissionsActivity implements INavigationLayout.INavigationLayoutDelegate, NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate, IPipActivity {
     public final static String EXTRA_FORCE_NOT_INTERNAL_APPS = "force_not_internal_apps";
     public final static String EXTRA_FORCE_REQUEST = "force_request";
@@ -790,7 +792,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
 
                     @Override
                     public void onBackProgressed(@NonNull BackEvent backEvent) {
-                        if (started && invoked) return;
+                        if (started && invoked || !AoiConfig.predictiveBack.get()) return;
 
                         final float progress = backEvent.getProgress();
                         if (!predictiveBackStarted && progress > LAZY_START) {

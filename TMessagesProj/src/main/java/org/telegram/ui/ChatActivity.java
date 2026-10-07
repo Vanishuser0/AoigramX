@@ -397,6 +397,7 @@ public class ChatActivity extends BaseFragment implements
     public static final int OPTION_MESSAGE_JSON = 1003;
     public static final int OPTION_MESSAGE_DETAILS = 1004;
     private static final int OPTION_SAVE = 1005;
+    private static final int MENU_RECENT_ACTIONS = 90;
     private ChatManualTranslation aoiChatManualTranslation;
     private QuickActions quickActions;
     private boolean aoiHideChannelBottomBar;
@@ -3926,6 +3927,8 @@ public class ChatActivity extends BaseFragment implements
                 } else if (id == open_direct) {
                     if (currentChat == null) return;
                     presentFragment(ChatActivity.of(-currentChat.linked_monoforum_id));
+                } else if (id == MENU_RECENT_ACTIONS) {
+                    presentFragment(new ChannelAdminLogActivity(currentChat));
                 } else if (id == charge_fee ) {
                     long user_id = dialog_id;
                     long parent_id = 0;
@@ -4679,6 +4682,10 @@ public class ChatActivity extends BaseFragment implements
         if (currentChat != null && forumTopic != null && chatMode == 0) {
             closeTopicItem = headerItem.lazilyAddSubItem(topic_close, R.drawable.msg_topic_close, LocaleController.getString(R.string.CloseTopic));
             closeTopicItem.setVisibility(currentChat != null && ChatObject.canManageTopic(currentAccount, currentChat, forumTopic) && forumTopic != null && !forumTopic.closed ? View.VISIBLE : View.GONE);
+        }
+        if (headerItem != null && ChatObject.isChannel(currentChat) && !ChatObject.isMonoForum(currentChat) && ChatObject.hasAdminRights(currentChat)) {
+            headerItem.lazilyAddColoredGap();
+            headerItem.lazilyAddSubItem(MENU_RECENT_ACTIONS, R.drawable.msg_log, getString(R.string.EventLog));
         }
         menu.setVisibility(inMenuMode ? View.GONE : View.VISIBLE);
 

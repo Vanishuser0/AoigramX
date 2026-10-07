@@ -174,6 +174,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
 
+import nu.gpu.aoigram.config.AoiConfig;
+
 @SuppressWarnings("unchecked")
 public class SharedMediaLayout extends FrameLayout implements NotificationCenter.NotificationCenterDelegate, DialogCell.DialogCellDelegate {
     public static final int TAB_PHOTOVIDEO = 0;
@@ -1609,6 +1611,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
         } else {
             main_tab = null;
         }
+        final boolean skipChatGifts = AoiConfig.skipGiftsTab.get() && chatInfo != null;
         if (initialTab == TAB_GIFTS || initialTab == TAB_RECOMMENDED_CHANNELS || initialTab == TAB_SAVED_DIALOGS || initialTab == TAB_COMMON_GROUPS) {
             this.initialTab = initialTab;
         } else if (user != null && user.bot && user.bot_has_main_app && user.bot_can_edit) {
@@ -1617,7 +1620,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
             this.initialTab = TAB_STORIES;
         } else if (main_tab instanceof TLRPC.TL_profileTabPosts && (userInfo != null && userInfo.stories_pinned_available || chatInfo != null && chatInfo.stories_pinned_available || isStoriesView())) {
             this.initialTab = TAB_STORIES;
-        } else if (main_tab instanceof TLRPC.TL_profileTabGifts && (userInfo != null && userInfo.stargifts_count > 0 || chatInfo != null && chatInfo.stargifts_count > 0)) {
+        } else if (main_tab instanceof TLRPC.TL_profileTabGifts && !skipChatGifts && (userInfo != null && userInfo.stargifts_count > 0 || chatInfo != null && chatInfo.stargifts_count > 0)) {
             this.initialTab = TAB_GIFTS;
         } else if (main_tab instanceof TLRPC.TL_profileTabFiles && (hasMedia[1] == -1 || hasMedia[1] > 0)) {
             this.initialTab = TAB_FILES;
@@ -1631,7 +1634,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
             this.initialTab = TAB_VOICE;
         } else if (userInfo != null && userInfo.stories_pinned_available || chatInfo != null && chatInfo.stories_pinned_available || isStoriesView()) {
             this.initialTab = getInitialTab();
-        } else if (userInfo != null && userInfo.stargifts_count > 0 || chatInfo != null && chatInfo.stargifts_count > 0) {
+        } else if (!skipChatGifts && (userInfo != null && userInfo.stargifts_count > 0 || chatInfo != null && chatInfo.stargifts_count > 0)) {
             this.initialTab = TAB_GIFTS;
         } else if (initialTab != -1 && topicId == 0) {
             this.initialTab = initialTab;
@@ -1642,6 +1645,9 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                     break;
                 }
             }
+        }
+        if (AoiConfig.skipGiftsTab.get() && this.initialTab == TAB_GIFTS && initialTab != TAB_GIFTS && hasMedia[6] > 0) {
+            this.initialTab = TAB_COMMON_GROUPS;
         }
         onTabProgress(initialTab);
         info = chatInfo;
@@ -5050,6 +5056,14 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
         int id = scrollSlidingTextTabStrip.getCurrentTabId();
         if (!scrollSlidingTextTabStrip.hasTab(id)) {
             id = scrollSlidingTextTabStrip.getFirstTabId();
+            if (AoiConfig.skipGiftsTab.get() && id == TAB_GIFTS) {
+                ArrayList<Integer> ids = scrollSlidingTextTabStrip.getTabIds();
+                if (scrollSlidingTextTabStrip.hasTab(TAB_COMMON_GROUPS)) {
+                    id = TAB_COMMON_GROUPS;
+                } else if (info != null && ids.size() > 1) {
+                    id = ids.get(1);
+                }
+            }
             scrollSlidingTextTabStrip.setInitialTabId(id);
             mediaPages[0].selectedType = id;
             switchToCurrentSelectedMode(false);

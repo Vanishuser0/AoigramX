@@ -27,6 +27,7 @@ public final class AoiConfig {
     public static final IntConfig idDcType = register(new IntConfig("idDcType", PeerIdDc.TELEGRAM_API));
     public static final BoolConfig hidePhone = register(new BoolConfig("hidePhone", false));
     public static final BoolConfig showFullAbout = register(new BoolConfig("showFullAbout", false));
+    public static final BoolConfig skipGiftsTab = register(new BoolConfig("skipGiftsTab", false));
 
     public static final StringConfig translationProvider = register(new StringConfig("translationProvider", "google"));
     public static final StringConfig translationLanguage = register(new StringConfig("translationLanguage", ""));

@@ -39,6 +39,8 @@
     <string name="ChatJoinDate">You joined %1$s on **%2$s**.</string>
     <string name="ChatCreationDate">%1$s was created on **%2$s**.</string>
     <string name="ShowFullAbout">Expand bio and description</string>
+    <string name="SkipGiftsTab">Skip Gifts tab</string>
+    <string name="SkipGiftsTabInfo">Profiles open on the next tab instead.</string>
     <string name="HideKeyboardOnScroll">Hide keyboard on scroll</string>
     <string name="HideChannelBottomBar">Hide channel bottom bar</string>
     <string name="DoubleTapActions">Double Tap Actions</string>

@@ -39,6 +39,7 @@ public final class AoiGeneralSettingsActivity extends BaseAoiSettingsActivity {
         items.add(idDcItem);
         items.add(asConfigCheck(AoiConfig.hidePhone, R.string.HidePhone));
         items.add(asConfigCheck(AoiConfig.showFullAbout, R.string.ShowFullAbout));
+        items.add(asConfigCheck(AoiConfig.skipGiftsTab, R.string.SkipGiftsTab, R.string.SkipGiftsTabInfo));
         items.add(UItem.asShadow(null));
     }
 

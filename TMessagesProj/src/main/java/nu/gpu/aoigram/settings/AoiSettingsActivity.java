@@ -65,8 +65,8 @@ public class AoiSettingsActivity extends BaseAoiSettingsActivity {
     }
 
     @Override
-    protected boolean forceActionBarVisible() {
-        return searchItem.isSearchFieldVisible2();
+    protected boolean shouldShowActionBarBackground() {
+        return searchItem.isSearchFieldVisible2() || super.shouldShowActionBarBackground();
     }
 
     @Override
@@ -155,6 +155,7 @@ public class AoiSettingsActivity extends BaseAoiSettingsActivity {
         addSearchItems(new AoiTranslatorSettingsActivity(), R.drawable.msg_translate);
         addSearchItems(new AoiLlmSettingsActivity(), R.drawable.msg_ai_translate);
         addSearchItems(new AoiChatSettingsActivity(), R.drawable.msg_discussion);
+        addSearchItems(new AoiPinnedReactionsActivity(), R.drawable.msg_pin);
         addSearchItems(new AoiOtherSettingsActivity(), R.drawable.msg_fave);
         addSearchItems(new AoiAboutSettingsActivity(), R.drawable.msg_info);
         if (searchItem.isSearchFieldVisible2()) {

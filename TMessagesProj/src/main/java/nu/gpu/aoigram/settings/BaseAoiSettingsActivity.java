@@ -271,10 +271,6 @@ public abstract class BaseAoiSettingsActivity extends BaseFragment {
         return false;
     }
 
-    protected boolean forceActionBarVisible() {
-        return false;
-    }
-
     protected int getListTopPadding() {
         return hasCollapsingHeader() ? dp(12) : ActionBar.getCurrentActionBarHeight();
     }
@@ -311,24 +307,24 @@ public abstract class BaseAoiSettingsActivity extends BaseFragment {
         listView.invalidate();
     }
 
+    protected boolean shouldShowActionBarBackground() {
+        if (hasCollapsingHeader()) {
+            if (listView.getChildCount() > 0) {
+                View firstChild = listView.getChildAt(0);
+                return listView.getChildAdapterPosition(firstChild) > 0 || firstChild.getY() + firstChild.getHeight() < actionBar.getHeight();
+            }
+            return false;
+        } else {
+            return listView.canScrollVertically(-1);
+        }
+    }
+
     protected final void updateActionBarVisible() {
         updateActionBarVisible(false, true);
     }
 
     private void updateActionBarVisible(boolean force, boolean animated) {
-        boolean visible;
-        if (forceActionBarVisible()) {
-            visible = true;
-        } else if (hasCollapsingHeader()) {
-            if (listView.getChildCount() > 0) {
-                View firstChild = listView.getChildAt(0);
-                visible = listView.getChildAdapterPosition(firstChild) > 0 || firstChild.getY() + firstChild.getHeight() < actionBar.getHeight();
-            } else {
-                visible = false;
-            }
-        } else {
-            visible = listView.canScrollVertically(-1);
-        }
+        boolean visible = shouldShowActionBarBackground();
         if (actionBarVisible == visible && !force) {
             return;
         }

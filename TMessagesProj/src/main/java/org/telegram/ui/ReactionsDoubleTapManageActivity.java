@@ -42,6 +42,8 @@ import org.telegram.ui.Components.SimpleThemeDescription;
 import java.util.ArrayList;
 import java.util.List;
 
+import nu.gpu.aoigram.settings.AoiPinnedReactionsActivity;
+
 public class ReactionsDoubleTapManageActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
     private LinearLayout contentView;
@@ -109,7 +111,10 @@ public class ReactionsDoubleTapManageActivity extends BaseFragment implements No
                         break;
                     case 2:
                         TextInfoPrivacyCell cell = new TextInfoPrivacyCell(context);
-                        cell.setText(LocaleController.getString(R.string.DoubleTapPreviewRational));
+                        cell.setText(AndroidUtilities.replaceArrows(AndroidUtilities.replaceSingleTag(
+                                LocaleController.getString(R.string.DoubleTapPreviewRational) + "\n\n**" + LocaleController.getString(R.string.PinnedReactions) + " >**",
+                                () -> presentFragment(new AoiPinnedReactionsActivity())
+                        ), true));
                         view = cell;
                         break;
                     case 3:

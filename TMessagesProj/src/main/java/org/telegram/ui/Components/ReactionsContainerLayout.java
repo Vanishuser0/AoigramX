@@ -91,7 +91,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.reactions.PinnedReactions;
+
 public class ReactionsContainerLayout extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
+
+    private boolean allowPinnedCustomReactions;
+    private boolean pinnedReactionsChannel;
 
     public boolean forceAttachToParent = false;
     public final static Property<ReactionsContainerLayout, Float> TRANSITION_PROGRESS_VALUE = new Property<ReactionsContainerLayout, Float>(Float.class, "transitionProgress") {
@@ -580,7 +586,7 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private void setVisibleReactionsList(List<ReactionsLayoutInBubble.VisibleReaction> visibleReactionsList, boolean animated) {
+    protected void setVisibleReactionsList(List<ReactionsLayoutInBubble.VisibleReaction> visibleReactionsList, boolean animated) {
         this.visibleReactionsList.clear();
         if (showCustomEmojiReaction()) {
             int i = 0;
@@ -1177,6 +1183,14 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
             fillRecentReactionsList(visibleReactions);
         }
         filterReactions(visibleReactions);
+        if (type == TYPE_DEFAULT) {
+            pinnedReactionsChannel = channelReactions || message != null && message.isForwardedChannelPost();
+            if (pinnedReactionsChannel && AoiConfig.hideStarReactionChannels.get() && visibleReactions.size() > 1 && visibleReactions.removeIf(reaction -> reaction.isStar)) {
+                hasStar = false;
+            }
+            allowPinnedCustomReactions = allReactionsAvailable && (reactionsChat == null || reactionsChat.available_reactions instanceof TLRPC.TL_chatReactionsAll);
+            PinnedReactions.prioritize(visibleReactions, currentAccount, pinnedReactionsChannel, allowPinnedCustomReactions);
+        }
         showExpandableReactions = !hitLimit && (!allReactionsAvailable && visibleReactions.size() > 16 || allReactionsAvailable && !UserConfig.getInstance(currentAccount).isPremium() && MessagesController.getInstance(currentAccount).premiumFeaturesBlocked());
         if (type == TYPE_TAGS && !UserConfig.getInstance(currentAccount).isPremium()) {
             showExpandableReactions = false;
@@ -1625,6 +1639,9 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
                     MediaDataController.getInstance(currentAccount).clearRecentReactions();
                     List<ReactionsLayoutInBubble.VisibleReaction> visibleReactions = new ArrayList<>();
                     fillRecentReactionsList(visibleReactions);
+                    if (type == TYPE_DEFAULT) {
+                        PinnedReactions.prioritize(visibleReactions, currentAccount, pinnedReactionsChannel, allowPinnedCustomReactions);
+                    }
                     setVisibleReactionsList(visibleReactions, true);
                     lastVisibleViews.clear();
                     reactionsWindow.setRecentReactions(visibleReactions);

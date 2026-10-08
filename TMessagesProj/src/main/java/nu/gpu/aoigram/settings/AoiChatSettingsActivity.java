@@ -21,9 +21,14 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
 
     private static final int PINNED_REACTIONS = 1;
     private static final int MESSAGE_MENU = 2;
+    private static final int CONFIRMATIONS = 3;
 
     private static final Option[] MESSAGE_MENU_OPTIONS = {
             new Option(AoiConfig.showCopyPhoto, R.string.CopyPhoto),
+            new Option(AoiConfig.showRepeat, R.string.Repeat),
+    };
+    private static final Option[] CONFIRMATION_OPTIONS = {
+            new Option(AoiConfig.repeatConfirm, R.string.RepeatConfirm),
     };
 
     private final SparseBooleanArray expandedGroups = new SparseBooleanArray();
@@ -45,6 +50,7 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
         items.add(UItem.asButton(PINNED_REACTIONS, R.drawable.msg_pin, getString(R.string.PinnedReactions), PinnedReactions.getLabel()));
         items.add(UItem.asShadow(null));
         addGroup(items, adapter, MESSAGE_MENU, R.drawable.msg_list, R.string.MessageMenu, MESSAGE_MENU_OPTIONS);
+        addGroup(items, adapter, CONFIRMATIONS, R.drawable.msg2_ask_question, R.string.Confirmations, CONFIRMATION_OPTIONS);
         items.add(UItem.asShadow(null));
     }
 
@@ -69,11 +75,17 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
         }
     }
 
+    private static Option[] getOptions(int groupId) {
+        return groupId == MESSAGE_MENU ? MESSAGE_MENU_OPTIONS : CONFIRMATION_OPTIONS;
+    }
+
     @Override
     public BaseAoiSettingsActivity setInitialItemKey(String itemKey) {
-        for (Option option : MESSAGE_MENU_OPTIONS) {
-            if (option.config.getKey().equals(itemKey)) {
-                expandedGroups.put(MESSAGE_MENU, true);
+        for (int groupId : new int[] {MESSAGE_MENU, CONFIRMATIONS}) {
+            for (Option option : getOptions(groupId)) {
+                if (option.config.getKey().equals(itemKey)) {
+                    expandedGroups.put(groupId, true);
+                }
             }
         }
         return super.setInitialItemKey(itemKey);
@@ -88,11 +100,11 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
     protected void onItemClick(UItem item, View view, int position, float x, float y) {
         if (item.id == PINNED_REACTIONS) {
             presentFragment(new AoiPinnedReactionsActivity());
-        } else if (item.id == MESSAGE_MENU) {
+        } else if (item.id == MESSAGE_MENU || item.id == CONFIRMATIONS) {
             if (LocaleController.isRTL ? x > dp(75) : x < view.getWidth() - dp(75)) {
                 item.clickCallback.onClick(view);
             } else {
-                for (Option option : MESSAGE_MENU_OPTIONS) {
+                for (Option option : getOptions(item.id)) {
                     option.config.set(!item.checked);
                 }
                 listView.adapter.update(true);

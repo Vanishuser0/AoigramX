@@ -24,6 +24,11 @@
     <string name="ShowFullAbout">Expand bio and description</string>
     <string name="HideKeyboardOnScroll">Hide keyboard on scroll</string>
     <string name="MessageMenu">Message Menu</string>
+    <string name="Confirmations">Confirmations</string>
+    <string name="Repeat">Repeat</string>
+    <string name="RepeatConfirm">Before repeating</string>
+    <string name="RepeatConfirmText">Repeat this message?</string>
+    <string name="RepeatMessagesConfirmText">Repeat these messages?</string>
     <string name="PinnedReactions">Pinned Reactions</string>
     <string name="PinnedReactionsChats">Enable in chats</string>
     <string name="PinnedReactionsChannels">Enable in channels</string>

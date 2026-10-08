@@ -370,6 +370,7 @@ import me.vkryl.core.reference.ReferenceList;
 
 import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.media.PhotoClipboard;
+import nu.gpu.aoigram.messages.Repeat;
 import nu.gpu.aoigram.translate.TranslationMenu;
 import nu.gpu.aoigram.translate.TranslationOptions;
 import nu.gpu.aoigram.translate.ChatManualTranslation;
@@ -386,6 +387,8 @@ public class ChatActivity extends BaseFragment implements
         FactorAnimator.Target
 {
     private static final int OPTION_COPY_PHOTO = 1000;
+    private static final int OPTION_REPEAT = 1001;
+    private static final int OPTION_REPEAT_AS_COPY = 1002;
     private ChatManualTranslation aoiChatManualTranslation;
 
     private final static boolean PULL_DOWN_BACK_FRAGMENT = false;
@@ -32204,6 +32207,12 @@ public class ChatActivity extends BaseFragment implements
                         }
                         processSelectedOption(options.get(i));
                     });
+                    if (option == OPTION_REPEAT && (!message.hasValidReplyMessageObject() && getThreadMessage() == null || Repeat.canCopy(message))) {
+                        cell.setOnLongClickListener(v1 -> {
+                            processSelectedOption(OPTION_REPEAT_AS_COPY);
+                            return true;
+                        });
+                    }
                     if (option == OPTION_TRANSLATE) {
                         TranslationMenu.bind(aoiChatManualTranslation, this, popupLayout, cell, message, groupedMessages, scrimBlur3Factory, () -> closeMenu(true));
                         /*final boolean translateEnabled = getMessagesController().getTranslateController().isContextTranslateEnabled();
@@ -33657,6 +33666,11 @@ public class ChatActivity extends BaseFragment implements
         }
         boolean preserveDim = false;
         switch (option) {
+            case OPTION_REPEAT:
+            case OPTION_REPEAT_AS_COPY: {
+                Repeat.send(this, selectedObject, selectedObjectGroup, option == OPTION_REPEAT_AS_COPY);
+                break;
+            }
             case OPTION_RETRY: {
                 final MessageObject object = selectedObject;
                 final MessageObject.GroupedMessages group = selectedObjectGroup;
@@ -46637,6 +46651,11 @@ public class ChatActivity extends BaseFragment implements
                     items.add(LocaleController.getString(R.string.Forward));
                     options.add(OPTION_FORWARD);
                     icons.add(R.drawable.msg_forward);
+                }
+                if (AoiConfig.showRepeat.get() && (noforwards ? Repeat.canCopyNoForwards(selectedObject) : canForward && selectedObject.canForwardMessage() && (!isThreadChat() || isTopic || Repeat.canCopy(selectedObject))) && allowChatActions && !isInsideContainer && getDialogId() != UserObject.VERIFY) {
+                    items.add(getString(R.string.Repeat));
+                    options.add(OPTION_REPEAT);
+                    icons.add(R.drawable.msg_repeat);
                 }
                 if (allowUnpin) {
                     items.add(LocaleController.getString(R.string.UnpinMessage));

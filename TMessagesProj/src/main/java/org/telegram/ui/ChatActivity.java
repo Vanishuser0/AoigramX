@@ -369,6 +369,7 @@ import me.vkryl.core.BitwiseUtils;
 import me.vkryl.core.reference.ReferenceList;
 
 import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.media.PhotoClipboard;
 import nu.gpu.aoigram.translate.TranslationMenu;
 import nu.gpu.aoigram.translate.TranslationOptions;
 import nu.gpu.aoigram.translate.ChatManualTranslation;
@@ -384,6 +385,7 @@ public class ChatActivity extends BaseFragment implements
         InstantCameraView.Delegate,
         FactorAnimator.Target
 {
+    private static final int OPTION_COPY_PHOTO = 1000;
     private ChatManualTranslation aoiChatManualTranslation;
 
     private final static boolean PULL_DOWN_BACK_FRAGMENT = false;
@@ -33759,6 +33761,10 @@ public class ChatActivity extends BaseFragment implements
                 undoView.showWithAction(0, UndoView.ACTION_MESSAGE_COPIED, null);
                 break;
             }
+            case OPTION_COPY_PHOTO: {
+                PhotoClipboard.copy(PhotoClipboard.getFile(selectedObject), selectedObject.isSticker(), BulletinFactory.of(this));
+                break;
+            }
             case OPTION_SAVE_TO_GALLERY: {
                 if (Build.VERSION.SDK_INT >= 23 && (Build.VERSION.SDK_INT <= 28 || BuildVars.NO_SCOPED_STORAGE) && getParentActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     getParentActivity().requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 4);
@@ -46377,6 +46383,11 @@ public class ChatActivity extends BaseFragment implements
                     options.add(OPTION_COPY);
                     icons.add(R.drawable.msg_copy);
                 }
+                if (!noforwardsOrPaidMedia && PhotoClipboard.canCopy(selectedObject)) {
+                    items.add(getString(selectedObject.isSticker() ? R.string.CopySticker : R.string.CopyPhoto));
+                    options.add(OPTION_COPY_PHOTO);
+                    icons.add(R.drawable.msg_copy_photo);
+                }
                 if (!isThreadChat() && chatMode != MODE_SCHEDULED && currentChat != null && primaryMessage != null && (currentChat.has_link || primaryMessage.hasReplies()) && currentChat.megagroup && primaryMessage.canViewThread()) {
                     if (primaryMessage.hasReplies()) {
                         items.add(LocaleController.formatPluralString("ViewReplies", primaryMessage.getRepliesCount()));
@@ -46686,6 +46697,11 @@ public class ChatActivity extends BaseFragment implements
                     items.add(LocaleController.getString(R.string.Copy));
                     options.add(OPTION_COPY);
                     icons.add(R.drawable.msg_copy);
+                }
+                if (!noforwardsOrPaidMedia && PhotoClipboard.canCopy(selectedObject)) {
+                    items.add(getString(selectedObject.isSticker() ? R.string.CopySticker : R.string.CopyPhoto));
+                    options.add(OPTION_COPY_PHOTO);
+                    icons.add(R.drawable.msg_copy_photo);
                 }
                 if (selectedObject.contentType == 0 && (selectedObject.aoiManualTranslation || !TextUtils.isEmpty(selectedObject.getMessageTextToTranslate(selectedObjectGroup, null))) && !selectedObject.isAnimatedEmoji() && !selectedObject.isDice()) {
                     items.add(getString(R.string.TranslateMessage));

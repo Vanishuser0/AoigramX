@@ -78,4 +78,8 @@
     <string name="InputTranslate">Translate (%1$s)</string>
     <string name="InputTranslateWithAI">Translate with AI (%1$s)</string>
     <string name="InputTranslationDone">Text translated</string>
+    <string name="CopyPhoto">Copy Photo</string>
+    <string name="PhotoCopied">Photo copied to clipboard</string>
+    <string name="CopySticker">Copy Sticker</string>
+    <string name="StickerCopied">Sticker copied to clipboard</string>
 </resources>

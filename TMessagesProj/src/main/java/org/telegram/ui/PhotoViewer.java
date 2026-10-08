@@ -347,6 +347,7 @@ import me.vkryl.android.animator.FactorAnimator;
 import me.vkryl.core.reference.ReferenceList;
 
 import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.media.PhotoClipboard;
 import nu.gpu.aoigram.translate.InputTranslation;
 import nu.gpu.aoigram.translate.InputTranslationMenu;
 import nu.gpu.aoigram.translate.TranslationOptions;
@@ -357,6 +358,7 @@ import nu.gpu.aoigram.translate.TranslationTask;
 @SuppressWarnings("unchecked")
 @OptIn(markerClass = UnstableApi.class)
 public class PhotoViewer implements NotificationCenter.NotificationCenterDelegate, GestureDetector2.OnGestureListener, GestureDetector2.OnDoubleTapListener, IPipSourceDelegate, FactorAnimator.Target {
+    private static final int gallery_menu_copy_photo = 1000;
     private final InputTranslation aoiInputTranslation = new InputTranslation();
     private TranslationTask aoiPhotoTranslation;
 
@@ -4621,7 +4623,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         showAlertDialog(builder);
     }
 
-    private void onSharePressed() {
+    private void onSharePressed(boolean copyPhoto) {
         if (parentActivity == null || !allowShare) {
             return;
         }
@@ -4629,7 +4631,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             File f = null;
             boolean isVideo = false;
 
-            if (currentMessageObject != null) {
+            if (copyPhoto && currentMessageObject != null) {
+                f = PhotoClipboard.getFile(currentMessageObject);
+            } else if (currentMessageObject != null) {
                 isVideo = currentMessageObject.isVideo();
                         /*if (currentMessageObject.messageOwner.media instanceof TLRPC.TL_messageMediaWebPage) {
                             AndroidUtilities.openUrl(parentActivity, currentMessageObject.messageOwner.media.webpage.url);
@@ -4645,9 +4649,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                     f = FileLoader.getInstance(currentAccount).getPathToMessage(currentMessageObject.messageOwner);
                 }
             } else if (currentFileLocationVideo != null) {
-                f = FileLoader.getInstance(currentAccount).getPathToAttach(getFileLocation(currentFileLocationVideo), getFileLocationExt(currentFileLocationVideo), avatarsDialogId != 0 || isEvent);
+                ImageLocation location = copyPhoto ? currentFileLocation : currentFileLocationVideo;
+                f = FileLoader.getInstance(currentAccount).getPathToAttach(getFileLocation(location), getFileLocationExt(location), avatarsDialogId != 0 || isEvent);
                 if (f == null || !f.exists()) {
-                    f = FileLoader.getInstance(currentAccount).getPathToAttach(getFileLocation(currentFileLocationVideo), getFileLocationExt(currentFileLocationVideo), false);
+                    f = FileLoader.getInstance(currentAccount).getPathToAttach(getFileLocation(location), getFileLocationExt(location), false);
                 }
             } else if (pageBlocksAdapter != null) {
                 f = pageBlocksAdapter.getFile(currentIndex);
@@ -4657,6 +4662,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             }
 
             if (f != null && f.exists()) {
+                if (copyPhoto) {
+                    PhotoClipboard.copy(f, false, BulletinFactory.of(containerView, resourcesProvider));
+                    return;
+                }
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 if (isVideo) {
                     intent.setType("video/mp4");
@@ -5535,8 +5544,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                     if (button != null) {
                         button.setTextColor(getThemedColor(Theme.key_text_RedBold));
                     }
-                } else if (id == gallery_menu_share || id == gallery_menu_share2) {
-                    onSharePressed();
+                } else if (id == gallery_menu_share || id == gallery_menu_share2 || id == gallery_menu_copy_photo) {
+                    onSharePressed(id == gallery_menu_copy_photo);
                 } else if (id == gallery_menu_openin) {
                     try {
                         if (isEmbedVideo) {
@@ -5937,6 +5946,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         menuItem.addSubItem(gallery_menu_reply, R.drawable.menu_reply, getString(R.string.Reply)).setColors(0xfffafafa, 0xfffafafa);
         menuItem.addSubItem(gallery_menu_report, R.drawable.msg_report, getString(R.string.ReportProfilePhoto)).setColors(0xfffafafa, 0xfffafafa);
         menuItem.addSubItem(gallery_menu_share, R.drawable.msg_shareout, getString(R.string.ShareFile)).setColors(0xfffafafa, 0xfffafafa);
+        menuItem.addSubItem(gallery_menu_copy_photo, R.drawable.msg_copy_photo, getString(R.string.CopyPhoto)).setColors(0xfffafafa, 0xfffafafa);
         menuItem.addSubItem(gallery_menu_masks2, R.drawable.msg_sticker, getString(R.string.ShowStickers)).setColors(0xfffafafa, 0xfffafafa);
         //menuItem.addSubItem(gallery_menu_edit_avatar, R.drawable.photo_paint, LocaleController.getString(R.string.EditPhoto)).setColors(0xfffafafa, 0xfffafafa);
         menuItem.addSubItem(gallery_menu_set_as_main, R.drawable.msg_openprofile, getString(R.string.SetAsMain)).setColors(0xfffafafa, 0xfffafafa);
@@ -14064,6 +14074,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         menuItem.hideSubItem(gallery_menu_reply);
         menuItem.hideSubItem(gallery_menu_report);
         menuItem.hideSubItem(gallery_menu_share);
+        menuItem.hideSubItem(gallery_menu_copy_photo);
         menuItem.hideSubItem(gallery_menu_openin);
         menuItem.hideSubItem(gallery_menu_savegif);
         menuItem.hideSubItem(gallery_menu_masks2);
@@ -14590,6 +14601,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         menuItem.hideSubItem(gallery_menu_report);
 
         CharSequence title = null;
+        boolean canCopyPhoto = false;
         editing = false;
         if (!imagesArr.isEmpty()) {
             if (switchingToIndex < 0 || switchingToIndex >= imagesArr.size()) {
@@ -14857,6 +14869,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 galleryGap.setVisibility(View.VISIBLE);
                 menuItem.showSubItem(gallery_menu_share);
             }
+            canCopyPhoto = PhotoClipboard.isPhoto(newMessageObject);
             groupedPhotosListView.fillList();
         } else if (!secureDocuments.isEmpty()) {
             allowShare = false;
@@ -14935,6 +14948,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 galleryGap.setVisibility(View.VISIBLE);
             }
             allowShare = !noforwards;
+            canCopyPhoto = true;
             menuItem.showSubItem(gallery_menu_share);
             menuItem.checkHideMenuItem();
             groupedPhotosListView.fillList();
@@ -15273,9 +15287,14 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             }
             groupedPhotosListView.fillList();
             pageBlocksAdapter.updateSlideshowCell(pageBlock);
+            canCopyPhoto = !isVideo && !pageBlocksAdapter.isHardwarePlayer(index);
         } else {
             menuItem.hideSubItem(gallery_menu_translate);
             menuItem.hideSubItem(gallery_menu_hide_translation);
+        }
+        menuItem.setSubItemShown(gallery_menu_copy_photo, allowShare && canCopyPhoto);
+        if (imagesArrLocals.isEmpty()) {
+            menuItem.checkHideMenuItem();
         }
         fancyShadows = editing && setAvatarFor == null || sendPhotoType == SELECT_TYPE_STICKER;
         actionBar.setBackgroundColor(sendPhotoTypeIsPollMedia || fancyShadows || setAvatarFor != null ? 0 : Theme.ACTION_BAR_PHOTO_VIEWER_COLOR);

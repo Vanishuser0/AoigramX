@@ -371,6 +371,7 @@ import me.vkryl.core.reference.ReferenceList;
 
 import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.media.PhotoClipboard;
+import nu.gpu.aoigram.messages.DoubleTap;
 import nu.gpu.aoigram.messages.MessageDetailsActivity;
 import nu.gpu.aoigram.messages.MessageJsonActivity;
 import nu.gpu.aoigram.messages.QuickActions;
@@ -398,6 +399,62 @@ public class ChatActivity extends BaseFragment implements
     private static final int OPTION_SAVE = 1005;
     private ChatManualTranslation aoiChatManualTranslation;
     private QuickActions quickActions;
+
+    private int getDoubleTapOption(ChatMessageCell cell, int action) {
+        int option = switch (action) {
+            case DoubleTap.REPLY -> OPTION_REPLY;
+            case DoubleTap.COPY -> OPTION_COPY;
+            case DoubleTap.FORWARD -> OPTION_FORWARD;
+            case DoubleTap.SAVE -> OPTION_SAVE;
+            case DoubleTap.REPEAT -> OPTION_REPEAT;
+            case DoubleTap.TRANSLATE, DoubleTap.TRANSLATE_AI -> OPTION_TRANSLATE;
+            case DoubleTap.EDIT -> OPTION_EDIT;
+            case DoubleTap.DELETE -> OPTION_DELETE;
+            default -> -1;
+        };
+        if (option == -1) {
+            return -1;
+        }
+        selectedObject = cell.getMessageObject();
+        selectedObjectGroup = getValidGroupedMessage(selectedObject);
+        selectedObjectToEditCaption = null;
+        ArrayList<Integer> options = new ArrayList<>();
+        fillMessageMenu(cell.getPrimaryMessageObject(), new ArrayList<>(), new ArrayList<>(), options, true);
+        if (option == OPTION_COPY && !options.contains(OPTION_COPY)) {
+            option = options.contains(OPTION_COPY_PHONE_NUMBER) ? OPTION_COPY_PHONE_NUMBER : OPTION_COPY_PHOTO;
+        } else if (option == OPTION_EDIT && !options.contains(OPTION_EDIT)) {
+            option = OPTION_EDIT_TODO;
+        }
+        if (!options.contains(option) || option == OPTION_TRANSLATE && !selectedObject.isOutOwner() && getMessagesController().getTranslateController().isTranslatingDialog(selectedObject.getDialogId())
+            || (option == OPTION_REPLY || option == OPTION_FORWARD || option == OPTION_SAVE) && selectedObject.isHiddenSensitive() && !selectedObject.isMediaSpoilersRevealed) {
+            return -1;
+        }
+        return option;
+    }
+
+    private void processDoubleTapAction(ChatMessageCell cell, int action) {
+        forwardingMessage = null;
+        forwardingMessageGroup = null;
+        int option = getDoubleTapOption(cell, action);
+        if (option == OPTION_TRANSLATE) {
+            MessageObject caption = selectedObjectGroup == null ? null : selectedObjectGroup.findCaptionMessageObject();
+            MessageObject message = caption == null ? selectedObject : caption;
+            if (message.translated) {
+                aoiChatManualTranslation.showOriginal(message);
+            } else if (action == DoubleTap.TRANSLATE_AI) {
+                aoiChatManualTranslation.translate(this, message, new TranslationOptions(TranslationOptions.LLM, TranslationOptions.defaultLanguage()));
+            } else {
+                aoiChatManualTranslation.translateDefault(this, message);
+            }
+        } else if (option == OPTION_DELETE) {
+            createDeleteMessagesAlert(selectedObject, selectedObjectGroup);
+        } else if (option != -1) {
+            processSelectedOption(option);
+        }
+        selectedObject = null;
+        selectedObjectGroup = null;
+        selectedObjectToEditCaption = null;
+    }
 
     private final static boolean PULL_DOWN_BACK_FRAGMENT = false;
     private final static boolean DISABLE_PROGRESS_VIEW = true;
@@ -1959,17 +2016,7 @@ public class ChatActivity extends BaseFragment implements
 
         @Override
         public boolean hasDoubleTap(View view, int position) {
-            if (isQuickRepliesOrWelcomeMessagesMode()) return false;
-            String reactionStringSetting = getMediaDataController().getDoubleTapReaction();
-            TLRPC.TL_availableReaction reaction = getMediaDataController().getReactionsMap().get(reactionStringSetting);
-            if (reaction == null && (reactionStringSetting == null || !reactionStringSetting.startsWith("animated_"))) {
-                return false;
-            }
-            boolean available = dialog_id >= 0;
-            if (!available && chatInfo != null) {
-                available = ChatObject.reactionIsAvailable(chatInfo, reaction == null ? reactionStringSetting : reaction.reaction);
-            }
-            if (!available) {
+            if (getParentActivity() == null || isSecretChat() || isInScheduleMode() || isInPreviewMode() || isQuickRepliesOrWelcomeMessagesMode() || actionBar.isActionModeShowed() || isReport()) {
                 return false;
             }
             MessageObject messageObject;
@@ -1980,7 +2027,33 @@ public class ChatActivity extends BaseFragment implements
             } else {
                 return false;
             }
-            return messageObject != null && !messageObject.isDateObject && !messageObject.isSending() && messageObject.canSetReaction() && !messageObject.isEditing() && !actionBar.isActionModeShowed() && !isSecretChat() && !isInScheduleMode() && !messageObject.isSponsored();
+            if (messageObject == null || messageObject.isDateObject || messageObject.isSending() || messageObject.isEditing() || messageObject.isSponsored()) {
+                return false;
+            }
+            int action = DoubleTap.getAction(messageObject);
+            if (action == DoubleTap.NONE) {
+                return false;
+            }
+            if (action != DoubleTap.REACTION) {
+                if (!(view instanceof ChatMessageCell cell)) {
+                    return false;
+                }
+                int option = getDoubleTapOption(cell, action);
+                selectedObject = null;
+                selectedObjectGroup = null;
+                selectedObjectToEditCaption = null;
+                return option != -1;
+            }
+            String reactionStringSetting = getMediaDataController().getDoubleTapReaction();
+            TLRPC.TL_availableReaction reaction = getMediaDataController().getReactionsMap().get(reactionStringSetting);
+            if (reaction == null && (reactionStringSetting == null || !reactionStringSetting.startsWith("animated_"))) {
+                return false;
+            }
+            boolean available = dialog_id >= 0;
+            if (!available && chatInfo != null) {
+                available = ChatObject.reactionIsAvailable(chatInfo, reaction == null ? reactionStringSetting : reaction.reaction);
+            }
+            return available && messageObject.canSetReaction();
         }
 
         @Override
@@ -1997,6 +2070,11 @@ public class ChatActivity extends BaseFragment implements
                     return;
                 }
             } else {
+                return;
+            }
+            int action = DoubleTap.getAction(messageObject);
+            if (action != DoubleTap.REACTION) {
+                processDoubleTapAction((ChatMessageCell) view, action);
                 return;
             }
             if (messageObject.isSecret() || !messageObject.canSetReaction() || messageObject.isExpiredStory() || messageObject.type == MessageObject.TYPE_JOINED_CHANNEL) {
@@ -46241,6 +46319,16 @@ public class ChatActivity extends BaseFragment implements
         ArrayList<CharSequence> items,
         ArrayList<Integer> options
     ) {
+        fillMessageMenu(primaryMessage, icons, items, options, false);
+    }
+
+    private void fillMessageMenu(
+        MessageObject primaryMessage,
+        ArrayList<Integer> icons,
+        ArrayList<CharSequence> items,
+        ArrayList<Integer> options,
+        boolean ignoreMenuVisibility
+    ) {
         final MessageObject message = selectedObject;
         final MessageObject.GroupedMessages groupedMessages = selectedObjectGroup;
         final int type = getMessageType(message);
@@ -46473,7 +46561,7 @@ public class ChatActivity extends BaseFragment implements
                     options.add(OPTION_COPY);
                     icons.add(R.drawable.msg_copy);
                 }
-                if (AoiConfig.showCopyPhoto.get() && !noforwardsOrPaidMedia && PhotoClipboard.canCopy(selectedObject)) {
+                if ((ignoreMenuVisibility || AoiConfig.showCopyPhoto.get()) && !noforwardsOrPaidMedia && PhotoClipboard.canCopy(selectedObject)) {
                     items.add(getString(selectedObject.isSticker() ? R.string.CopySticker : R.string.CopyPhoto));
                     options.add(OPTION_COPY_PHOTO);
                     icons.add(R.drawable.msg_copy_photo);
@@ -46726,12 +46814,12 @@ public class ChatActivity extends BaseFragment implements
                     options.add(OPTION_FORWARD);
                     icons.add(R.drawable.msg_forward);
                 }
-                if (AoiConfig.showSave.get() && canForward && selectedObject.canForwardMessage() && selectedObject.getDialogId() != getUserConfig().getClientUserId()) {
+                if ((ignoreMenuVisibility || AoiConfig.showSave.get()) && canForward && selectedObject.canForwardMessage() && selectedObject.getDialogId() != getUserConfig().getClientUserId()) {
                     items.add(getString(R.string.Save));
                     options.add(OPTION_SAVE);
                     icons.add(R.drawable.msg_saved);
                 }
-                if (AoiConfig.showRepeat.get() && (noforwards ? Repeat.canCopyNoForwards(selectedObject) : canForward && selectedObject.canForwardMessage() && (!isThreadChat() || isTopic || Repeat.canCopy(selectedObject))) && allowChatActions && !isInsideContainer && getDialogId() != UserObject.VERIFY) {
+                if ((ignoreMenuVisibility || AoiConfig.showRepeat.get()) && (noforwards ? Repeat.canCopyNoForwards(selectedObject) : canForward && selectedObject.canForwardMessage() && (!isThreadChat() || isTopic || Repeat.canCopy(selectedObject))) && allowChatActions && !isInsideContainer && getDialogId() != UserObject.VERIFY) {
                     items.add(getString(R.string.Repeat));
                     options.add(OPTION_REPEAT);
                     icons.add(R.drawable.msg_repeat);
@@ -46798,7 +46886,7 @@ public class ChatActivity extends BaseFragment implements
                     options.add(OPTION_COPY);
                     icons.add(R.drawable.msg_copy);
                 }
-                if (AoiConfig.showCopyPhoto.get() && !noforwardsOrPaidMedia && PhotoClipboard.canCopy(selectedObject)) {
+                if ((ignoreMenuVisibility || AoiConfig.showCopyPhoto.get()) && !noforwardsOrPaidMedia && PhotoClipboard.canCopy(selectedObject)) {
                     items.add(getString(selectedObject.isSticker() ? R.string.CopySticker : R.string.CopyPhoto));
                     options.add(OPTION_COPY_PHOTO);
                     icons.add(R.drawable.msg_copy_photo);

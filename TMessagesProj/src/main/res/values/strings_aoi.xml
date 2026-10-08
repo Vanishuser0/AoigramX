@@ -23,6 +23,10 @@
     <string name="Profile">Profile</string>
     <string name="ShowFullAbout">Expand bio and description</string>
     <string name="HideKeyboardOnScroll">Hide keyboard on scroll</string>
+    <string name="DoubleTapActions">Double Tap Actions</string>
+    <string name="IncomingMessages">Incoming messages</string>
+    <string name="OutgoingMessages">Outgoing messages</string>
+    <string name="SendReaction">Send reaction</string>
     <string name="MessageMenu">Message Menu</string>
     <string name="GroupMessageMenu">Group Message Menu</string>
     <string name="GroupMessageMenuInfo">Grouping moves the main actions to the bottom of the message menu.</string>

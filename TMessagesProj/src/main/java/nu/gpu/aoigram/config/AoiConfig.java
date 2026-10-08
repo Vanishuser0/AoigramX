@@ -7,6 +7,8 @@ import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.ConnectionsManager;
 
+import nu.gpu.aoigram.messages.DoubleTap;
+
 public final class AoiConfig {
 
     private static final String PREFERENCES_NAME = "aoi_config";
@@ -63,6 +65,8 @@ public final class AoiConfig {
     public static final BoolConfig usePinnedReactionsChannels = register(new BoolConfig("usePinnedReactionsChannels", false));
     public static final BoolConfig hideStarReactionChannels = register(new BoolConfig("hideStarReactionChannels", false));
     public static final StringConfig pinnedReactionsChannels = register(new StringConfig("pinnedReactionsChannels", ""));
+    public static final IntConfig doubleTapIncomingAction = register(new IntConfig("doubleTapIncomingAction", DoubleTap.REACTION));
+    public static final IntConfig doubleTapOutgoingAction = register(new IntConfig("doubleTapOutgoingAction", DoubleTap.REACTION));
     public static final BoolConfig groupMessageMenu = register(new BoolConfig("groupMessageMenu", true));
     public static final BoolConfig showCopyPhoto = register(new BoolConfig("showCopyPhoto", true));
     public static final BoolConfig showSave = register(new BoolConfig("showSave", true));

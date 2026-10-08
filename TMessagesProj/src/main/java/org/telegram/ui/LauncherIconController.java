@@ -34,12 +34,18 @@ public class LauncherIconController {
     }
 
     public enum LauncherIcon {
-        DEFAULT("DefaultIcon", R.drawable.icon_background_sa, R.mipmap.icon_foreground_sa, R.string.AppIconDefault),
+        DEFAULT("DefaultIcon", R.drawable.icon_aoi_background, R.drawable.icon_aoi_foreground, R.string.AppIconDefault),
+        INVERTED("InvertedIcon", R.drawable.icon_aoi_inverted_background, R.drawable.icon_aoi_inverted_foreground, R.string.AppIconInverted),
+        SORA("SoraIcon", R.drawable.icon_aoi_sora_background, R.drawable.icon_aoi_inverted_foreground, R.string.AppIconSora),
+        UMI("UmiIcon", R.drawable.icon_aoi_umi_background, R.drawable.icon_aoi_inverted_foreground, R.string.AppIconUmi),
+        SAKURA("SakuraIcon", R.drawable.icon_aoi_sakura_background, R.drawable.icon_aoi_inverted_foreground, R.string.AppIconSakura),
+        YORU("YoruIcon", R.drawable.icon_aoi_yoru_background, R.drawable.icon_aoi_inverted_foreground, R.string.AppIconYoru),
+        TELEGRAM("TelegramIcon", R.drawable.icon_background_sa, R.mipmap.icon_foreground_sa, R.string.AppName),
         VINTAGE("VintageIcon", R.drawable.icon_6_background_sa, R.mipmap.icon_6_foreground_sa, R.string.AppIconVintage),
         AQUA("AquaIcon", R.drawable.icon_4_background_sa, R.mipmap.icon_foreground_sa, R.string.AppIconAqua),
-        PREMIUM("PremiumIcon", R.drawable.icon_3_background_sa, R.mipmap.icon_3_foreground_sa, R.string.AppIconPremium, true),
-        TURBO("TurboIcon", R.drawable.icon_5_background_sa, R.mipmap.icon_5_foreground_sa, R.string.AppIconTurbo, true),
-        NOX("NoxIcon", R.mipmap.icon_2_background_sa, R.mipmap.icon_foreground_sa, R.string.AppIconNox, true);
+        PREMIUM("PremiumIcon", R.drawable.icon_3_background_sa, R.mipmap.icon_3_foreground_sa, R.string.AppIconPremium),
+        TURBO("TurboIcon", R.drawable.icon_5_background_sa, R.mipmap.icon_5_foreground_sa, R.string.AppIconTurbo),
+        NOX("NoxIcon", R.mipmap.icon_2_background_sa, R.mipmap.icon_foreground_sa, R.string.AppIconNox);
 
         public final String key;
         public final int background;

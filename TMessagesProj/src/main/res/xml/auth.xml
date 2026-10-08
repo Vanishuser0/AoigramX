@@ -2,7 +2,7 @@
 
 <account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
     android:accountType="nu.gpu.aoigram"
-    android:icon="@drawable/ic_launcher_dr"
-    android:smallIcon="@drawable/ic_launcher_dr"
+    android:icon="@drawable/icon_aoi_round"
+    android:smallIcon="@drawable/icon_aoi_round"
     android:label="@string/AppNameAoi"
     android:accountPreferences="@xml/auth_menu"/>

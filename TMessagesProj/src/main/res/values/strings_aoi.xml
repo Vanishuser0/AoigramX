@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="AppNameAoi" translatable="false">Aoigram</string>
+    <string name="AppIconInverted">Inverted</string>
+    <string name="AppIconSora">Sora</string>
+    <string name="AppIconUmi">Umi</string>
+    <string name="AppIconSakura">Sakura</string>
+    <string name="AppIconYoru">Yoru</string>
     <string name="AoiSettings">Aoi Settings</string>
     <string name="AoiDeveloperSettings">Developer Settings</string>
     <string name="AoiGeneralSettings">General</string>

@@ -395,6 +395,7 @@ public class ChatActivity extends BaseFragment implements
     private static final int OPTION_REPEAT_AS_COPY = 1002;
     public static final int OPTION_MESSAGE_JSON = 1003;
     public static final int OPTION_MESSAGE_DETAILS = 1004;
+    private static final int OPTION_SAVE = 1005;
     private ChatManualTranslation aoiChatManualTranslation;
     private QuickActions quickActions;
 
@@ -31313,6 +31314,7 @@ public class ChatActivity extends BaseFragment implements
                         case OPTION_SAVE_TO_DOWNLOADS_OR_MUSIC:
                         case OPTION_SHARE:
                         case OPTION_FORWARD:
+                        case OPTION_SAVE:
                         case OPTION_REPLY:
                             options.remove(i);
                             items.remove(i);
@@ -33705,6 +33707,28 @@ public class ChatActivity extends BaseFragment implements
         }
         boolean preserveDim = false;
         switch (option) {
+            case OPTION_SAVE: {
+                if (getMessagesController().isFrozen()) {
+                    AccountFrozenAlert.show(currentAccount);
+                    break;
+                }
+                ArrayList<MessageObject> messages = new ArrayList<>();
+                if (selectedObjectGroup != null) {
+                    messages.addAll(selectedObjectGroup.messages);
+                } else {
+                    messages.add(selectedObject);
+                }
+                long did = getUserConfig().getClientUserId();
+                int result = getSendMessagesHelper().sendMessage(messages, did, false, false, true, 0, 0);
+                if (result != 0) {
+                    AlertsCreator.showSendMediaAlert(result, this, themeDelegate);
+                    break;
+                }
+                Bulletin bulletin = BulletinFactory.createForwardedBulletin(getContext(), this, null, 1, did, messages.size(),
+                    getThemedColor(Theme.key_undo_background), getThemedColor(Theme.key_undo_infoColor), Bulletin.DURATION_PROLONG);
+                bulletin.allowBlur().show(bulletin.getLayout() instanceof Bulletin.LottieLayoutWithReactions);
+                break;
+            }
             case OPTION_MESSAGE_DETAILS: {
                 presentFragment(new MessageDetailsActivity(this, selectedObject, currentEncryptedChat != null || isPeerNoForwards()));
                 break;
@@ -46701,6 +46725,11 @@ public class ChatActivity extends BaseFragment implements
                     items.add(LocaleController.getString(R.string.Forward));
                     options.add(OPTION_FORWARD);
                     icons.add(R.drawable.msg_forward);
+                }
+                if (AoiConfig.showSave.get() && canForward && selectedObject.canForwardMessage() && selectedObject.getDialogId() != getUserConfig().getClientUserId()) {
+                    items.add(getString(R.string.Save));
+                    options.add(OPTION_SAVE);
+                    icons.add(R.drawable.msg_saved);
                 }
                 if (AoiConfig.showRepeat.get() && (noforwards ? Repeat.canCopyNoForwards(selectedObject) : canForward && selectedObject.canForwardMessage() && (!isThreadChat() || isTopic || Repeat.canCopy(selectedObject))) && allowChatActions && !isInsideContainer && getDialogId() != UserObject.VERIFY) {
                     items.add(getString(R.string.Repeat));

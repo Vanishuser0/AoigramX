@@ -65,6 +65,7 @@ public final class AoiConfig {
     public static final StringConfig pinnedReactionsChannels = register(new StringConfig("pinnedReactionsChannels", ""));
     public static final BoolConfig groupMessageMenu = register(new BoolConfig("groupMessageMenu", true));
     public static final BoolConfig showCopyPhoto = register(new BoolConfig("showCopyPhoto", true));
+    public static final BoolConfig showSave = register(new BoolConfig("showSave", true));
     public static final BoolConfig showRepeat = register(new BoolConfig("showRepeat", true));
     public static final BoolConfig showReport = register(new BoolConfig("showReport", false));
     public static final BoolConfig showDetails = register(new BoolConfig("showDetails", true));

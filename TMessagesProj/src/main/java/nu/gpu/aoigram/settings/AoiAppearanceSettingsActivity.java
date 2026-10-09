@@ -31,5 +31,8 @@ public final class AoiAppearanceSettingsActivity extends BaseAoiSettingsActivity
             items.add(asConfigCheck(AoiConfig.predictiveBack, R.string.PredictiveBack));
         }
         items.add(UItem.asShadow(null));
+        items.add(UItem.asHeader(getString(R.string.DialogList)));
+        items.add(asConfigCheck(AoiConfig.hideStories, R.string.HideStories));
+        items.add(UItem.asShadow(null));
     }
 }

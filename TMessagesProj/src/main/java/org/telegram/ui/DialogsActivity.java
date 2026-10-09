@@ -96,6 +96,7 @@ import org.telegram.ui.recyclerview.LinearSmoothScrollerCustom;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.typeface.Typefaces;
 
 import org.telegram.messenger.AccountInstance;
@@ -12789,9 +12790,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         if (StoryRecorder.isVisible() || (getLastStoryViewer() != null && getLastStoryViewer().isFullyVisible())) {
             animated = false;
         }
-        boolean onlySelfStories = !isArchive() && getStoriesController().hasOnlySelfStories();
+        boolean onlySelfStories = !AoiConfig.hideStories.get() && !isArchive() && getStoriesController().hasOnlySelfStories();
         boolean newVisibility;
-        if (communityId != 0) {
+        if (communityId != 0 || AoiConfig.hideStories.get()) {
             newVisibility = false;
         } else if (isArchive()) {
             newVisibility = !getStoriesController().getHiddenList().isEmpty();

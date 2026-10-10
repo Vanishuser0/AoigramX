@@ -33,6 +33,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipException;
 
+import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.network.DownloadSpeedBoost;
+
 public class FileLoadOperation {
 
     private final boolean FULL_LOGS = false;
@@ -298,7 +301,12 @@ public class FileLoadOperation {
     }
 
     private void updateParams() {
-        if ((preloadPrefixSize > 0 || MessagesController.getInstance(currentAccount).getfileExperimentalParams) && !forceSmallChunk) {
+        int speedBoost = AoiConfig.downloadSpeedBoost.get();
+        if (speedBoost == DownloadSpeedBoost.EXTREME && !forceSmallChunk) {
+            downloadChunkSizeBig = 1024 * 1024;
+            maxDownloadRequests = 12;
+            maxDownloadRequestsBig = 12;
+        } else if ((speedBoost == DownloadSpeedBoost.ON || preloadPrefixSize > 0 || MessagesController.getInstance(currentAccount).getfileExperimentalParams) && !forceSmallChunk) {
             downloadChunkSizeBig = 1024 * 512;
             maxDownloadRequests = 8;
             maxDownloadRequestsBig = 8;
@@ -1183,6 +1191,12 @@ public class FileLoadOperation {
                             for (int a = 0; a < count; a++) {
                                 long start = filePartsStream.readLong();
                                 long end = filePartsStream.readLong();
+                                while (start % currentDownloadChunkSize != 0) {
+                                    currentDownloadChunkSize /= 2;
+                                    if (useDownloadByteBudget) {
+                                        currentMaxDownloadRequests *= 2;
+                                    }
+                                }
                                 notLoadedBytesRanges.add(new Range(start, end));
                                 notRequestedBytesRanges.add(new Range(start, end));
                             }
@@ -2463,7 +2477,7 @@ public class FileLoadOperation {
 
             if (!isPreloadVideoOperation && supportsPreloading && preloadStream != null && preloadedBytesRanges != null) {
                 PreloadRange range = preloadedBytesRanges.get(requestInfo.offset);
-                if (range != null) {
+                if (range != null && (range.length == currentDownloadChunkSize || requestInfo.offset + range.length == totalBytesCount)) {
                     requestInfo.response = new TLRPC.TL_upload_file();
                     try {
                         if (BuildVars.DEBUG_VERSION && range.length > Integer.MAX_VALUE) {

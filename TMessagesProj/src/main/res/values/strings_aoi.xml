@@ -42,6 +42,12 @@
     <string name="ShowFullAbout">Expand bio and description</string>
     <string name="SkipGiftsTab">Skip Gifts tab</string>
     <string name="SkipGiftsTabInfo">Profiles open on the next tab instead.</string>
+    <string name="DownloadSpeedBoost">Download speed boost</string>
+    <string name="DownloadSpeedBoostOff">Off</string>
+    <string name="DownloadSpeedBoostOn">On</string>
+    <string name="DownloadSpeedBoostExtreme">Extreme</string>
+    <string name="UploadSpeedBoost">Upload speed boost</string>
+    <string name="SpeedBoostInfo">Download boost only affects videos and audio. Extreme may be slower on unstable connections.</string>
     <string name="HideKeyboardOnScroll">Hide keyboard on scroll</string>
     <string name="HideChannelBottomBar">Hide channel bottom bar</string>
     <string name="DoubleTapActions">Double Tap Actions</string>

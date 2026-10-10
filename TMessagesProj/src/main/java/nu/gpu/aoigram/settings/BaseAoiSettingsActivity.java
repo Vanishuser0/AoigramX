@@ -242,6 +242,7 @@ public abstract class BaseAoiSettingsActivity extends BaseFragment {
         String deepLink = AoiSettingsDeepLink.create(pageKey, itemKey);
 
         ItemOptions.makeOptions(this, view)
+                .setLongPressSelectionEnabled(false)
                 .add(R.drawable.msg_link2, getString(R.string.CopyLink), () -> {
                     AndroidUtilities.addToClipboard(deepLink);
                     BulletinFactory.of(this).createCopyLinkBulletin().show();

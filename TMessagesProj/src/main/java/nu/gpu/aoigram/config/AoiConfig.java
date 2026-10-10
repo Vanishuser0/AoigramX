@@ -8,6 +8,7 @@ import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.ConnectionsManager;
 
 import nu.gpu.aoigram.messages.DoubleTap;
+import nu.gpu.aoigram.network.DownloadSpeedBoost;
 import nu.gpu.aoigram.profile.PeerIdDc;
 
 public final class AoiConfig {
@@ -28,6 +29,8 @@ public final class AoiConfig {
     public static final BoolConfig hidePhone = register(new BoolConfig("hidePhone", false));
     public static final BoolConfig showFullAbout = register(new BoolConfig("showFullAbout", false));
     public static final BoolConfig skipGiftsTab = register(new BoolConfig("skipGiftsTab", false));
+    public static final IntConfig downloadSpeedBoost = register(new IntConfig("downloadSpeedBoost", DownloadSpeedBoost.OFF));
+    public static final BoolConfig uploadSpeedBoost = register(new BoolConfig("uploadSpeedBoost", false));
 
     public static final BoolConfig glareEffects = register(new BoolConfig("glareEffects", false));
     public static final BoolConfig predictiveBack = register(new BoolConfig("predictiveBack", false));

@@ -26,6 +26,8 @@ import java.io.RandomAccessFile;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+import nu.gpu.aoigram.config.AoiConfig;
+
 public class FileUploadOperation {
 
     private static class UploadCachedResult {
@@ -121,7 +123,7 @@ public class FileUploadOperation {
             if (BuildVars.LOGS_ENABLED) {
                 FileLog.d("start upload on slow network = " + slowNetwork);
             }
-            for (int a = 0, count = (slowNetwork ? initialRequestsSlowNetworkCount : initialRequestsCount); a < count; a++) {
+            for (int a = 0, count = (slowNetwork ? initialRequestsSlowNetworkCount : initialRequestsCount); a < count && (a == 0 || a < maxRequestsCount); a++) {
                 startUploadRequest();
             }
         });
@@ -158,7 +160,7 @@ public class FileUploadOperation {
                 cachedResults.clear();
 
                 operationGuid++;
-                for (int a = 0, count = (slowNetwork ? initialRequestsSlowNetworkCount : initialRequestsCount); a < count; a++) {
+                for (int a = 0, count = (slowNetwork ? initialRequestsSlowNetworkCount : initialRequestsCount); a < count && (a == 0 || a < maxRequestsCount); a++) {
                     startUploadRequest();
                 }
             }
@@ -309,7 +311,7 @@ public class FileUploadOperation {
                 if (AccountInstance.getInstance(currentAccount).getUserConfig().isPremium() && totalFileSize > FileLoader.DEFAULT_MAX_FILE_SIZE) {
                     maxUploadParts = MessagesController.getInstance(currentAccount).uploadMaxFilePartsPremium;
                 }
-                uploadChunkSize = (int) Math.max(slowNetwork ? minUploadChunkSlowNetworkSize : minUploadChunkSize, (totalFileSize + 1024L * maxUploadParts - 1) / (1024L * maxUploadParts));
+                uploadChunkSize = (int) Math.max(slowNetwork ? minUploadChunkSlowNetworkSize : AoiConfig.uploadSpeedBoost.get() ? 512 : minUploadChunkSize, (totalFileSize + 1024L * maxUploadParts - 1) / (1024L * maxUploadParts));
                 if (1024 % uploadChunkSize != 0) {
                     int chunkSize = 64;
                     while (uploadChunkSize > chunkSize) {

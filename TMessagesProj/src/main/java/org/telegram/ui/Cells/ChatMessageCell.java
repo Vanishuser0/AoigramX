@@ -3199,6 +3199,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 }
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
                 if (instantPressed) {
+                    boolean openImage = drawPhotoImage && photoImage.isInsideImage(x, y) && !(currentMessageObject.isWebpage() && "telegram_story_album".equals(MessageObject.getMedia(currentMessageObject.messageOwner).webpage.type));
                     if (documentAttachType == DOCUMENT_ATTACH_TYPE_ROUND) {
                         if (!MediaController.getInstance().isPlayingMessage(currentMessageObject) || MediaController.getInstance().isMessagePaused()) {
                             delegate.needPlayMessage(this, currentMessageObject, false);
@@ -3211,7 +3212,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                         }
                     } else if (drawPhotoImage && (documentAttachType == DOCUMENT_ATTACH_TYPE_GIF || documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO || authorLayout == null && titleLayout == null && descriptionLayout == null && siteNameLayout == null)) {
                         if (delegate != null) {
-                            delegate.didPressImage(this, lastTouchX, lastTouchY, true);
+                            delegate.didPressImage(this, lastTouchX, lastTouchY, !openImage);
                         }
                     } else if (currentMessageObject != null && !currentMessageObject.preview) {
                         TLRPC.WebPage webPage = MessageObject.getMedia(currentMessageObject.messageOwner).webpage;
@@ -3221,7 +3222,14 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                             }
                         } else if (webPage != null) {
                             if (delegate != null) {
-                                delegate.didPressWebPage(this, webPage, webPage.url, MessageObject.getMedia(currentMessageObject.messageOwner).safe);
+                                boolean openDocument = documentAttachType == DOCUMENT_ATTACH_TYPE_DOCUMENT && !drawPhotoImage && y >= namesOffset + mediaOffsetY;
+                                if (openImage || openDocument && currentMessageObject.mediaExists) {
+                                    delegate.didPressImage(this, lastTouchX, lastTouchY, false);
+                                } else if (openDocument) {
+                                    didPressButton(true, false);
+                                } else {
+                                    delegate.didPressWebPage(this, webPage, webPage.url, MessageObject.getMedia(currentMessageObject.messageOwner).safe);
+                                }
                             } else {
                                 Browser.openUrl(getContext(), webPage.url);
                             }

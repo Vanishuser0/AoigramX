@@ -63,6 +63,7 @@
     <string name="HideSearchBar">Hide search bar</string>
     <string name="MoreMenu">More…</string>
     <string name="SortByUnread">Unread First</string>
+    <string name="ShowSenderAvatar">Sender avatar in preview</string>
     <string name="MessageDetails">Details</string>
     <string name="MessageDetailsId">Message ID</string>
     <string name="MessageDetailsChat">Chat</string>

@@ -149,7 +149,11 @@ import java.util.Stack;
 
 import me.vkryl.android.animator.BoolAnimator;
 
+import nu.gpu.aoigram.config.AoiConfig;
+
 public class DialogCell extends BaseCell implements StoriesListPlaceProvider.AvatarOverlaysView, Theme.Colorable {
+
+    private AvatarSpan aoiSenderAvatarSpan;
 
     public boolean collapsed;
     public boolean drawArchive = true;
@@ -1811,6 +1815,16 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                                         nameSpannableString.append(messageNameString).append(arrowSpan).append(topicName);
                                         messageNameString = nameSpannableString;
                                     }
+                                }
+                                if (AoiConfig.showSenderAvatar.get() && chat != null && !useFromUserAsAvatar && message.getFromChatId() != UserConfig.getInstance(currentAccount).getClientUserId()) {
+                                    if (aoiSenderAvatarSpan == null) {
+                                        aoiSenderAvatarSpan = new AvatarSpan(this, currentAccount);
+                                        aoiSenderAvatarSpan.needDrawShadow = false;
+                                    }
+                                    aoiSenderAvatarSpan.setDialogId(message.getFromChatId());
+                                    SpannableStringBuilder nameWithAvatar = new SpannableStringBuilder("  ").append(messageNameString);
+                                    nameWithAvatar.setSpan(aoiSenderAvatarSpan, 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                    messageNameString = nameWithAvatar;
                                 }
                                 checkMessage = false;
                                 SpannableStringBuilder stringBuilder = getMessageStringFormatted(messageFormatType, restrictionReason, messageNameString, false);

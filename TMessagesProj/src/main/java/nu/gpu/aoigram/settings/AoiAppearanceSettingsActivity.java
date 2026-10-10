@@ -35,6 +35,7 @@ public final class AoiAppearanceSettingsActivity extends BaseAoiSettingsActivity
         items.add(UItem.asHeader(getString(R.string.DialogList)));
         items.add(asConfigCheck(AoiConfig.hideStories, R.string.HideStories));
         items.add(asConfigCheck(AoiConfig.hideSearchBar, R.string.HideSearchBar));
+        items.add(asConfigCheck(AoiConfig.showSenderAvatar, R.string.ShowSenderAvatar));
         items.add(UItem.asShadow(null));
     }
 

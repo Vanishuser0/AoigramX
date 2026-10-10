@@ -269,6 +269,13 @@ public class ChatActivityEnterView extends FrameLayout implements
         return true;
     }
 
+    private boolean aoiHasMarkdown() {
+        CharSequence text = AndroidUtilities.getTrimmedString(messageEditText.getTextToUse());
+        CharSequence[] parsed = {new SpannableStringBuilder(text)};
+        MediaDataController.getInstance(currentAccount).getEntities(parsed, supportsSendingNewEntities());
+        return parsed[0].length() != text.length();
+    }
+
     private int commonInputType;
     private boolean stickersEnabled;
     private ActionBarMenuSubItem sendWhenOnlineButton;
@@ -5190,6 +5197,20 @@ public class ChatActivityEnterView extends FrameLayout implements
         }
         if (parentFragment != null && audioToSend == null && videoToSendMessageObject == null && richDraftMessage == null
                 && messageEditText != null && !messageEditText.getText().toString().isBlank()) {
+            if (aoiHasMarkdown()) {
+                options.add(R.drawable.formatting_code, getString(R.string.SendWithoutMarkdown), () -> {
+                    sentFromPreview = System.currentTimeMillis();
+                    final boolean shownDialog = sendMessageInternal(true, 0, 0, 0, true, false);
+                    if (!containsSendMessage && messageSendPreview != null) {
+                        messageSendPreview.dismiss(!shownDialog);
+                        messageSendPreview = null;
+                    } else {
+                        dismissSendPreviewSent = !shownDialog;
+                        AndroidUtilities.cancelRunOnUIThread(dismissSendPreview);
+                        AndroidUtilities.runOnUIThread(dismissSendPreview, 500);
+                    }
+                });
+            }
             InputTranslationMenu.add(options, sendButton, resourcesProvider, translation -> {
                 messageSendPreview.dismiss(false);
                 aoiInputTranslation.translate(currentAccount, dialog_id, replyingMessageObject, translation,
@@ -7333,6 +7354,10 @@ public class ChatActivityEnterView extends FrameLayout implements
     }
 
     protected boolean sendMessageInternal(boolean notify, int scheduleDate, int scheduleRepeatPeriod, long payStars, boolean allowConfirm) {
+        return sendMessageInternal(notify, scheduleDate, scheduleRepeatPeriod, payStars, allowConfirm, true);
+    }
+
+    private boolean sendMessageInternal(boolean notify, int scheduleDate, int scheduleRepeatPeriod, long payStars, boolean allowConfirm, boolean parseMarkdown) {
         aoiInputTranslation.cancel();
         final boolean allowConfirmFinal = allowConfirm && !animatorEphemeralMessageVisibility.getValue();
 
@@ -7358,7 +7383,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                 }
             }
             if (allowConfirmFinal && showConfirmAlert(() -> {
-                sendMessageInternal(notify, scheduleDate, scheduleRepeatPeriod, payStars, false);
+                sendMessageInternal(notify, scheduleDate, scheduleRepeatPeriod, payStars, false, parseMarkdown);
             })) {
                 return;
             }
@@ -7452,7 +7477,7 @@ public class ChatActivityEnterView extends FrameLayout implements
             if (checkPremiumAnimatedEmoji(currentAccount, dialog_id, parentFragment, null, message)) {
                 return;
             }
-            if (processSendingText(message, notify, scheduleDate, scheduleRepeatPeriod, payStars)) {
+            if (processSendingText(message, notify, scheduleDate, scheduleRepeatPeriod, payStars, parseMarkdown)) {
                 if (delegate.hasForwardingMessages() || (scheduleDate != 0 && !isInScheduleMode()) || isInScheduleMode()) {
                     if (messageEditText != null) {
                         messageEditText.setText("");
@@ -7482,7 +7507,7 @@ public class ChatActivityEnterView extends FrameLayout implements
             updateSendButtonPaid();
         };
         if (allowConfirmFinal) {
-            boolean alertShown = AlertsCreator.ensurePaidMessageConfirmation(currentAccount, dialog_id, getMessagesCount(), starsPrice -> sendMessageInternal(notify, scheduleDate, scheduleRepeatPeriod, starsPrice, false), payStars);
+            boolean alertShown = AlertsCreator.ensurePaidMessageConfirmation(currentAccount, dialog_id, getMessagesCount(), starsPrice -> sendMessageInternal(notify, scheduleDate, scheduleRepeatPeriod, starsPrice, false, parseMarkdown), payStars);
             if (alertShown && sendButtonVisible) {
                 if (isInVideoMode()) {
                     if (delegate.isVideoRecordingPaused())
@@ -7826,7 +7851,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         setEditingMessageObject(null, null, false);
     }
 
-    public boolean processSendingText(CharSequence text, boolean notify, int scheduleDate, int scheduleRepeatPeriod, long payStars) {
+    public boolean processSendingText(CharSequence text, boolean notify, int scheduleDate, int scheduleRepeatPeriod, long payStars, boolean parseMarkdown) {
         if (replyingQuote != null && parentFragment != null && replyingQuote.outdated) {
             parentFragment.showQuoteMessageUpdate();
             return false;
@@ -7886,7 +7911,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                     part = AndroidUtilities.getTrimmedString(part);
                 }
                 CharSequence[] message = new CharSequence[]{ part };
-                ArrayList<TLRPC.MessageEntity> entities = MediaDataController.getInstance(currentAccount).getEntities(message, supportsNewEntities);
+                ArrayList<TLRPC.MessageEntity> entities = MediaDataController.getInstance(currentAccount).getEntities(message, supportsNewEntities, parseMarkdown);
                 MessageObject.SendAnimationData sendAnimationData = null;
 
                 if (!delegate.hasForwardingMessages()) {

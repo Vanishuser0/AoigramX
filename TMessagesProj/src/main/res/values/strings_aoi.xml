@@ -225,4 +225,5 @@
     <string name="StickerCopied">Sticker copied to clipboard</string>
     <string name="MutualContact">Mutual contact</string>
     <string name="MutualContactDescription">You are in each other\'s contacts.</string>
+    <string name="SendWithoutMarkdown">Send without Markdown</string>
 </resources>

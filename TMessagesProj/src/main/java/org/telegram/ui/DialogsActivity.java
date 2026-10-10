@@ -6783,12 +6783,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             }
         }
         int index = filterTabsView.getTabsCount() - 1;
+        int position = 0;
         ArrayList<MessagesController.DialogFilter> filters = getMessagesController().getDialogFilters();
         for (int i = 0; i < filters.size(); ++i) {
+            if (!filterTabsView.hasTab(i)) {
+                continue;
+            }
             if (filters.get(i).id == fid) {
-                index = i;
+                index = position;
                 break;
             }
+            position++;
         }
 
         FilterTabsView.Tab tab = filterTabsView.getTab(index);
@@ -6879,7 +6884,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 filterTabsView.removeTabs();
                 for (int a = 0, N = filters.size(); a < N; a++) {
                     if (filters.get(a).isDefault()) {
-                        filterTabsView.addTab(a, 0, LocaleController.getString(R.string.FilterAllChats), null, false, true, filters.get(a).locked);
+                        if (!AoiConfig.hideAllChatsTab.get()) {
+                            filterTabsView.addTab(a, 0, LocaleController.getString(R.string.FilterAllChats), null, false, true, filters.get(a).locked);
+                        }
                     } else {
                         final MessagesController.DialogFilter filter = filters.get(a);
                         filterTabsView.addTab(a, filter.localId, filter.name, filter.entities, filter.title_noanimate, false, filters.get(a).locked);
@@ -6900,6 +6907,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         updateCurrentTab = true;
                         viewPages[0].selectedType = id;
                     }
+                }
+                if (AoiConfig.hideAllChatsTab.get() && !filterTabsView.hasTab(viewPages[0].selectedType)) {
+                    updateCurrentTab = true;
+                    viewPages[0].selectedType = filterTabsView.getFirstTabId();
+                    filterTabsView.selectTabWithStableId(filterTabsView.getStableId(viewPages[0].selectedType));
                 }
                 for (int a = 0; a < viewPages.length; a++) {
                     if (viewPages[a].selectedType >= filters.size()) {

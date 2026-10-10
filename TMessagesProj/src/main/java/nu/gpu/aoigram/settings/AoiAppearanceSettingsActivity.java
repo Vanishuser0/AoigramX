@@ -37,12 +37,15 @@ public final class AoiAppearanceSettingsActivity extends BaseAoiSettingsActivity
         items.add(asConfigCheck(AoiConfig.hideSearchBar, R.string.HideSearchBar));
         items.add(asConfigCheck(AoiConfig.showSenderAvatar, R.string.ShowSenderAvatar));
         items.add(UItem.asShadow(null));
+        items.add(UItem.asHeader(getString(R.string.SettingsFolders)));
+        items.add(asConfigCheck(AoiConfig.hideAllChatsTab, R.string.HideAllChatsTab));
+        items.add(UItem.asShadow(null));
     }
 
     @Override
     protected void onItemClick(UItem item, View view, int position, float x, float y) {
         super.onItemClick(item, view, position, x, y);
-        if (item.object == AoiConfig.hideSearchBar) {
+        if (item.object == AoiConfig.hideSearchBar || item.object == AoiConfig.hideAllChatsTab) {
             parentLayout.rebuildFragments(0);
         }
     }

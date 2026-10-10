@@ -38,6 +38,7 @@ public final class AoiConfig {
     public static final BoolConfig hideSearchBar = register(new BoolConfig("hideSearchBar", false));
     public static final BoolConfig showSenderAvatar = register(new BoolConfig("showSenderAvatar", false));
     public static final BoolConfig sortByUnread = register(new BoolConfig("sortByUnread", false));
+    public static final BoolConfig hideAllChatsTab = register(new BoolConfig("hideAllChatsTab", false));
 
     public static final StringConfig translationProvider = register(new StringConfig("translationProvider", "google"));
     public static final StringConfig translationLanguage = register(new StringConfig("translationLanguage", ""));

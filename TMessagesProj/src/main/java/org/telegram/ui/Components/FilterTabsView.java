@@ -82,7 +82,7 @@ public class FilterTabsView extends FrameLayout {
     }
 
     public int getStableId(int selectedType) {
-        return positionToStableId.get(selectedType, -1);
+        return positionToStableId.get(idToPosition.get(selectedType, -1), -1);
     }
 
     public boolean selectTabWithStableId(int stableId) {
@@ -1112,7 +1112,7 @@ public class FilterTabsView extends FrameLayout {
             }
             TabView tabView = (TabView) view;
             if (isEditing) {
-                if (position != 0) {
+                if (!tabView.currentTab.isDefault) {
                     int side = dp(6);
                     if (tabView.rect.left - side < x && tabView.rect.right + side > x) {
                         delegate.onDeletePressed(tabView.currentTab.id);
@@ -1544,25 +1544,26 @@ public class FilterTabsView extends FrameLayout {
         if (!tabs.isEmpty()) {
             final int width = MeasureSpec.getSize(widthMeasureSpec) - listViewPaddingH * 2;
             Tab firstTab = findDefaultTab();
+            int trueTabsWidth = allTabsWidth;
             if (firstTab != null) {
                 firstTab.setTitle(LocaleController.getString(R.string.FilterAllChats), null, false);
                 int tabWidth = firstTab.getWidth(false);
                 firstTab.setTitle(allTabsWidth > width ? LocaleController.getString(R.string.FilterAllChatsShort) : LocaleController.getString(R.string.FilterAllChats), null, false);
-                int trueTabsWidth = allTabsWidth - tabWidth;
+                trueTabsWidth = allTabsWidth - tabWidth;
                 trueTabsWidth += firstTab.getWidth(false);
-                int prevWidth = additionalTabWidth;
-                additionalTabWidth = trueTabsWidth < width ? (width - trueTabsWidth) / tabs.size() : 0;
-                if (prevWidth != additionalTabWidth) {
-                    ignoreLayout = true;
-                    RecyclerView.ItemAnimator animator = listView.getItemAnimator();
-                    listView.setItemAnimator(null);
-                    adapter.notifyDataSetChanged();
-                    listView.setItemAnimator(animator);
-                    ignoreLayout = false;
-                }
-                updateTabsWidths();
-                invalidated = false;
             }
+            int prevWidth = additionalTabWidth;
+            additionalTabWidth = trueTabsWidth < width ? (width - trueTabsWidth) / tabs.size() : 0;
+            if (prevWidth != additionalTabWidth) {
+                ignoreLayout = true;
+                RecyclerView.ItemAnimator animator = listView.getItemAnimator();
+                listView.setItemAnimator(null);
+                adapter.notifyDataSetChanged();
+                listView.setItemAnimator(animator);
+                ignoreLayout = false;
+            }
+            updateTabsWidths();
+            invalidated = false;
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
@@ -1813,6 +1814,8 @@ public class FilterTabsView extends FrameLayout {
             if (idx1 < 0 || idx2 < 0 || idx1 >= count || idx2 >= count) {
                 return;
             }
+            idx1 = tabs.get(idx1).id;
+            idx2 = tabs.get(idx2).id;
             ArrayList<MessagesController.DialogFilter> filters = MessagesController.getInstance(UserConfig.selectedAccount).getDialogFilters();
             MessagesController.DialogFilter filter1 = filters.get(idx1);
             MessagesController.DialogFilter filter2 = filters.get(idx2);
@@ -1920,7 +1923,7 @@ public class FilterTabsView extends FrameLayout {
 
         @Override
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder source, @NonNull RecyclerView.ViewHolder target) {
-            if (MessagesController.getInstance(UserConfig.selectedAccount).premiumFeaturesBlocked() && ((source.getAdapterPosition() == 0 || target.getAdapterPosition() == 0) && !UserConfig.getInstance(UserConfig.selectedAccount).isPremium())) {
+            if (MessagesController.getInstance(UserConfig.selectedAccount).premiumFeaturesBlocked() && ((source.getAdapterPosition() == 0 || target.getAdapterPosition() == 0) && tabs.get(0).isDefault && !UserConfig.getInstance(UserConfig.selectedAccount).isPremium())) {
                 return false;
             }
             adapter.swapElements(source.getAdapterPosition(), target.getAdapterPosition());

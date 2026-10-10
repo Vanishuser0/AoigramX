@@ -88,6 +88,8 @@ import java.util.Collections;
 import me.vkryl.android.animator.BoolAnimator;
 import me.vkryl.android.animator.FactorAnimator;
 
+import nu.gpu.aoigram.config.AoiConfig;
+
 public class MainTabsActivity extends ViewPagerActivity implements NotificationCenter.NotificationCenterDelegate, FactorAnimator.Target {
 
     public static final int TABS_COUNT = 4;
@@ -468,6 +470,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         final ItemOptions o = ItemOptions.makeOptions(this, anchor);
         for (int i = 0; i < filters.size(); i++) {
             final MessagesController.DialogFilter folder = filters.get(i);
+            if (AoiConfig.hideAllChatsTab.get() && folder.isDefault()) continue;
             final ActionBarMenuSubItem folderItem = new ActionBarMenuSubItem(getParentActivity(), 2, false, false, getResourceProvider());
             folderItem.setPadding(dp(18), 0, dp(18), 0);
             CharSequence title = folder.isDefault() ? getString(R.string.FilterAllChats) : folder.name;

@@ -4461,6 +4461,9 @@ public class LocaleController {
     @Nullable
     private String getStringV2(String key, @StringRes int stringRes, String fallback) {
         final Context context = ApplicationLoader.applicationContext;
+        if (stringRes == R.string.AppName) {
+            return context.getString(R.string.AppNameAoi);
+        }
         String value;
 
         if (BuildVars.USE_CLOUD_STRINGS) {

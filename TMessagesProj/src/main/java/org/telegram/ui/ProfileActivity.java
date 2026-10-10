@@ -7197,7 +7197,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             }
 
             boolean result = (canEditAdmin || canEditTag || canRestrict || allowKick);
-            if (resultOnly || !result) {
+            final int joined = channelParticipant != null ? channelParticipant.date : participant.date;
+            if (resultOnly || !result && joined == 0) {
                 return result;
             }
 
@@ -7214,7 +7215,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 bg = ((RecyclerListView) view.getParent()).getClipBackground(view);
             }
 
-            ItemOptions.makeOptions(this, view)
+            ItemOptions options = ItemOptions.makeOptions(this, view)
                     .setScrimViewBackground(bg)
                     .setLongPressSelectionEnabled(false)
                     .addIf(!self, R.drawable.msg_discussion, getString(R.string.SendMessage), () -> {
@@ -7242,8 +7243,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     .addIf(allowKick, R.drawable.msg_remove, LocaleController.getString(R.string.KickFromGroup), true, () -> {
                         kickUser(selectedUser, participant);
                     })
-                    .setMinWidth(190)
-                    .show();
+                    .setMinWidth(190);
+            if (joined != 0) {
+                options.addGapIf(!self || result).addText(LocaleController.formatJoined(joined), 13);
+            }
+            options.show();
         } else {
             if (participant.user_id == getUserConfig().getClientUserId()) {
                 return false;

@@ -402,6 +402,43 @@ public class ChatActivity extends BaseFragment implements
     private QuickActions quickActions;
     private boolean aoiHideChannelBottomBar;
 
+    private boolean aoiCanSelectMessage(MessageObject message) {
+        int type = getMessageType(message);
+        if (type < 2 || type == 20 || type == MessageObject.TYPE_SUGGEST_PHOTO) {
+            return false;
+        }
+        return !message.isAnyGift() && message.type != MessageObject.TYPE_JOINED_CHANNEL && message.type != MessageObject.TYPE_GIFT_STARS && !message.isWallpaperAction() && !message.isSponsored() && !message.isEphemeral();
+    }
+
+    private boolean aoiSelectRange(boolean apply) {
+        ArrayList<MessageObject> messages = chatAdapter.getMessages();
+        int first = -1, last = -1;
+        for (int i = 0; i < messages.size(); i++) {
+            MessageObject message = messages.get(i);
+            if (selectedMessagesIds[message.getDialogId() == dialog_id ? 0 : 1].indexOfKey(message.getId()) >= 0) {
+                if (first < 0) {
+                    first = i;
+                }
+                last = i;
+            }
+        }
+        for (int i = first + 1; i < last; i++) {
+            MessageObject message = messages.get(i);
+            if (selectedMessagesIds[message.getDialogId() == dialog_id ? 0 : 1].indexOfKey(message.getId()) < 0 && aoiCanSelectMessage(message)) {
+                if (!apply) return true;
+                boolean full = selectedMessagesIds[0].size() + selectedMessagesIds[1].size() >= 100;
+                addToSelectedMessages(message, false, false);
+                if (full) break;
+            }
+        }
+        if (apply) {
+            addToSelectedMessages(null, false, true);
+            updateActionModeTitle();
+            updateVisibleRows();
+        }
+        return false;
+    }
+
     private boolean aoiCanOpenDirect() {
         return ChatObject.isChannel(currentChat) && !ChatObject.isMonoForum(currentChat) && currentChat.linked_monoforum_id != 0 && (ChatObject.canManageMonoForum(currentAccount, -currentChat.linked_monoforum_id) || aoiHideChannelBottomBar && currentChat.broadcast_messages_allowed);
     }
@@ -8276,6 +8313,7 @@ public class ChatActivity extends BaseFragment implements
 
         actionsButtonsLayout = new ChatActivityActionsButtonsLayout(context, resourceProvider, blurredBackgroundColorProvider, glassBackgroundDrawableFactory);
         actionsButtonsLayout.setForwardButtonOnClickListener(v -> openForward(false));
+        actionsButtonsLayout.setSelectButtonOnClickListener(v -> aoiSelectRange(true));
         actionsButtonsLayout.setReplyButtonOnClickListener(v -> {
             MessageObject messageObject = null;
             for (int a = 1; a >= 0; a--) {
@@ -19687,7 +19725,9 @@ public class ChatActivity extends BaseFragment implements
                             }
                         }
                     }
-                    actionsButtonsLayout.showReplyButton(newVisibility == View.VISIBLE, true);
+                    boolean aoiCanSelectRange = aoiSelectRange(false);
+                    actionsButtonsLayout.showReplyButton(newVisibility == View.VISIBLE && !aoiCanSelectRange, true);
+                    actionsButtonsLayout.showSelectButton(aoiCanSelectRange, true);
                 }
 
                 if (editItem != null) {
@@ -19786,15 +19826,7 @@ public class ChatActivity extends BaseFragment implements
             message = ((ChatActionCell) view).getMessageObject();
         }
 
-        int type = getMessageType(message);
-
-        if (message != null && message.isAnyGift()) {
-            return;
-        }
-        if (type < 2 || type == 20 || type == MessageObject.TYPE_SUGGEST_PHOTO || message != null && (message.type == MessageObject.TYPE_JOINED_CHANNEL || message.type == MessageObject.TYPE_GIFT_STARS) || (message != null && message.isWallpaperAction())) {
-            return;
-        }
-        if (message != null && (message.isSponsored() || message.isEphemeral())) {
+        if (!aoiCanSelectMessage(message)) {
             return;
         }
         addToSelectedMessages(message, outside);

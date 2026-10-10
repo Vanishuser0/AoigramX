@@ -370,6 +370,7 @@ import me.vkryl.core.BitwiseUtils;
 import me.vkryl.core.reference.ReferenceList;
 
 import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.media.DownloadedMedia;
 import nu.gpu.aoigram.media.PhotoClipboard;
 import nu.gpu.aoigram.messages.DoubleTap;
 import nu.gpu.aoigram.messages.MessageDetailsActivity;
@@ -397,6 +398,7 @@ public class ChatActivity extends BaseFragment implements
     public static final int OPTION_MESSAGE_JSON = 1003;
     public static final int OPTION_MESSAGE_DETAILS = 1004;
     private static final int OPTION_SAVE = 1005;
+    private static final int OPTION_CLEAR = 1006;
     private static final int MENU_RECENT_ACTIONS = 90;
     private ChatManualTranslation aoiChatManualTranslation;
     private QuickActions quickActions;
@@ -33987,6 +33989,16 @@ public class ChatActivity extends BaseFragment implements
                 PhotoClipboard.copy(PhotoClipboard.getFile(selectedObject), selectedObject.isSticker(), BulletinFactory.of(this));
                 break;
             }
+            case OPTION_CLEAR: {
+                MessageObject message = selectedObject;
+                DownloadedMedia.clear(message, size -> {
+                    if (findMessageCell(message.getId(), false) instanceof ChatMessageCell cell) {
+                        cell.updateButtonState(false, true, false);
+                    }
+                    BulletinFactory.of(this).createSimpleBulletin(R.raw.ic_delete, formatString(R.string.CacheWasCleared, AndroidUtilities.formatFileSize(size))).show();
+                });
+                break;
+            }
             case OPTION_SAVE_TO_GALLERY: {
                 if (Build.VERSION.SDK_INT >= 23 && (Build.VERSION.SDK_INT <= 28 || BuildVars.NO_SCOPED_STORAGE) && getParentActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     getParentActivity().requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 4);
@@ -46926,6 +46938,11 @@ public class ChatActivity extends BaseFragment implements
                         icons.add(R.drawable.msg_report);
                     }
                 }
+                if (AoiConfig.showClear.get() && DownloadedMedia.canClear(selectedObject)) {
+                    items.add(getString(R.string.Clear));
+                    options.add(OPTION_CLEAR);
+                    icons.add(R.drawable.msg_clear);
+                }
                 if (message.canDeleteMessage(chatMode == MODE_SCHEDULED, currentChat) && (threadMessageObjects == null || !threadMessageObjects.contains(message))) {
                     items.add(LocaleController.getString(chatMode == MODE_SAVED && threadMessageId != getUserConfig().getClientUserId() ? R.string.Remove : R.string.Delete));
                     options.add(OPTION_DELETE);
@@ -47026,6 +47043,11 @@ public class ChatActivity extends BaseFragment implements
                         options.add(OPTION_CALL);
                         icons.add(R.drawable.msg_callback);
                     }
+                }
+                if (AoiConfig.showClear.get() && DownloadedMedia.canClear(selectedObject)) {
+                    items.add(getString(R.string.Clear));
+                    options.add(OPTION_CLEAR);
+                    icons.add(R.drawable.msg_clear);
                 }
                 items.add(LocaleController.getString(chatMode == MODE_SAVED && threadMessageId != getUserConfig().getClientUserId() ? R.string.Remove : R.string.Delete));
                 options.add(OPTION_DELETE);

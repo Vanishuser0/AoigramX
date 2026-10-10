@@ -33,6 +33,7 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
             new Option(AoiConfig.showSave, R.string.Save),
             new Option(AoiConfig.showRepeat, R.string.Repeat),
             new Option(AoiConfig.showReport, R.string.ReportChat),
+            new Option(AoiConfig.showClear, R.string.Clear),
             new Option(AoiConfig.showDetails, R.string.MessageDetails),
     };
     private static final Option[] CONFIRMATION_OPTIONS = {

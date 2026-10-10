@@ -92,6 +92,7 @@ public final class AoiConfig {
     public static final BoolConfig showSave = register(new BoolConfig("showSave", true));
     public static final BoolConfig showRepeat = register(new BoolConfig("showRepeat", true));
     public static final BoolConfig showReport = register(new BoolConfig("showReport", false));
+    public static final BoolConfig showClear = register(new BoolConfig("showClear", true));
     public static final BoolConfig showDetails = register(new BoolConfig("showDetails", true));
     public static final BoolConfig repeatConfirm = register(new BoolConfig("repeatConfirm", true));
     public static final BoolConfig previewRecording = register(new BoolConfig("previewRecording", true));

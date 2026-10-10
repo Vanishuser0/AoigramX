@@ -145,6 +145,11 @@ public class MessageObject {
     public TLRPC.TL_textWithEntities aoiDisplaySource;
     public TLRPC.TL_textWithEntities aoiDisplayText;
 
+    public void aoiResetVideoQualities() {
+        videoQualitiesCached = null;
+        videoQualities = null;
+    }
+
     private static final int MESSAGE_ID_RESERVED_BITS_MASK = 0x70000000;
     private static final int MESSAGE_ID_EPHEMERAL_BITS_MASK = 0x60000000;
 

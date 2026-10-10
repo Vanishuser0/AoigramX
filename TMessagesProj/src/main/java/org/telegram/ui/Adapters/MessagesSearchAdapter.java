@@ -250,7 +250,7 @@ public class MessagesSearchAdapter extends RecyclerListView.SelectionAdapter imp
                     date = messageObject.messageOwner.date;
                 }
             } else {
-                if (messageObject.isOutOwner() || ChatObject.isMonoForum(currentAccount, did)) {
+                if (messageObject.isOutOwner() || ChatObject.isMonoForum(currentAccount, did) || searchType == 0 && messageObject.getFromChatId() != 0) {
                     did = messageObject.getFromChatId();
                 }
                 useMe = true;

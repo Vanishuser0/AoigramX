@@ -323,10 +323,10 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
     private Dialog permissionsShowDialog;
     private ArrayList<String> permissionsItems = new ArrayList<>();
     private ArrayList<String> permissionsShowItems = new ArrayList<>();
-    private boolean checkPermissions = true;
-    private boolean checkShowPermissions = true;
+    private boolean checkPermissions = false;
+    private boolean checkShowPermissions = false;
     private boolean newAccount;
-    private boolean syncContacts = true;
+    private boolean syncContacts = false;
     private boolean testBackend = false;
 
     @ActivityMode
@@ -692,7 +692,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
         }
         if (savedInstanceState != null) {
             currentViewNum = savedInstanceState.getInt("currentViewNum", 0);
-            syncContacts = savedInstanceState.getInt("syncContacts", 1) == 1;
+            syncContacts = savedInstanceState.getInt("syncContacts", 0) == 1;
             if (currentViewNum >= VIEW_CODE_MESSAGE && currentViewNum <= VIEW_CODE_CALL) {
                 int time = savedInstanceState.getInt("open");
                 if (time != 0 && Math.abs(System.currentTimeMillis() / 1000 - time) >= 24 * 60 * 60) {
@@ -1499,10 +1499,10 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
         }
 
         if (needFloatingButton) {
-            if (page == VIEW_PHONE_INPUT) {
+            /*if (page == VIEW_PHONE_INPUT) {
                 checkPermissions = true;
                 checkShowPermissions = true;
-            }
+            }*/
             currentDoneType = DONE_TYPE_ACTION;
             showDoneButton(false, animated);
             // Force reset radial progress

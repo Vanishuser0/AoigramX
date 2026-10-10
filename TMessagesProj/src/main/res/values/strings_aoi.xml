@@ -208,4 +208,6 @@
     <string name="PhotoCopied">Photo copied to clipboard</string>
     <string name="CopySticker">Copy Sticker</string>
     <string name="StickerCopied">Sticker copied to clipboard</string>
+    <string name="MutualContact">Mutual contact</string>
+    <string name="MutualContactDescription">You are in each other\'s contacts.</string>
 </resources>

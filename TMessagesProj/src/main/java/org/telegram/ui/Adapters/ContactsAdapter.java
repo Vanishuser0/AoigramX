@@ -449,6 +449,7 @@ public class ContactsAdapter extends RecyclerListView.SectionsAdapter {
             case USER_CELL: {
                 UserCell cell = new UserCell(mContext, 58, 1, false);
                 cell.setCallCellStyle(58);
+                cell.enableMutualContactIcon();
                 view = cell;
                 break;
             }

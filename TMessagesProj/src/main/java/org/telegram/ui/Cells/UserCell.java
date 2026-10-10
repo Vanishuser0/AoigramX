@@ -49,6 +49,7 @@ import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.AnimatedEmojiDrawable;
 import org.telegram.ui.Components.AvatarDrawable;
 import org.telegram.ui.Components.BackupImageView;
+import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.ChatSearchTabs;
 import org.telegram.ui.Components.CheckBox2;
 import org.telegram.ui.Components.CheckBoxSquare;
@@ -62,6 +63,19 @@ import org.telegram.ui.Stories.StoriesListPlaceProvider;
 import org.telegram.ui.Stories.StoriesUtilities;
 
 public class UserCell extends FrameLayout implements NotificationCenter.NotificationCenterDelegate, Theme.Colorable {
+
+    private ImageView mutualContactView;
+
+    public void enableMutualContactIcon() {
+        mutualContactView = new ImageView(getContext());
+        mutualContactView.setScaleType(ImageView.ScaleType.CENTER);
+        mutualContactView.setImageResource(R.drawable.ic_round_swap_horiz_24);
+        mutualContactView.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector, resourcesProvider), Theme.RIPPLE_MASK_CIRCLE_TO_BOUND_EDGE));
+        mutualContactView.setContentDescription(getString(R.string.MutualContact));
+        mutualContactView.setOnClickListener(v -> BulletinFactory.global().createSimpleBulletin(R.raw.contact_check, getString(R.string.MutualContactDescription)).show());
+        mutualContactView.setVisibility(GONE);
+        addView(mutualContactView, LayoutHelper.createFrame(40, 40, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.CENTER_VERTICAL, LocaleController.isRTL ? 8 : 0, 0, LocaleController.isRTL ? 0 : 8, 0));
+    }
 
     public BackupImageView avatarImageView;
     protected SimpleTextView nameTextView;
@@ -243,13 +257,14 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
         layoutParams.rightMargin = dp(LocaleController.isRTL ? 7 + padding : 0);
         avatarImageView.setLayoutParams(layoutParams);
 
+        int endPadding = mutualContactView != null ? 48 : 28;
         layoutParams = (LayoutParams) nameTextView.getLayoutParams();
-        layoutParams.leftMargin = dp(LocaleController.isRTL ? 28 + (checkBoxBig != null ? 18 : 0) : (64 + padding + paddingText));
-        layoutParams.rightMargin = dp(LocaleController.isRTL ? (64 + padding + paddingText) : 28 + (checkBoxBig != null ? 18 : 0));
+        layoutParams.leftMargin = dp(LocaleController.isRTL ? endPadding + (checkBoxBig != null ? 18 : 0) : (64 + padding + paddingText));
+        layoutParams.rightMargin = dp(LocaleController.isRTL ? (64 + padding + paddingText) : endPadding + (checkBoxBig != null ? 18 : 0));
 
         layoutParams = (FrameLayout.LayoutParams) statusTextView.getLayoutParams();
-        layoutParams.leftMargin = dp(LocaleController.isRTL ? 28 : (64 + padding + paddingText));
-        layoutParams.rightMargin = dp(LocaleController.isRTL ? (64 + padding + paddingText) : 28);
+        layoutParams.leftMargin = dp(LocaleController.isRTL ? endPadding : (64 + padding + paddingText));
+        layoutParams.rightMargin = dp(LocaleController.isRTL ? (64 + padding + paddingText) : endPadding);
 
         if (checkBox != null) {
             layoutParams = (FrameLayout.LayoutParams) checkBox.getLayoutParams();
@@ -696,6 +711,10 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
         } else {
             nameTextView.setRightDrawable(null);
             nameTextView.setRightDrawableTopPadding(0);
+        }
+        if (mutualContactView != null) {
+            mutualContactView.setVisibility(currentUser != null && currentUser.mutual_contact ? VISIBLE : GONE);
+            mutualContactView.setColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText3, resourcesProvider), PorterDuff.Mode.SRC_IN);
         }
         if (currentStatus != null) {
             statusTextView.setTextColor(statusColor);

@@ -60,6 +60,7 @@
     <string name="PredictiveBack">Predictive back animation</string>
     <string name="DialogList">Chat List</string>
     <string name="HideStories">Hide stories</string>
+    <string name="HideSearchBar">Hide search bar</string>
     <string name="MessageDetails">Details</string>
     <string name="MessageDetailsId">Message ID</string>
     <string name="MessageDetailsChat">Chat</string>

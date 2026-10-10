@@ -56,6 +56,7 @@
     <string name="RepeatConfirm">Before repeating</string>
     <string name="RepeatConfirmText">Repeat this message?</string>
     <string name="RepeatMessagesConfirmText">Repeat these messages?</string>
+    <string name="DisableInstantCamera">Disable instant camera</string>
     <string name="PreviewRecording">Before sending recordings</string>
     <string name="GlareEffects">Glare effects</string>
     <string name="PredictiveBack">Predictive back animation</string>

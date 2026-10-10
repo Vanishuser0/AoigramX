@@ -78,6 +78,7 @@ public final class AoiConfig {
     public static final StringConfig pinnedReactionsChannels = register(new StringConfig("pinnedReactionsChannels", ""));
     public static final IntConfig doubleTapIncomingAction = register(new IntConfig("doubleTapIncomingAction", DoubleTap.REACTION));
     public static final IntConfig doubleTapOutgoingAction = register(new IntConfig("doubleTapOutgoingAction", DoubleTap.REACTION));
+    public static final BoolConfig disableInstantCamera = register(new BoolConfig("disableInstantCamera", true));
     public static final BoolConfig groupMessageMenu = register(new BoolConfig("groupMessageMenu", true));
     public static final BoolConfig showCopyPhoto = register(new BoolConfig("showCopyPhoto", true));
     public static final BoolConfig showSave = register(new BoolConfig("showSave", true));

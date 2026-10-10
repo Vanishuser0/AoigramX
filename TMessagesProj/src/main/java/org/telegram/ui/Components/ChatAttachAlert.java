@@ -5967,7 +5967,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
 //            selectedMenuItem.setClickable(count > 0);
 //            selectedMenuItem.animate().alpha(count > 0 ? 1f : 0f).scaleX(count > 0 ? 1f : .6f).scaleY(count > 0 ? 1f : .6f).setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT).setDuration(320).start();
 //        } else
-        if (currentAttachLayout == photoLayout && ((baseFragment instanceof ChatActivity) || avatarPicker != 0 || storyMediaPicker) && (count == 0 && menuShowed || (count != 0 || avatarPicker != 0 || storyMediaPicker) && !menuShowed)) {
+        if (currentAttachLayout == photoLayout && ((baseFragment instanceof ChatActivity) || avatarPicker != 0 || storyMediaPicker || photoLayout.hasCameraItem()) && (count == 0 && menuShowed || (count != 0 || avatarPicker != 0 || storyMediaPicker) && !menuShowed)) {
             menuShowed = count != 0 || avatarPicker != 0 || storyMediaPicker;
             if (menuAnimator != null) {
                 menuAnimator.cancel();

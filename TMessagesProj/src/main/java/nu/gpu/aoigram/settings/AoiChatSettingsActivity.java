@@ -73,6 +73,9 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
         items.add(outgoingItem);
         items.add(UItem.asCustom(doubleTapPreview));
         items.add(UItem.asShadow(null));
+        items.add(UItem.asHeader(getString(R.string.VoipCamera)));
+        items.add(asConfigCheck(AoiConfig.disableInstantCamera, R.string.DisableInstantCamera));
+        items.add(UItem.asShadow(null));
         items.add(asConfigCheck(AoiConfig.groupMessageMenu, R.string.GroupMessageMenu, R.string.GroupMessageMenuInfo));
         addGroup(items, adapter, MESSAGE_MENU, R.drawable.msg_list, R.string.MessageMenu, MESSAGE_MENU_OPTIONS);
         addGroup(items, adapter, CONFIRMATIONS, R.drawable.msg2_ask_question, R.string.Confirmations, CONFIRMATION_OPTIONS);

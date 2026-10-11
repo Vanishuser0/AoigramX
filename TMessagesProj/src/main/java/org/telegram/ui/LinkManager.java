@@ -815,7 +815,7 @@ public class LinkManager {
                 }), ConnectionsManager.RequestFlagFailOnServerErrors | ConnectionsManager.RequestFlagWithoutLogin));
                 return true;
             }
-            if (!TextUtils.isEmpty(third) && "passkey".equalsIgnoreCase(second) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            if (!TextUtils.isEmpty(third) && "passkey".equalsIgnoreCase(second) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && BuildVars.SUPPORTS_PASSKEYS) {
                 init();
                 setRequestId(getConnectionsManager().sendRequestTyped(new TL_account.getPasskeys(), AndroidUtilities::runOnUIThread, (passkeys, error) -> {
                     done();

@@ -489,7 +489,7 @@ public class PrivacySettingsActivity extends BaseFragment implements Notificatio
                 }
             } else if (position == passkeysRow) {
                 if (Build.VERSION.SDK_INT < 28 || !BuildVars.SUPPORTS_PASSKEYS) return;
-                if (currentPasskeys != null && currentPasskeys.size() > 0) {
+                if (currentPasskeys != null) {
                     presentFragment(new PasskeysActivity(currentPasskeys));
                 } else {
                     PasskeysActivity.showLearnSheet(context, currentAccount, resourceProvider, true);

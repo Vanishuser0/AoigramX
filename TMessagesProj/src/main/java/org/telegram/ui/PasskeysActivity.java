@@ -3,11 +3,13 @@ package org.telegram.ui;
 import static org.telegram.messenger.AndroidUtilities.dp;
 import static org.telegram.messenger.LocaleController.getString;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.os.Build;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -19,13 +21,16 @@ import android.widget.TextView;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.credentials.CredentialManager;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.PasskeysController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.Utilities;
+import org.telegram.messenger.browser.Browser;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.tgnet.tl.TL_account;
@@ -88,6 +93,14 @@ public class PasskeysActivity extends BaseFragment {
         return fragmentView = contentView;
     }
 
+    @Override
+    public void onTransitionAnimationEnd(boolean isOpen, boolean backward) {
+        super.onTransitionAnimationEnd(isOpen, backward);
+        if (isOpen && !backward && passkeys.isEmpty()) {
+            showLearnSheet(getContext(), currentAccount, resourceProvider, true);
+        }
+    }
+
     @Keep
     public int addPasskeyRow;
 
@@ -105,6 +118,11 @@ public class PasskeysActivity extends BaseFragment {
         items.add(UItem.asShadow(AndroidUtilities.replaceArrows(AndroidUtilities.replaceSingleTag(getString(R.string.PasskeyInfo), () -> {
             showLearnSheet(getContext(), currentAccount, resourceProvider, passkeys.size() + 1 <= getMessagesController().config.passkeysAccountPasskeysMax.get());
         }), true)));
+        items.add(UItem.asButton(-2, R.drawable.msg_settings, getString(R.string.Settings)));
+        items.add(UItem.asShadow(AndroidUtilities.replaceMultipleTags(getString(R.string.PasskeyProviders),
+            () -> Browser.openUrl(getContext(), "https://github.com/bitwarden/android"),
+            () -> Browser.openUrl(getContext(), "https://github.com/Kunzisoft/KeePassDX")
+        )));
     }
 
     private void openMenu(View view) {
@@ -171,6 +189,12 @@ public class PasskeysActivity extends BaseFragment {
                     added(passkey);
                 }
             });
+        } else if (item.id == -2 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            try {
+                CredentialManager.create(getContext()).createSettingsPendingIntent().send();
+            } catch (PendingIntent.CanceledException e) {
+                FileLog.e(e);
+            }
         } else if (item.object != null) {
             openMenu(view);
         }

@@ -226,4 +226,6 @@
     <string name="MutualContact">Mutual contact</string>
     <string name="MutualContactDescription">You are in each other\'s contacts.</string>
     <string name="SendWithoutMarkdown">Send without Markdown</string>
+    <string name="PasskeyProviders">Passkeys only work with password managers that let you trust privileged apps, such as **Bitwarden** and **KeePassDX**.</string>
+    <string name="PasskeyNoCredentialAvailable">No passkey available.</string>
 </resources>

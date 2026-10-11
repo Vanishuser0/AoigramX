@@ -1,13 +1,49 @@
 package org.telegram.ui;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.os.Build;
 
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.R;
 
+import java.util.Arrays;
+
 public class LauncherIconController {
+    private static Boolean officialEnabled;
+
+    public static void setIconAndSplash(Activity activity, LauncherIcon icon) {
+        setIcon(icon);
+        if (Build.VERSION.SDK_INT >= 33) {
+            activity.getSplashScreen().setSplashScreenTheme(isOfficial(icon) ? R.style.Theme_TMessages_Start_Official : Resources.ID_NULL);
+        }
+    }
+
+    public static int getNotificationIcon() {
+        return isOfficialEnabled() ? R.drawable.notification : R.drawable.icon_aoi_notification;
+    }
+
+    public static int getNotificationPersonIcon() {
+        return isOfficialEnabled() ? R.drawable.ic_launcher_dr : R.drawable.icon_aoi_round;
+    }
+
+    public static boolean isOfficialEnabled() {
+        if (officialEnabled == null) {
+            officialEnabled = Arrays.stream(LauncherIcon.values()).anyMatch(icon -> isOfficial(icon) && isEnabled(icon));
+        }
+        return officialEnabled;
+    }
+
+    private static boolean isOfficial(LauncherIcon icon) {
+        return switch (icon) {
+            case DEFAULT, INVERTED, SORA, UMI, SAKURA, YORU -> false;
+            default -> true;
+        };
+    }
+
     public static void tryFixLauncherIconIfNeeded() {
         for (LauncherIcon icon : LauncherIcon.values()) {
             if (isEnabled(icon)) {
@@ -31,6 +67,7 @@ public class LauncherIconController {
             pm.setComponentEnabledSetting(i.getComponentName(ctx), i == icon ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
         }
+        officialEnabled = isOfficial(icon);
     }
 
     public enum LauncherIcon {

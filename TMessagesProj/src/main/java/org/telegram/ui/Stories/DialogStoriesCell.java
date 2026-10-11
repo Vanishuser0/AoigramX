@@ -29,6 +29,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
+import android.text.style.ImageSpan;
 import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
@@ -91,6 +92,7 @@ import org.telegram.ui.Components.RadialProgress;
 import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.SeekBarView;
 import org.telegram.ui.Components.TypefaceSpan;
+import org.telegram.ui.LauncherIconController;
 import org.telegram.ui.PremiumPreviewFragment;
 import org.telegram.ui.Stories.recorder.HintView2;
 import org.telegram.ui.Stories.recorder.StoryRecorder;
@@ -106,6 +108,7 @@ import me.vkryl.android.animator.ReplaceAnimator;
 
 @SuppressLint("ViewConstructor")
 public class DialogStoriesCell extends FrameLayout implements NotificationCenter.NotificationCenterDelegate, FactorAnimator.Target {
+    private Drawable logoDrawable;
 
     public final static int TYPE_DIALOGS = 0;
     public final static int TYPE_ARCHIVE= 1;
@@ -335,9 +338,18 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
         addView(titleView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
         telegramLogoView = new AnimatedTextView(context, true, true, false);
-        telegramLogoView.setContentDescription(getString(R.string.AppNameAoi));
+        telegramLogoView.setContentDescription(getString(R.string.AppName));
         telegramLogoView.setTypeface(AndroidUtilities.bold());
-        telegramLogoView.setText(Typefaces.titleText());
+        if (LauncherIconController.isOfficialEnabled()) {
+            logoDrawable = context.getResources().getDrawable(R.drawable.telegram_logo_2).mutate();
+            logoDrawable.setBounds(0, 0, logoDrawable.getIntrinsicWidth(), logoDrawable.getIntrinsicHeight());
+            logoDrawable.setColorFilter(getTextLogoColor(), PorterDuff.Mode.MULTIPLY);
+            SpannableStringBuilder ssb = new SpannableStringBuilder(getString(R.string.AppName));
+            ssb.setSpan(new ImageSpan(logoDrawable), 0, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            telegramLogoView.setText(ssb);
+        } else {
+            telegramLogoView.setText(Typefaces.titleText());
+        }
         telegramLogoView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
         telegramLogoView.setFocusableInTouchMode(true);
         addView(telegramLogoView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT));
@@ -942,7 +954,11 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
             titleView.setTranslationX(lastViewRight);
             titleView.getDrawable().setRightPadding(lastViewRight - dp(12) + actionBar.menu.getVisibleItemsMeasuredWidthWithAlpha() * progress);
 
-            offset = (telegramLogoView.getMeasuredHeight() - telegramLogoView.getTextHeight()) / 2f - dpf2(1.8f);
+            if (logoDrawable != null) {
+                offset = (telegramLogoView.getMeasuredHeight() - dp(22)) / 2f - dp(4.333f);
+            } else {
+                offset = (telegramLogoView.getMeasuredHeight() - telegramLogoView.getTextHeight()) / 2f - dpf2(1.8f);
+            }
             telegramLogoView.setTranslationX(titleView.getTranslationX() + dp(1));
             telegramLogoView.setTranslationY(bottomY + dp(14 + FAKE_TOP_PADDING) - offset + translationOffset /*titleView.getTranslationY() + dpf2(37.33f)*/);
 
@@ -1158,6 +1174,9 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
         titleView.setTextColor(getTextLogoColor());
         if (subtitleOverlayContainer != null) {
             subtitleOverlayContainer.updateColors();
+        }
+        if (logoDrawable != null) {
+            logoDrawable.setColorFilter(getTextLogoColor(), PorterDuff.Mode.MULTIPLY);
         }
         telegramLogoView.invalidate();
         AndroidUtilities.forEachViews(recyclerListView, view -> {

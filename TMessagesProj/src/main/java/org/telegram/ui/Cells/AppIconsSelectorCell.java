@@ -132,7 +132,7 @@ public class AppIconsSelectorCell extends RecyclerListView implements Notificati
             smoothScroller.setTargetPosition(position);
             linearLayoutManager.startSmoothScroll(smoothScroller);
 
-            LauncherIconController.setIcon(icon);
+            LauncherIconController.setIconAndSplash(fragment.getParentActivity(), icon);
             holderView.setSelected(true, true);
 
             for (int i = 0; i < getChildCount(); i++) {

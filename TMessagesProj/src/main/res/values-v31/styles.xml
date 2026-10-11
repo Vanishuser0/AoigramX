@@ -33,6 +33,10 @@
         <item name="android:windowSplashScreenBackground">?android:windowBackground</item>
     </style>
 
+    <style name="Theme.TMessages.Start.Official">
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/tg_splash_320</item>
+    </style>
+
     <style name="Theme.TMessages" parent="Theme.AppCompat.Light">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>

@@ -214,6 +214,7 @@
             android:targetActivity="org.telegram.ui.LaunchActivity"
             android:icon="@mipmap/icon_telegram_launcher"
             android:roundIcon="@mipmap/icon_telegram_launcher_round"
+            android:label="@string/AppName"
             android:exported="true">
 
             <intent-filter>
@@ -230,6 +231,7 @@
             android:targetActivity="org.telegram.ui.LaunchActivity"
             android:icon="@mipmap/icon_6_launcher"
             android:roundIcon="@mipmap/icon_6_launcher_round"
+            android:label="@string/AppName"
             android:exported="true">
 
             <intent-filter>
@@ -246,6 +248,7 @@
             android:targetActivity="org.telegram.ui.LaunchActivity"
             android:icon="@mipmap/icon_4_launcher"
             android:roundIcon="@mipmap/icon_4_launcher_round"
+            android:label="@string/AppName"
             android:exported="true">
 
             <intent-filter>
@@ -262,6 +265,7 @@
             android:targetActivity="org.telegram.ui.LaunchActivity"
             android:icon="@mipmap/icon_3_launcher"
             android:roundIcon="@mipmap/icon_3_launcher_round"
+            android:label="@string/AppName"
             android:exported="true">
 
             <intent-filter>
@@ -278,6 +282,7 @@
             android:targetActivity="org.telegram.ui.LaunchActivity"
             android:icon="@mipmap/icon_5_launcher"
             android:roundIcon="@mipmap/icon_5_launcher_round"
+            android:label="@string/AppName"
             android:exported="true">
 
             <intent-filter>
@@ -294,6 +299,7 @@
             android:targetActivity="org.telegram.ui.LaunchActivity"
             android:icon="@mipmap/icon_2_launcher"
             android:roundIcon="@mipmap/icon_2_launcher_round"
+            android:label="@string/AppName"
             android:exported="true">
 
             <intent-filter>

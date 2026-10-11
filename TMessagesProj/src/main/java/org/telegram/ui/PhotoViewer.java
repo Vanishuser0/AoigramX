@@ -346,6 +346,8 @@ import me.vkryl.android.animator.BoolAnimator;
 import me.vkryl.android.animator.FactorAnimator;
 import me.vkryl.core.reference.ReferenceList;
 
+import nu.gpu.aoigram.config.AoiConfig;
+
 @SuppressLint("WrongConstant")
 @SuppressWarnings("unchecked")
 @OptIn(markerClass = UnstableApi.class)
@@ -15705,7 +15707,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                     ads.stop();
                     ads = null;
                 }
-                if (newMessageObject != null) {
+                if (!AoiConfig.disableAds.get() && newMessageObject != null) {
                     ads = VideoAds.make(newMessageObject.currentAccount, newMessageObject.getDialogId(), newMessageObject.getId(), BulletinFactory.of(containerView, resourcesProvider));
                     ads.setWaitingPaused(videoPlayer == null || videoPlayer.isPlaying() && videoPlayer.getPlaybackState() == ExoPlayer.STATE_READY);
                     ads.setPauseOnPopupCallback(() -> {

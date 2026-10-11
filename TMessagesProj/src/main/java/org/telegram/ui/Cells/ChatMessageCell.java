@@ -262,11 +262,14 @@ import me.vkryl.android.animator.FactorAnimator;
 import me.vkryl.core.BitwiseUtils;
 
 import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.messages.ForwardsCount;
 import nu.gpu.aoigram.translate.TranslationDisplay;
 
 public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate, ImageReceiver.ImageReceiverDelegate,
         DownloadController.FileDownloadProgressListener, TextSelectionHelper.SelectableView,
         NotificationCenter.NotificationCenterDelegate, FactorAnimator.Target, IMessageCell {
+    private final ForwardsCount forwardsCount = new ForwardsCount();
+
     private final static int TIME_APPEAR_MS = 200;
     private final static int UPLOADING_ALLOWABLE_ERROR = 1024 * 1024;
     private final static int STICKER_STATUS_OFFSET = 6;
@@ -6251,6 +6254,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             return true;
         }
         if (lastViewsCount != currentMessageObject.messageOwner.views) {
+            return true;
+        }
+        if (forwardsCount.isChanged(currentMessageObject)) {
             return true;
         }
         if (lastRepliesCount != getRepliesCount()) {
@@ -18587,6 +18593,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             float drawableWidth = Theme.chat_msgInViewsDrawable.getIntrinsicWidth() * (Theme.chat_timePaint.getTextSize() - dp(2)) / Theme.chat_msgInViewsDrawable.getIntrinsicHeight();
             timeWidth += viewsTextWidth + drawableWidth + dp(10);
         }
+        timeWidth += forwardsCount.measure(messageObject);
         if (messageObject.type == MessageObject.TYPE_EXTENDED_MEDIA_PREVIEW) {
             String str = formatString(R.string.PaymentCheckoutPay, LocaleController.getInstance().formatCurrencyString(messageObject.messageOwner.media.total_amount, messageObject.messageOwner.media.currency).toUpperCase(Locale.ROOT));
             currentUnlockString = str.length() >= 2 ? str.substring(0, 1).toUpperCase(Locale.ROOT) + str.substring(1).toLowerCase(Locale.ROOT) : str;
@@ -24718,6 +24725,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             }
             transitionParams.lastTimeXViews = viewsX;
         }
+        offsetX += forwardsCount.draw(canvas, this, timeX, offsetX, timeY, alpha, progress, drawSelectionBackground);
         if (isPinned || transitionParams.animatePinned) {
             float pinnedX = (transitionParams.shouldAnimateTimeX ? this.timeX : timeX) + offsetX;
             boolean inAnimation = transitionParams.animatePinned && isPinned;
@@ -28497,6 +28505,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             this.lastViewsCount = getMessageObject().messageOwner.views;
             lastRepliesLayout = repliesLayout;
             lastViewsLayout = viewsLayout;
+            forwardsCount.recordDrawingState();
 
             lastIsPinned = isPinned;
 
@@ -28894,6 +28903,11 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 accessibilityText = null;
             }
 
+            if (forwardsCount.animateChange()) {
+                changed = true;
+                timeDrawablesIsChanged = true;
+            }
+
             if (commentLayout != null && lastCommentsCount != getRepliesCount()) {
                 if (lastCommentLayout != null && !TextUtils.equals(lastCommentLayout.getText(), commentLayout.getText())) {
                     animateCommentsLayout = lastCommentLayout;
@@ -29110,6 +29124,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             animateComments = false;
             animateCommentsLayout = null;
             animateViewsLayout = null;
+            forwardsCount.resetAnimation();
             animateShouldDrawTimeOnMedia = false;
             animateShouldDrawMenuDrawable = false;
             shouldAnimateTimeX = false;

@@ -1805,6 +1805,10 @@ public class AlertsCreator {
         builder.setWidth(Math.min(dp(320), AndroidUtilities.displaySize.x * 85 / 100));
         builder.setPositiveButton(LocaleController.getString(R.string.Open), (dialogInterface, i) -> open.run());
         builder.setNegativeButton(LocaleController.getString(R.string.Cancel), null);
+        builder.setNeutralButton(LocaleController.getString(R.string.Copy), (dialogInterface, i) -> {
+            AndroidUtilities.addToClipboard(url);
+            BulletinFactory.global().createCopyLinkBulletin().show();
+        });
 
         dialog[0] = builder.show();
     }

@@ -13796,6 +13796,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 presentFragment(new ThemeActivity(ThemeActivity.THEME_TYPE_NIGHT));
             });
         });
+        io.getLastView().setOnLongClickListener(v -> {
+            io.dismiss();
+            presentFragment(new ThemeActivity(ThemeActivity.THEME_TYPE_BASIC));
+            return true;
+        });
         io.addGap();
         io.add(R.drawable.outline_groups_24, getString(R.string.NewGroup), () -> {
             Bundle args = new Bundle();

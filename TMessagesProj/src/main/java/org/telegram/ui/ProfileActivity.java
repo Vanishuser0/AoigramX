@@ -12302,8 +12302,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         editItemVisible = true;
                     }
                 } else {
-                    if (ChatObject.hasAdminRights(chat) || chat.megagroup && ChatObject.canChangeChatInfo(chat)) {
+                    if (ChatObject.hasAdminRights(chat) || chat.megagroup) {
                         editItemVisible = true;
+                        final boolean canEdit = ChatObject.hasAdminRights(chat) || ChatObject.canChangeChatInfo(chat);
+                        editItem.setIcon(canEdit ? R.drawable.group_edit_profile : R.drawable.msg_info);
+                        editItem.setContentDescription(getString(canEdit ? R.string.Edit : R.string.Info));
                     }
                 }
                 if (chatInfo != null) {

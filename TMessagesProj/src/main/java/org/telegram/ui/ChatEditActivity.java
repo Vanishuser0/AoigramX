@@ -120,6 +120,7 @@ import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
 
 public class ChatEditActivity extends BaseFragment implements ImageUpdater.ImageUpdaterDelegate, NotificationCenter.NotificationCenterDelegate {
+    private int aoiAdminCount;
 
     private View doneButton;
 
@@ -666,7 +667,7 @@ public class ChatEditActivity extends BaseFragment implements ImageUpdater.Image
 
         linearLayout1.setOrientation(LinearLayout.VERTICAL);
 
-        actionBar.setTitle(getString(R.string.ChannelEdit));
+        actionBar.setTitle(getString(currentUser != null || ChatObject.hasAdminRights(currentChat) || ChatObject.canChangeChatInfo(currentChat) ? R.string.ChannelEdit : R.string.Info));
 
         avatarContainer = new LinearLayout(context);
         avatarContainer.setOrientation(LinearLayout.VERTICAL);
@@ -763,7 +764,7 @@ public class ChatEditActivity extends BaseFragment implements ImageUpdater.Image
         } else {
             nameTextView.setHint(getString("GroupName", R.string.GroupName));
         }
-        nameTextView.setEnabled(currentChat != null || ChatObject.canChangeChatInfo(currentChat));
+        nameTextView.setEnabled(currentChat == null || ChatObject.canChangeChatInfo(currentChat));
         nameTextView.setFocusable(nameTextView.isEnabled());
         nameTextView.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
@@ -1245,6 +1246,18 @@ public class ChatEditActivity extends BaseFragment implements ImageUpdater.Image
                 fragment.setInfo(info);
                 presentFragment(fragment);
             });
+            if (ChatObject.isChannel(currentChat) && !ChatObject.hasAdminRights(currentChat)) {
+                TLRPC.TL_channels_getParticipants req = new TLRPC.TL_channels_getParticipants();
+                req.channel = getMessagesController().getInputChannel(currentChat);
+                req.filter = new TLRPC.TL_channelParticipantsAdmins();
+                req.limit = 0;
+                getConnectionsManager().bindRequestToGuid(getConnectionsManager().sendRequest(req, (res, err) -> AndroidUtilities.runOnUIThread(() -> {
+                    if (res instanceof TLRPC.TL_channels_channelParticipants) {
+                        aoiAdminCount = ((TLRPC.TL_channels_channelParticipants) res).count;
+                        updateFields(false, true);
+                    }
+                })), classGuid);
+            }
 
             membersCell = new TextCell(context);
             membersCell.setBackgroundDrawable(Theme.getSelectorDrawable(false));
@@ -1281,7 +1294,7 @@ public class ChatEditActivity extends BaseFragment implements ImageUpdater.Image
                 logCell.setOnClickListener(v -> presentFragment(new ChannelAdminLogActivity(currentChat)));
             }
 
-            if (ChatObject.isBoostSupported(currentChat)) {
+            if (ChatObject.isBoostSupported(currentChat) && ChatObject.hasAdminRights(currentChat)) {
                 statsAndBoosts = new TextCell(context);
                 statsAndBoosts.setTextAndIcon(getString(R.string.StatisticsAndBoosts), R.drawable.msg_stats, true);
                 statsAndBoosts.setBackground(Theme.getSelectorDrawable(false));
@@ -1309,7 +1322,7 @@ public class ChatEditActivity extends BaseFragment implements ImageUpdater.Image
             if (isChannel) {
                 infoContainer.addView(inviteLinksCell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
             }
-            if (isChannel || currentChat.gigagroup) {
+            if (isChannel || currentChat.gigagroup && ChatObject.hasAdminRights(currentChat)) {
                 infoContainer.addView(blockCell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
             }
             if (statsAndBoosts != null) {
@@ -1377,11 +1390,6 @@ public class ChatEditActivity extends BaseFragment implements ImageUpdater.Image
         }
 
         if (currentChat != null) {
-            if (!ChatObject.hasAdminRights(currentChat)) {
-                infoContainer.setVisibility(View.GONE);
-                settingsTopSectionCell.setVisibility(View.GONE);
-            }
-
             if (stickersCell == null) {
                 infoSectionCell = new ShadowSectionCell(context);
                 linearLayout1.addView(infoSectionCell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
@@ -2305,7 +2313,7 @@ public class ChatEditActivity extends BaseFragment implements ImageUpdater.Image
         }
 
         if (logCell != null) {
-            logCell.setVisibility(ChatObject.isChannel(currentChat) ? View.VISIBLE : View.GONE);
+            logCell.setVisibility(ChatObject.isChannel(currentChat) && ChatObject.hasAdminRights(currentChat) ? View.VISIBLE : View.GONE);
         }
 
         if (linkedCell != null) {
@@ -2399,7 +2407,7 @@ public class ChatEditActivity extends BaseFragment implements ImageUpdater.Image
                     blockCell.setTextAndValueAndIcon(getString(R.string.ChannelBlacklist), String.format("%d", Math.max(info.banned_count, info.kicked_count)), R.drawable.msg_user_remove, logCell != null && logCell.getVisibility() == View.VISIBLE);
                 } else {
                     if (ChatObject.isChannel(currentChat)) {
-                        membersCell.setTextAndValueAndIcon(getString("ChannelMembers", R.string.ChannelMembers), String.format("%d", info.participants_count), R.drawable.msg_groups, true);
+                        membersCell.setTextAndValueAndIcon(getString("ChannelMembers", R.string.ChannelMembers), String.format("%d", info.participants_count), R.drawable.msg_groups, logCell.getVisibility() == View.VISIBLE);
                     } else {
                         membersCell.setTextAndValueAndIcon(getString("ChannelMembers", R.string.ChannelMembers), String.format("%d", info.participants.participants.size()), R.drawable.msg_groups, memberRequestsCell.getVisibility() == View.VISIBLE);
                     }
@@ -2437,7 +2445,15 @@ public class ChatEditActivity extends BaseFragment implements ImageUpdater.Image
                         memberRequestsCell.setTextAndValueAndIcon(getString("MemberRequests", R.string.MemberRequests), String.format("%d", info.requests_pending), R.drawable.msg_requests, logCell != null && logCell.getVisibility() == View.VISIBLE);
                     }
                 }
-                adminCell.setTextAndValueAndIcon(getString("ChannelAdministrators", R.string.ChannelAdministrators), String.format("%d", ChatObject.isChannel(currentChat) ? info.admins_count : getAdminCount()), R.drawable.msg_admins, true);
+                if (ChatObject.isChannel(currentChat) && !ChatObject.hasAdminRights(currentChat)) {
+                    if (aoiAdminCount > 0) {
+                        adminCell.setTextAndValueAndIcon(getString(R.string.ChannelAdministrators), String.format("%d", aoiAdminCount), R.drawable.msg_admins, true);
+                    } else {
+                        adminCell.setTextAndIcon(getString(R.string.ChannelAdministrators), R.drawable.msg_admins, true);
+                    }
+                } else {
+                    adminCell.setTextAndValueAndIcon(getString("ChannelAdministrators", R.string.ChannelAdministrators), String.format("%d", ChatObject.isChannel(currentChat) ? info.admins_count : getAdminCount()), R.drawable.msg_admins, true);
+                }
             } else {
                 if (isChannel && !ChatObject.isCommunity(currentChat)) {
                     membersCell.setTextAndIcon(getString("ChannelSubscribers", R.string.ChannelSubscribers), R.drawable.msg_groups, true);
@@ -2452,7 +2468,7 @@ public class ChatEditActivity extends BaseFragment implements ImageUpdater.Image
                 }
                 adminCell.setTextAndIcon(getString("ChannelAdministrators", R.string.ChannelAdministrators), R.drawable.msg_admins, true);
             }
-            reactionsCell.setVisibility(ChatObject.canChangeChatInfo(currentChat) ? View.VISIBLE : View.GONE);
+            reactionsCell.setVisibility(ChatObject.hasAdminRights(currentChat) && ChatObject.canChangeChatInfo(currentChat) ? View.VISIBLE : View.GONE);
             updateReactionsCell(animated);
             if (info == null || !ChatObject.canUserDoAdminAction(currentChat, ChatObject.ACTION_INVITE) || (!isPrivate && currentChat.creator)) {
                 inviteLinksCell.setVisibility(View.GONE);

@@ -469,7 +469,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
                 dontRestrictBoostersInfoRow = rowCount++;
             }
 
-            if (ChatObject.isChannel(currentChat) && !isCommunity) {
+            if (ChatObject.isChannel(currentChat) && ChatObject.hasAdminRights(currentChat) && !isCommunity) {
                 if (participantsDivider2Row == -1) {
                     participantsDivider2Row = rowCount++;
                 }
@@ -563,7 +563,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
             }
         } else if (type == TYPE_USERS) {
             if (ChatObject.isChannel(currentChat)) {
-                if (!ChatObject.isChannelAndNotMegaGroup(currentChat) && !needOpenSearch) {
+                if (!ChatObject.isChannelAndNotMegaGroup(currentChat) && ChatObject.hasAdminRights(currentChat) && !needOpenSearch) {
                     hideMembersRow = rowCount++;
                     hideMembersInfoRow = rowCount++;
                 }
@@ -671,7 +671,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
                 }
             }
         });
-        if (selectType != SELECT_TYPE_MEMBERS || type == TYPE_USERS || type == TYPE_BANNED || type == TYPE_KICKED) {
+        if (selectType != SELECT_TYPE_MEMBERS || type == TYPE_USERS || ChatObject.hasAdminRights(currentChat) && (type == TYPE_BANNED || type == TYPE_KICKED)) {
             searchListViewAdapter = new SearchAdapter(context);
             ActionBarMenu menu = actionBar.createMenu();
             searchItem = menu.addItem(search_button, R.drawable.outline_header_search).setIsSearchField(true).setActionBarMenuItemSearchListener(new ActionBarMenuItem.ActionBarMenuItemSearchListener() {
@@ -2346,6 +2346,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
     }
 
     private boolean hasNotRestrictBoostersChanges() {
+        if (!ChatObject.canUserDoAdminAction(currentChat, ChatObject.ACTION_DELETE_MESSAGES)) return false;
         boolean isEnabledNotRestrictBoosters = this.isEnabledNotRestrictBoosters && isNotRestrictBoostersVisible();
         return info != null && (info.boosts_unrestrict != notRestrictBoosters
                 || (isEnabledNotRestrictBoosters && notRestrictBoosters == 0)

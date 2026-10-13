@@ -1263,26 +1263,13 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
 
     private void updateTabsPosition(int position) {
         if (position != RecyclerView.NO_POSITION) {
-            final int recentmaxlen = SPAN_COUNT_FOR_EMOJI * RECENT_MAX_LINES;
-            final int recentSize = recent.size() > recentmaxlen && !recentExpanded ? recentmaxlen : recent.size() + (includeEmpty ? 1 : 0);
-            if (position <= recentSize || position <= recentReactions.size()) {
-                emojiTabs.select(0); // recent
-            } else {
-                final int maxlen = SPAN_COUNT_FOR_EMOJI * EXPAND_MAX_LINES;
-                for (int i = 0; i < positionToSection.size(); ++i) {
-                    final int startPosition = positionToSection.keyAt(i);
-                    final int index = positionToSection.valueAt(i);
-                    final EmojiView.EmojiPack pack = index >= 0 ? packs.get(index) : null;
-                    if (pack == null) {
-                        continue;
-                    }
-                    final int count = pack.expanded ? pack.documents.size() : Math.min(maxlen, pack.documents.size());
-                    if (position > startPosition && position <= startPosition + 1 + count) {
-                        emojiTabs.select((emojiTabs.recentTab != null ? 1 : 0) + (emojiTabs.isGiftsVisible() ? 1 : 0) + index);
-                        return;
-                    }
+            for (int i = positionToSection.size() - 1; i >= 0; --i) {
+                if (position >= positionToSection.keyAt(i)) {
+                    emojiTabs.select((emojiTabs.recentTab != null ? 1 : 0) + (emojiTabs.isGiftsVisible() ? 1 : 0) + positionToSection.valueAt(i));
+                    return;
                 }
             }
+            emojiTabs.select(giftsSectionRow >= 0 && position >= giftsSectionRow ? 1 : 0);
         }
     }
 

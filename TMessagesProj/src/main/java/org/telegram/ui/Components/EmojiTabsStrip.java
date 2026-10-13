@@ -422,6 +422,7 @@ public class EmojiTabsStrip extends ScrollableHorizontalScrollView {
             }).start();
         }
         contentView.requestLayout();
+        updateClickListeners();
         giftsFirstChange = false;
     }
 
@@ -615,6 +616,10 @@ public class EmojiTabsStrip extends ScrollableHorizontalScrollView {
     public void updateClickListeners() {
         for (int i = 0, j = 0; i < contentView.getChildCount(); ++i, ++j) {
             View child = contentView.getChildAt(i);
+            if (child == giftsTab && !giftsIsShown) {
+                --j;
+                continue;
+            }
             if (child instanceof EmojiTabsView) {
                 EmojiTabsView tabsView = (EmojiTabsView) child;
                 for (int a = 0; a < tabsView.contentView.getChildCount(); ++a, ++j) {
@@ -678,6 +683,10 @@ public class EmojiTabsStrip extends ScrollableHorizontalScrollView {
         final int wasSelected = selected;
         for (int i = 0, j = 0; i < contentView.getChildCount(); ++i, ++j) {
             View child = contentView.getChildAt(i);
+            if (child == giftsTab && !giftsIsShown) {
+                --j;
+                continue;
+            }
             int from = j;
             if (child instanceof EmojiTabsView) {
                 EmojiTabsView tabs = (EmojiTabsView) child;

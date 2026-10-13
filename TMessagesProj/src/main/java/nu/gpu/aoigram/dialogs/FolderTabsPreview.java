@@ -28,6 +28,7 @@ import nu.gpu.aoigram.config.AoiConfig;
 public final class FolderTabsPreview extends FrameLayout {
 
     private static final int[] TITLES = {R.string.FilterAllChats, R.string.FolderLinkPreviewRight, R.string.FilterGroups, R.string.FilterChannels, R.string.FilterBots};
+    private static final String[] EMOTICONS = {"💬", "👤", "👥", "📢", "🤖"};
     private static final int[] UNMUTED = {9, 3, 5, 0, 1};
     private static final int[] MUTED = {51, 0, 19, 32, 0};
 
@@ -61,6 +62,11 @@ public final class FolderTabsPreview extends FrameLayout {
                 }
                 boolean includeMuted = tabId == 0 ? NotificationsController.getInstance(fragment.getCurrentAccount()).showBadgeMuted : !FolderUnreadCounter.isUnmutedOnly();
                 return UNMUTED[tabId] + (includeMuted ? MUTED[tabId] : 0);
+            }
+
+            @Override
+            public int getTabIcon(int tabId) {
+                return FolderIcons.getTabIcon(EMOTICONS[tabId]);
             }
 
             @Override

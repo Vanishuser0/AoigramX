@@ -106,7 +106,12 @@ import org.telegram.ui.Components.spoilers.SpoilersTextView;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import nu.gpu.aoigram.dialogs.FolderIconButton;
+import nu.gpu.aoigram.dialogs.FolderIcons;
+
 public class FilterCreateActivity extends BaseFragment {
+    private String newFilterEmoticon;
+    private FolderIconButton folderIconButton;
 
     private RecyclerListView listView;
     private ListAdapter adapter;
@@ -207,6 +212,7 @@ public class FilterCreateActivity extends BaseFragment {
         newFilterName = MessageObject.replaceAnimatedEmoji(newFilterName, filter.entities, paint.getFontMetricsInt());
         newFilterAnimations = !filter.title_noanimate;
         AnimatedEmojiDrawable.toggleAnimations(currentAccount, newFilterAnimations);
+        newFilterEmoticon = filter.emoticon;
         newFilterFlags = filter.flags;
         newFilterColor = filter.color;
         newAlwaysShow = new ArrayList<>(filter.alwaysShow);
@@ -1064,6 +1070,7 @@ public class FilterCreateActivity extends BaseFragment {
     private void save(boolean progress, Runnable after) {
         final CharSequence[] parsedTitle = new CharSequence[] { newFilterName };
         final ArrayList<TLRPC.MessageEntity> entities = getMediaDataController().getEntities(parsedTitle, false);
+        filter.emoticon = newFilterEmoticon;
         saveFilterToServer(filter, newFilterFlags, parsedTitle[0].toString(), entities, !newFilterAnimations, newFilterColor, newAlwaysShow, newNeverShow, newPinned, creatingNew, false, hasUserChanged, true, progress, this, () -> {
 
             hasUserChanged = false;
@@ -1141,6 +1148,10 @@ public class FilterCreateActivity extends BaseFragment {
         req.filter.title.text = newFilterName;
         req.filter.title.entities = newFilterNameEntities;
         req.filter.title_noanimate = newFilterNoanimate;
+        if (filter.emoticon != null) {
+            req.filter.flags |= 33554432;
+            req.filter.emoticon = filter.emoticon;
+        }
         if (newFilterColor < 0) {
             req.filter.flags &=~ 134217728;
             req.filter.color = 0;
@@ -1267,6 +1278,9 @@ public class FilterCreateActivity extends BaseFragment {
         if (!TextUtils.equals(filter.name, newFilterName)) {
             return true;
         }
+        if (!TextUtils.equals(filter.emoticon, newFilterEmoticon)) {
+            return true;
+        }
         if (filter.flags != newFilterFlags) {
             return true;
         }
@@ -1274,6 +1288,9 @@ public class FilterCreateActivity extends BaseFragment {
     }
 
     private void checkDoneButton(boolean animated) {
+        if (folderIconButton != null) {
+            folderIconButton.update();
+        }
         boolean enabled = !TextUtils.isEmpty(newFilterName) && newFilterName.length() <= MAX_NAME_LENGTH;
         if (enabled) {
             enabled = (newFilterFlags & MessagesController.DIALOG_FILTER_FLAG_ALL_CHATS) != 0 || !newAlwaysShow.isEmpty();
@@ -1495,6 +1512,11 @@ public class FilterCreateActivity extends BaseFragment {
                     cell.editTextEmoji.getEditText().setEmojiColor(getThemedColor(Theme.key_featuredStickers_addButton));
                     cell.editTextEmoji.setEmojiViewCacheType(AnimatedEmojiDrawable.CACHE_TYPE_TOGGLEABLE_EDIT);
                     cell.editTextEmoji.setText(newFilterName);
+                    folderIconButton = new FolderIconButton(FilterCreateActivity.this, () -> FolderIcons.getEmoticon(newFilterEmoticon, newFilterFlags, newAlwaysShow), emoticon -> {
+                        newFilterEmoticon = emoticon;
+                        checkDoneButton(true);
+                    });
+                    folderIconButton.attachTo(cell);
                     AnimatedEmojiDrawable.toggleAnimations(currentAccount, newFilterAnimations);
                     EditTextCaption editText = cell.editTextEmoji.getEditText();
                     editText.addTextChangedListener(new EditTextSuggestionsFix());

@@ -15,6 +15,7 @@ import org.telegram.ui.Components.UniversalAdapter;
 import java.util.ArrayList;
 
 import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.dialogs.FolderIcons;
 import nu.gpu.aoigram.dialogs.FolderTabsPreview;
 import nu.gpu.aoigram.dialogs.FolderUnreadCounter;
 
@@ -68,6 +69,9 @@ public final class AoiAppearanceSettingsActivity extends BaseAoiSettingsActivity
         items.add(UItem.asShadow(null));
         items.add(UItem.asHeader(getString(R.string.SettingsFolders)));
         items.add(UItem.asCustom(folderTabsPreview));
+        UItem tabStyleItem = UItem.asButton(0, getString(R.string.FolderTabStyle), FolderIcons.getLabel(AoiConfig.folderTabStyle.get()));
+        tabStyleItem.object = AoiConfig.folderTabStyle;
+        items.add(tabStyleItem);
         UItem unreadCounterItem = UItem.asButton(0, getString(R.string.FolderUnreadCounter), FolderUnreadCounter.getLabel(AoiConfig.folderUnreadCounter.get()));
         unreadCounterItem.object = AoiConfig.folderUnreadCounter;
         items.add(unreadCounterItem);
@@ -82,6 +86,14 @@ public final class AoiAppearanceSettingsActivity extends BaseAoiSettingsActivity
             folderTabsPreview.updateColors();
         } else if (item.object == AoiConfig.hideSearchBar) {
             parentLayout.rebuildFragments(0);
+        } else if (item.object == AoiConfig.folderTabStyle) {
+            String[] labels = {FolderIcons.getLabel(FolderIcons.TITLE), FolderIcons.getLabel(FolderIcons.ICON), FolderIcons.getLabel(FolderIcons.ICON_AND_TITLE)};
+            showDialog(AlertsCreator.createSingleChoiceDialog(getParentActivity(), labels, getString(R.string.FolderTabStyle), AoiConfig.folderTabStyle.get(), (dialog, which) -> {
+                AoiConfig.folderTabStyle.set(which);
+                listView.adapter.update(true);
+                folderTabsPreview.updateTabs(true);
+                parentLayout.rebuildFragments(0);
+            }));
         } else if (item.object == AoiConfig.folderUnreadCounter) {
             String[] labels = {FolderUnreadCounter.getLabel(FolderUnreadCounter.ALL), FolderUnreadCounter.getLabel(FolderUnreadCounter.UNMUTED), FolderUnreadCounter.getLabel(FolderUnreadCounter.HIDDEN)};
             showDialog(AlertsCreator.createSingleChoiceDialog(getParentActivity(), labels, getString(R.string.FolderUnreadCounter), AoiConfig.folderUnreadCounter.get(), (dialog, which) -> {

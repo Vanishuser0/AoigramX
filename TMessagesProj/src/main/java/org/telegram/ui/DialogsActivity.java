@@ -98,6 +98,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.dialogs.DialogsMoreMenu;
+import nu.gpu.aoigram.dialogs.FolderIcons;
 import nu.gpu.aoigram.dialogs.FolderUnreadCounter;
 import nu.gpu.aoigram.typeface.Typefaces;
 
@@ -3682,6 +3683,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         return 0;
                     }
                     return getMessagesController().getDialogFilters().get(tabId).unreadCount;
+                }
+
+                @Override
+                public int getTabIcon(int tabId) {
+                    return FolderIcons.getTabIcon(getMessagesController().getDialogFilters().get(tabId));
                 }
 
                 @Override

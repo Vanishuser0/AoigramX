@@ -72,6 +72,11 @@
     <string name="MoreMenu">More…</string>
     <string name="SortByUnread">Unread First</string>
     <string name="ShowSenderAvatar">Sender avatar in preview</string>
+    <string name="FolderTabStyle">Tab style</string>
+    <string name="FolderTabStyleTitle">Title</string>
+    <string name="FolderTabStyleIcon">Icon</string>
+    <string name="FolderTabStyleIconAndTitle">Icon and title</string>
+    <string name="FolderIcon">Folder icon</string>
     <string name="FolderUnreadCounter">Unread counter</string>
     <string name="FolderUnreadCounterAll">All</string>
     <string name="FolderUnreadCounterUnmuted">Unmuted only</string>

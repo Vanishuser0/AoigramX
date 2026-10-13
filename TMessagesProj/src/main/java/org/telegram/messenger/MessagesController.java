@@ -1280,6 +1280,8 @@ public class MessagesController extends BaseController implements NotificationCe
     public static int DIALOG_FILTER_FLAG_CHATLIST_ADMIN = 0x00000400;
 
     public static class DialogFilter {
+        public String emoticon;
+
         public int id;
         public String name;
         public ArrayList<TLRPC.MessageEntity> entities = new ArrayList<>();

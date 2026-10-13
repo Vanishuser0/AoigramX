@@ -72,6 +72,8 @@ import org.telegram.ui.Stories.recorder.HintView2;
 import java.util.ArrayList;
 import java.util.Map;
 
+import nu.gpu.aoigram.dialogs.FolderIcons;
+
 @SuppressLint("ViewConstructor")
 public class FilterTabsView extends FrameLayout {
 
@@ -97,6 +99,10 @@ public class FilterTabsView extends FrameLayout {
     }
 
     public interface FilterTabsViewDelegate {
+        default int getTabIcon(int tabId) {
+            return 0;
+        }
+
         void onPageSelected(Tab tab, boolean forward);
 
         void onPageScrolled(float progress);
@@ -117,6 +123,8 @@ public class FilterTabsView extends FrameLayout {
     }
 
     public class Tab {
+        public int aoiIcon;
+
         public int id;
         public CharSequence title;
         public int titleWidth;
@@ -132,7 +140,7 @@ public class FilterTabsView extends FrameLayout {
         }
 
         public int getWidth(boolean store) {
-            int width = titleWidth = (int) Math.ceil(HintView2.measureCorrectly(title, textPaint));
+            int width = titleWidth = (FolderIcons.showTitle() ? (int) Math.ceil(HintView2.measureCorrectly(title, textPaint)) : 0) + FolderIcons.getIconWidth(aoiIcon);
             int c;
             if (store) {
                 c = delegate.getTabCounter(id);
@@ -178,6 +186,8 @@ public class FilterTabsView extends FrameLayout {
     private static final float TAB_COUNTER_HEIGHT = 17.333f;
 
     public class TabView extends View {
+        private int aoiIconRes;
+        private Drawable aoiIconDrawable;
 
         public ValueAnimator changeAnimator;
         private Tab currentTab;
@@ -400,6 +410,18 @@ public class FilterTabsView extends FrameLayout {
                 textOffsetX = (int) -textLayout.getLineLeft(0);
             }
 
+            if (currentTab.aoiIcon != 0) {
+                if (aoiIconRes != currentTab.aoiIcon) {
+                    aoiIconRes = currentTab.aoiIcon;
+                    aoiIconDrawable = ContextCompat.getDrawable(getContext(), aoiIconRes).mutate();
+                }
+                int iconTop = (getMeasuredHeight() - dp(FolderIcons.ICON_SIZE)) / 2;
+                aoiIconDrawable.setBounds((int) textX, iconTop, (int) textX + dp(FolderIcons.ICON_SIZE), iconTop + dp(FolderIcons.ICON_SIZE));
+                aoiIconDrawable.setColorFilter(emojiColorFilter);
+                aoiIconDrawable.draw(canvas);
+            }
+            canvas.save();
+            canvas.translate(FolderIcons.getIconWidth(currentTab.aoiIcon), 0);
 
             float titleOffsetX = 0;
             if (animateTextChange) {
@@ -432,7 +454,7 @@ public class FilterTabsView extends FrameLayout {
                     textPaint.setAlpha(alpha);
                 }
             } else {
-                if (textLayout != null) {
+                if (textLayout != null && FolderIcons.showTitle()) {
                     canvas.save();
                     canvas.translate(textX + textOffsetX, (getMeasuredHeight() - textHeight) / 2f + 1);
                     textLayout.draw(canvas);
@@ -440,6 +462,7 @@ public class FilterTabsView extends FrameLayout {
                     canvas.restore();
                 }
             }
+            canvas.restore();
 
             if (animateCounterEnter || counterText != null || showRemove && (isEditing || editingStartAnimationProgress != 0)) {
                 if (aBackgroundColorKey < 0) {
@@ -664,7 +687,7 @@ public class FilterTabsView extends FrameLayout {
                 changed = true;
             }
 
-            if (lastTitle != null && !currentTab.title.equals(lastTitle)) {
+            if (FolderIcons.showTitle() && lastTitle != null && !currentTab.title.equals(lastTitle)) {
                 boolean animateOut;
                 CharSequence maxStr;
                 CharSequence substring;
@@ -1274,6 +1297,7 @@ public class FilterTabsView extends FrameLayout {
         Tab tab = new Tab(id, text(text, entities), noanimate);
         tab.isDefault = isDefault;
         tab.isLocked = isLocked;
+        tab.aoiIcon = delegate.getTabIcon(id);
         allTabsWidth += tab.getWidth(true) + dp(TAB_PADDING_WIDTH);
         tabs.add(tab);
     }
@@ -1293,6 +1317,7 @@ public class FilterTabsView extends FrameLayout {
         Tab tab = new Tab(id, text, noanimate);
         tab.isDefault = isDefault;
         tab.isLocked = isLocked;
+        tab.aoiIcon = delegate.getTabIcon(id);
         allTabsWidth += tab.getWidth(true) + dp(TAB_PADDING_WIDTH);
         tabs.add(tab);
     }

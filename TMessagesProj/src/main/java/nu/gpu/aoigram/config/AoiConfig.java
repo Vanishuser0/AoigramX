@@ -7,6 +7,7 @@ import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.ConnectionsManager;
 
+import nu.gpu.aoigram.dialogs.FolderIcons;
 import nu.gpu.aoigram.dialogs.FolderUnreadCounter;
 import nu.gpu.aoigram.messages.DoubleTap;
 import nu.gpu.aoigram.network.DownloadSpeedBoost;
@@ -39,6 +40,7 @@ public final class AoiConfig {
     public static final BoolConfig hideSearchBar = register(new BoolConfig("hideSearchBar", false));
     public static final BoolConfig showSenderAvatar = register(new BoolConfig("showSenderAvatar", false));
     public static final BoolConfig sortByUnread = register(new BoolConfig("sortByUnread", false));
+    public static final IntConfig folderTabStyle = register(new IntConfig("folderTabStyle", FolderIcons.TITLE));
     public static final IntConfig folderUnreadCounter = register(new IntConfig("folderUnreadCounter", FolderUnreadCounter.ALL));
     public static final BoolConfig hideAllChatsTab = register(new BoolConfig("hideAllChatsTab", false));
 

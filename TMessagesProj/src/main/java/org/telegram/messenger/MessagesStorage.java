@@ -76,6 +76,7 @@ import java.util.function.Consumer;
 
 import me.vkryl.core.BitwiseUtils;
 
+import nu.gpu.aoigram.dialogs.FolderIcons;
 import nu.gpu.aoigram.dialogs.FolderUnreadCounter;
 
 public class MessagesStorage extends BaseController {
@@ -2648,6 +2649,7 @@ public class MessagesStorage extends BaseController {
                 }
                 filtersCursor.dispose();
                 filtersCursor = null;
+                FolderIcons.loadEmoticons(database, filtersById);
 
                 if (!hasDefaultFilter) {
                     MessagesController.DialogFilter filter = new MessagesController.DialogFilter();
@@ -3201,6 +3203,7 @@ public class MessagesStorage extends BaseController {
             state.dispose();
             entitiesBuffer.reuse();
             state = null;
+            FolderIcons.saveEmoticon(database, filter);
             if (peers) {
                 database.executeFast("DELETE FROM dialog_filter_ep WHERE id = " + filter.id).stepThis().dispose();
                 database.executeFast("DELETE FROM dialog_filter_pin_v2 WHERE id = " + filter.id).stepThis().dispose();
@@ -3341,6 +3344,10 @@ public class MessagesStorage extends BaseController {
                         if (filter.title_noanimate != newFilter.title_noanimate) {
                             changed = true;
                             filter.title_noanimate= newFilter.title_noanimate;
+                        }
+                        if (!TextUtils.equals(filter.emoticon, newFilter.emoticon)) {
+                            changed = true;
+                            filter.emoticon = newFilter.emoticon;
                         }
                         final int color = (newFilter.flags & 134217728) != 0 ? newFilter.color : -1;
                         if (filter.color != color) {
@@ -3483,6 +3490,7 @@ public class MessagesStorage extends BaseController {
                         filter.name = newFilter.title.text;
                         filter.entities = newFilter.title.entities;
                         filter.title_noanimate = newFilter.title_noanimate;
+                        filter.emoticon = newFilter.emoticon;
                         filter.color = (newFilter.flags & 134217728) != 0 ? newFilter.color : -1;
                         filter.pendingUnreadCount = -1;
                         for (int c = 0; c < 2; c++) {
@@ -3639,6 +3647,7 @@ public class MessagesStorage extends BaseController {
             database.executeFast("DELETE FROM dialog_filter WHERE id = " + filter.id).stepThis().dispose();
             database.executeFast("DELETE FROM dialog_filter_ep WHERE id = " + filter.id).stepThis().dispose();
             database.executeFast("DELETE FROM dialog_filter_pin_v2 WHERE id = " + filter.id).stepThis().dispose();
+            FolderIcons.deleteEmoticon(database, filter.id);
         } catch (Exception e) {
             checkSQLException(e);
         }

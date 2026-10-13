@@ -3943,6 +3943,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         }
                         break;
                     case ProfileActionsView.KEY_DISCUSS:
+                    case ProfileActionsView.KEY_CHANNEL:
                         openDiscussion();
                         break;
                     case ProfileActionsView.KEY_LEAVE:
@@ -12172,6 +12173,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
         boolean shareAction = false;
         boolean discussAction = false;
+        boolean channelAction = false;
         boolean giftAction = false;
         boolean streamAction = false;
         boolean voiceChatAction = false;
@@ -12328,6 +12330,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     otherItem.addSubItem(channel_stories, R.drawable.msg_archive, LocaleController.getString(R.string.OpenChannelArchiveStories));
                 }
                 if (chat.megagroup) {
+                    channelAction = chatInfo != null && chatInfo.linked_chat_id != 0;
                     if (chatInfo == null || !chatInfo.participants_hidden || ChatObject.hasAdminRights(chat)) {
                         canSearchMembers = true;
                         otherItem.addSubItem(search_members, R.drawable.msg_search, LocaleController.getString(R.string.SearchMembers));
@@ -12343,11 +12346,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         otherItem.addSubItem(leave_group, R.drawable.msg_leave, getString(R.string.LeaveMega));
                         final ActionBarMenuSubItem deleteItem = otherItem.addSubItem(delete_group, R.drawable.msg_delete, getString(R.string.DeleteMega));
                         deleteItem.setColors(getThemedColor(Theme.key_text_RedBold), getThemedColor(Theme.key_text_RedRegular));
-                        leaveAction = true;
                     } else {
                         if (!chat.left && !chat.kicked && !isTopic) {
                             otherItem.addSubItem(leave_group, R.drawable.msg_leave, getString(R.string.LeaveMega));
-                            leaveAction = true;
+                            leaveAction = !ChatObject.hasAdminRights(chat);
                         }
                     }
                 } else {
@@ -12405,7 +12407,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     otherItem.addSubItem(add_shortcut, R.drawable.msg_home, LocaleController.getString(R.string.AddShortcut));
                 }
                 otherItem.addSubItem(leave_group, R.drawable.msg_leave, LocaleController.getString(R.string.DeleteAndExit));
-                leaveAction = true;
+                leaveAction = !ChatObject.hasAdminRights(chat);
             }
         }
 
@@ -12444,6 +12446,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             actionsView.set(ProfileActionsView.KEY_CALL, callItemVisible);
             actionsView.set(ProfileActionsView.KEY_VIDEO, videoCallItemVisible);
             actionsView.set(ProfileActionsView.KEY_DISCUSS, discussAction);
+            actionsView.set(ProfileActionsView.KEY_CHANNEL, channelAction);
             actionsView.set(ProfileActionsView.KEY_LEAVE, leaveAction);
             actionsView.set(ProfileActionsView.KEY_STORY, addStoryAction);
             actionsView.set(ProfileActionsView.KEY_VOICE_CHAT, voiceChatAction);

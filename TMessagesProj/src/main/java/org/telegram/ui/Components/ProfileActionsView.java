@@ -55,6 +55,7 @@ import java.util.Set;
 
 @SuppressLint("ViewConstructor")
 public class ProfileActionsView extends View {
+    public static final int KEY_CHANNEL = 18;
 
     private final List<Action> actions = new ArrayList<>();
     private final Paint paint = new Paint();
@@ -751,6 +752,7 @@ public class ProfileActionsView extends View {
                     insertIfAvailable(out, KEY_MESSAGE);
                 }
                 insertIfAvailable(out, KEY_NOTIFICATION);
+                insertIfAvailable(out, KEY_CHANNEL);
                 if (join) {
                     out.add(getOrCreate(KEY_REPORT));
                 } else {
@@ -834,6 +836,9 @@ public class ProfileActionsView extends View {
                 break;
             case KEY_DISCUSS:
                 newAction = new Action(ActionButton.DISCUSS);
+                break;
+            case KEY_CHANNEL:
+                newAction = new Action(ActionButton.CHANNEL);
                 break;
             case KEY_GIFT:
                 newAction = new Action(ActionButton.GIFT);
@@ -1217,6 +1222,7 @@ public class ProfileActionsView extends View {
         NOTIFICATION_MUTE(R.string.ProfileButtonMute, R.drawable.filled_profile_mute_24, R.drawable.outline_profile_mute_24),
         NOTIFICATION_UNMUTE(R.string.ProfileButtonUnmute, R.drawable.filled_profile_unmute_24, R.drawable.outline_profile_unmute_24),
         DISCUSS(R.string.ProfileActionsDiscuss, R.drawable.filled_profile_message_24, R.drawable.outline_profile_message_24),
+        CHANNEL(R.string.ProfileChannel, R.drawable.msg_folders_channels, R.drawable.msg_channel),
         GIFT(R.string.ProfileActionsGift, R.drawable.gift, R.drawable.input_gift_s),
         SHARE(R.string.ProfileActionsShare, R.drawable.action_share, R.drawable.msg_share),
         CALL(R.string.ProfileActionsCall, R.drawable.filled_profile_call_24, R.drawable.outline_profile_call_24),

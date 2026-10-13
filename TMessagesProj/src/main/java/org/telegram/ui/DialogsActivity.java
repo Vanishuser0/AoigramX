@@ -97,6 +97,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.dialogs.DialogsMoreMenu;
 import nu.gpu.aoigram.typeface.Typefaces;
 
 import org.telegram.messenger.AccountInstance;
@@ -13671,7 +13672,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     }
 
     private void showItemOptions() {
-        ItemOptions io = ItemOptions.makeOptions(this, optionsItem);
+        ItemOptions io = ItemOptions.makeOptions(this, optionsItem, true);
         io.setColors(getThemedColor(Theme.key_actionBarDefaultTitle), getThemedColor(Theme.key_actionBarDefaultTitle));
         io.setDimAlpha(0x08);
 
@@ -13811,6 +13812,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 presentFragment(new SettingsActivity());
             });
         }
+        DialogsMoreMenu.addMenu(this, io);
 
         if (proxyMenuSubItem != null) {
             proxyMenuSubItem.subtextView.setTextColor(getThemedColor(Theme.key_groupcreate_sectionText));

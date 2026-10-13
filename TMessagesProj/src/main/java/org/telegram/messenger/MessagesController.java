@@ -142,6 +142,7 @@ import java.util.stream.Collectors;
 import me.vkryl.core.BitwiseUtils;
 
 import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.dialogs.UnreadFirstSort;
 
 public class MessagesController extends BaseController implements NotificationCenter.NotificationCenterDelegate {
 
@@ -1423,6 +1424,10 @@ public class MessagesController extends BaseController implements NotificationCe
                 return 0;
             }
         }
+        int unreadOrder = UnreadFirstSort.compare(currentAccount, dialog1, dialog2);
+        if (unreadOrder != 0) {
+            return unreadOrder;
+        }
         MediaDataController mediaDataController = getMediaDataController();
         long date1 = DialogObject.getLastMessageOrDraftDate(dialog1, mediaDataController.getDraft(dialog1.id, 0));
         long date2 = DialogObject.getLastMessageOrDraftDate(dialog2, mediaDataController.getDraft(dialog2.id, 0));
@@ -1458,6 +1463,10 @@ public class MessagesController extends BaseController implements NotificationCe
             } else {
                 return 0;
             }
+        }
+        int unreadOrder = UnreadFirstSort.compare(currentAccount, dialog1, dialog2);
+        if (unreadOrder != 0) {
+            return unreadOrder;
         }
         MediaDataController mediaDataController = getMediaDataController();
         long date1 = DialogObject.getLastMessageOrDraftDate(dialog1, mediaDataController.getDraft(dialog1.id, 0));
@@ -22397,12 +22406,6 @@ public class MessagesController extends BaseController implements NotificationCe
                 arrayList.clear();
             }
         }
-        for (int a = 0; a < dialogsByCommunity.size(); a++) {
-            ArrayList<TLRPC.Dialog> arrayList = dialogsByCommunity.valueAt(a);
-            if (arrayList != null) {
-                arrayList.clear();
-            }
-        }
         unreadUnmutedDialogs = 0;
         boolean selfAdded = false;
         long selfId = getUserConfig().getClientUserId();
@@ -22453,6 +22456,12 @@ public class MessagesController extends BaseController implements NotificationCe
         try {
             Collections.sort(allDialogs, dialogComparator);
         } catch (Exception e) {}
+        for (int a = 0; a < dialogsByCommunity.size(); a++) {
+            ArrayList<TLRPC.Dialog> arrayList = dialogsByCommunity.valueAt(a);
+            if (arrayList != null) {
+                arrayList.clear();
+            }
+        }
         isLeftPromoChannel = true;
         if (promoDialog != null && promoDialog.id < 0) {
             TLRPC.Chat chat = getChat(-promoDialog.id);

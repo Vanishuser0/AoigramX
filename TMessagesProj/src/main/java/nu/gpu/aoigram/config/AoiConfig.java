@@ -33,6 +33,7 @@ public final class AoiConfig {
     public static final BoolConfig predictiveBack = register(new BoolConfig("predictiveBack", false));
     public static final BoolConfig hideStories = register(new BoolConfig("hideStories", false));
     public static final BoolConfig hideSearchBar = register(new BoolConfig("hideSearchBar", false));
+    public static final BoolConfig sortByUnread = register(new BoolConfig("sortByUnread", false));
 
     public static final StringConfig translationProvider = register(new StringConfig("translationProvider", "google"));
     public static final StringConfig translationLanguage = register(new StringConfig("translationLanguage", ""));

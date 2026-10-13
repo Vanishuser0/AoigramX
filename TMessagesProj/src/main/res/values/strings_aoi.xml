@@ -61,6 +61,8 @@
     <string name="DialogList">Chat List</string>
     <string name="HideStories">Hide stories</string>
     <string name="HideSearchBar">Hide search bar</string>
+    <string name="MoreMenu">More…</string>
+    <string name="SortByUnread">Unread First</string>
     <string name="MessageDetails">Details</string>
     <string name="MessageDetailsId">Message ID</string>
     <string name="MessageDetailsChat">Chat</string>

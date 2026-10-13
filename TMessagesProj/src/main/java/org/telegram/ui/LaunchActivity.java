@@ -261,6 +261,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.remote.AppUpdates;
 
 public class LaunchActivity extends BasePermissionsActivity implements INavigationLayout.INavigationLayoutDelegate, NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate, IPipActivity {
     public final static String EXTRA_FORCE_NOT_INTERNAL_APPS = "force_not_internal_apps";
@@ -6077,7 +6078,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         if (!ApplicationLoader.isStandaloneBuild() && !ApplicationLoader.isBetaBuild()) {
             return;
         }
-        if (!force && !BuildVars.CHECK_UPDATES) {
+        if (!force && (!BuildVars.CHECK_UPDATES || !AoiConfig.autoCheckUpdates.get())) {
             return;
         }
         if (ApplicationLoader.applicationLoaderInstance.isCustomUpdate()) {
@@ -6104,23 +6105,14 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         if (!force && Math.abs(System.currentTimeMillis() - SharedConfig.lastUpdateCheckTime) < MessagesController.getInstance(0).updateCheckDelay * 1000) {
             return;
         }
-        final TLRPC.TL_help_getAppUpdate req = new TLRPC.TL_help_getAppUpdate();
-        try {
-            req.source = ApplicationLoader.applicationContext.getPackageManager().getInstallerPackageName(ApplicationLoader.applicationContext.getPackageName());
-        } catch (Exception ignore) {
-
-        }
-        if (req.source == null) {
-            req.source = "";
-        }
         final int accountNum = currentAccount;
-        int reqId = ConnectionsManager.getInstance(currentAccount).sendRequest(req, (response, error) -> {
+        AppUpdates.request(currentAccount, (response, error) -> {
             SharedConfig.lastUpdateCheckTime = System.currentTimeMillis();
             SharedConfig.saveConfig();
             if (response instanceof TLRPC.TL_help_appUpdate) {
                 final TLRPC.TL_help_appUpdate res = (TLRPC.TL_help_appUpdate) response;
                 AndroidUtilities.runOnUIThread(() -> {
-                    if (SharedConfig.pendingAppUpdate != null && SharedConfig.pendingAppUpdate.version.equals(res.version)) {
+                    if (progress == null && SharedConfig.pendingAppUpdate != null && SharedConfig.pendingAppUpdate.id == res.id) {
                         return;
                     }
                     final boolean newVersionAvailable = SharedConfig.setNewAppVersionAvailable(res);
@@ -6144,11 +6136,14 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                 });
             } else if (response instanceof TLRPC.TL_help_noAppUpdate) {
                 AndroidUtilities.runOnUIThread(() -> {
+                    SharedConfig.pendingAppUpdate = null;
+                    SharedConfig.saveConfig();
+                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.appUpdateAvailable);
                     if (progress != null) {
                         progress.end();
                         BaseFragment fragment = getLastFragment();
                         if (fragment != null) {
-                            BulletinFactory.of(fragment).createSimpleBulletin(R.raw.chats_infotip, LocaleController.getString(R.string.YourVersionIsLatest)).show();
+                            BulletinFactory.of(fragment).createSimpleBulletin(R.raw.contact_check, LocaleController.getString(R.string.YourVersionIsLatest)).show();
                         }
                     }
                 });
@@ -6166,7 +6161,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         });
         if (progress != null) {
             progress.init();
-            progress.onCancel(() -> ConnectionsManager.getInstance(currentAccount).cancelRequest(reqId, true));
         }
     }
 

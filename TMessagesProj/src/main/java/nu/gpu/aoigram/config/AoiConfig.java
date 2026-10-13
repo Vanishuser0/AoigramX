@@ -12,6 +12,7 @@ import nu.gpu.aoigram.dialogs.FolderUnreadCounter;
 import nu.gpu.aoigram.messages.DoubleTap;
 import nu.gpu.aoigram.network.DownloadSpeedBoost;
 import nu.gpu.aoigram.profile.PeerIdDc;
+import nu.gpu.aoigram.remote.AppUpdates;
 
 public final class AoiConfig {
 
@@ -96,6 +97,9 @@ public final class AoiConfig {
     public static final BoolConfig showDetails = register(new BoolConfig("showDetails", true));
     public static final BoolConfig repeatConfirm = register(new BoolConfig("repeatConfirm", true));
     public static final BoolConfig previewRecording = register(new BoolConfig("previewRecording", true));
+
+    public static final IntConfig updateChannel = register(new IntConfig("updateChannel", AppUpdates.STABLE));
+    public static final BoolConfig autoCheckUpdates = register(new BoolConfig("autoCheckUpdates", true));
 
     private AoiConfig() {
     }

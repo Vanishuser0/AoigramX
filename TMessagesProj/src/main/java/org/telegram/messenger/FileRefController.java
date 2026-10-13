@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import nu.gpu.aoigram.remote.AppUpdates;
+
 public class FileRefController extends BaseController {
 
     private static class Requester {
@@ -647,16 +649,7 @@ public class FileRefController extends BaseController {
                 }
                 favStickersWaiter.add(new Waiter(locationKey, parentKey));
             } else if ("update".equals(string)) {
-                TLRPC.TL_help_getAppUpdate req = new TLRPC.TL_help_getAppUpdate();
-                try {
-                    req.source = ApplicationLoader.applicationContext.getPackageManager().getInstallerPackageName(ApplicationLoader.applicationContext.getPackageName());
-                } catch (Exception ignore) {
-
-                }
-                if (req.source == null) {
-                    req.source = "";
-                }
-                getConnectionsManager().sendRequest(req, (response, error) -> onRequestComplete(locationKey, parentKey, response, error, true, false));
+                AppUpdates.request(currentAccount, (response, error) -> onRequestComplete(locationKey, parentKey, response, error, true, false));
             } else if (string.startsWith("avatar_")) {
                 long id = Utilities.parseLong(string);
                 if (id > 0) {

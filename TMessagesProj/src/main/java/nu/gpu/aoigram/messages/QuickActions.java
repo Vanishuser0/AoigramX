@@ -7,6 +7,7 @@ import static org.telegram.ui.ChatActivity.OPTION_COPY_LINK;
 import static org.telegram.ui.ChatActivity.OPTION_DELETE;
 import static org.telegram.ui.ChatActivity.OPTION_EDIT;
 import static org.telegram.ui.ChatActivity.OPTION_FORWARD;
+import static org.telegram.ui.ChatActivity.OPTION_FORWARD_NO_QUOTE;
 import static org.telegram.ui.ChatActivity.OPTION_REPLY;
 
 import android.annotation.SuppressLint;
@@ -103,6 +104,12 @@ public final class QuickActions extends LinearLayout {
                     });
                     ViewCompat.replaceAccessibilityAction(button, AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_LONG_CLICK,
                             items.get(longClickIndex), (view, arguments) -> view.performLongClick());
+                }
+                if (index == forward) {
+                    button.setOnLongClickListener(view -> {
+                        onOption.run(OPTION_FORWARD_NO_QUOTE);
+                        return true;
+                    });
                 }
             }
         }

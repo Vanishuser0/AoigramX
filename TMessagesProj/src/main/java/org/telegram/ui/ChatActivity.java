@@ -399,10 +399,12 @@ public class ChatActivity extends BaseFragment implements
     public static final int OPTION_MESSAGE_DETAILS = 1004;
     private static final int OPTION_SAVE = 1005;
     private static final int OPTION_CLEAR = 1006;
+    public static final int OPTION_FORWARD_NO_QUOTE = 1007;
     private static final int MENU_RECENT_ACTIONS = 90;
     private ChatManualTranslation aoiChatManualTranslation;
     private QuickActions quickActions;
     private boolean aoiHideChannelBottomBar;
+    private boolean aoiForwardNoQuote;
 
     private boolean aoiCanSelectMessage(MessageObject message) {
         int type = getMessageType(message);
@@ -3960,7 +3962,7 @@ public class ChatActivity extends BaseFragment implements
                     }
                     createDeleteMessagesAlert(null, null);
                 } else if (id == forward) {
-                    openForward(true);
+                    openForward(true, false);
                 } else if (id == share) {
                     share();
                 } else if (id == open_direct) {
@@ -8314,7 +8316,11 @@ public class ChatActivity extends BaseFragment implements
         }
 
         actionsButtonsLayout = new ChatActivityActionsButtonsLayout(context, resourceProvider, blurredBackgroundColorProvider, glassBackgroundDrawableFactory);
-        actionsButtonsLayout.setForwardButtonOnClickListener(v -> openForward(false));
+        actionsButtonsLayout.setForwardButtonOnClickListener(v -> openForward(false, false));
+        actionsButtonsLayout.getForwardButton().setOnLongClickListener(v -> {
+            openForward(false, true);
+            return true;
+        });
         actionsButtonsLayout.setSelectButtonOnClickListener(v -> aoiSelectRange(true));
         actionsButtonsLayout.setReplyButtonOnClickListener(v -> {
             MessageObject messageObject = null;
@@ -10557,6 +10563,10 @@ public class ChatActivity extends BaseFragment implements
             actionModeViews.add(actionMode.addItemWithWidth(copy, R.drawable.msg_copy, dp(48), LocaleController.getString(R.string.Copy)));
             if (!isSavedMessages && getDialogId() != UserObject.VERIFY) {
                 actionModeViews.add(actionMode.addItemWithWidth(forward, R.drawable.msg_forward, dp(48), LocaleController.getString(R.string.Forward)));
+                actionMode.getItem(forward).setOnLongClickListener(v -> {
+                    openForward(true, true);
+                    return true;
+                });
             }
             actionModeViews.add(actionMode.addItemWithWidth(share, R.drawable.msg_shareout, dp(48), LocaleController.getString(R.string.ShareFile)));
             actionModeViews.add(actionMode.addItemWithWidth(delete, R.drawable.msg_delete, dp(48), LocaleController.getString(R.string.Delete)));
@@ -12491,7 +12501,7 @@ public class ChatActivity extends BaseFragment implements
         updateSelectedMessageReactions();
     }
 
-    private void openForward(boolean fromActionBar) {
+    private void openForward(boolean fromActionBar, boolean noQuote) {
         if (isPeerNoForwards() || hasSelectedNoforwardsMessage()) {
             // We should update text if user changed locale without re-opening chat activity
             String str;
@@ -12571,6 +12581,7 @@ public class ChatActivity extends BaseFragment implements
         args.putInt("hasPoll", hasPoll);
         args.putBoolean("hasInvoice", hasInvoice);
         args.putBoolean("canSelectTopics", true);
+        args.putBoolean("aoiForwardNoQuote", noQuote);
         DialogsActivity fragment = new DialogsActivity(args);
         fragment.setDelegate(ChatActivity.this);
         presentFragment(fragment);
@@ -15503,6 +15514,10 @@ public class ChatActivity extends BaseFragment implements
                     messagePreviewParams.attach(forwardingPreviewView);
                 }
                 messagePreviewParams.updateForward(messageObjectsToForward, dialog_id);
+                if (aoiForwardNoQuote) {
+                    messagePreviewParams.hideForwardSendersName = true;
+                    aoiForwardNoQuote = false;
+                }
                 if (messagePreviewParams.isEmpty() && editingMessageObject == null) {
                     messagePreviewParams = null;
                 }
@@ -32368,6 +32383,12 @@ public class ChatActivity extends BaseFragment implements
                         ViewCompat.replaceAccessibilityAction(cell, AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_LONG_CLICK,
                             getString(R.string.ViewAsJson), (view, arguments) -> view.performLongClick());
                     }
+                    if (option == OPTION_FORWARD) {
+                        cell.setOnLongClickListener(v1 -> {
+                            processSelectedOption(OPTION_FORWARD_NO_QUOTE);
+                            return true;
+                        });
+                    }
                     if (option == OPTION_REPEAT && (!message.hasValidReplyMessageObject() && getThreadMessage() == null || Repeat.canCopy(message))) {
                         cell.setOnLongClickListener(v1 -> {
                             processSelectedOption(OPTION_REPEAT_AS_COPY);
@@ -33914,7 +33935,8 @@ public class ChatActivity extends BaseFragment implements
                 createDeleteMessagesAlert(selectedObject, selectedObjectGroup, true);
                 break;
             }
-            case OPTION_FORWARD: {
+            case OPTION_FORWARD:
+            case OPTION_FORWARD_NO_QUOTE: {
                 if (getMessagesController().isFrozen()) {
                     AccountFrozenAlert.show(currentAccount);
                     selectedObject = null;
@@ -33934,6 +33956,7 @@ public class ChatActivity extends BaseFragment implements
                 }
                 args.putBoolean("hasInvoice", forwardingMessage.isInvoice());
                 args.putBoolean("canSelectTopics", true);
+                args.putBoolean("aoiForwardNoQuote", option == OPTION_FORWARD_NO_QUOTE);
                 DialogsActivity fragment = new DialogsActivity(args);
                 fragment.setDelegate(this);
                 presentFragment(fragment);
@@ -34970,6 +34993,7 @@ public class ChatActivity extends BaseFragment implements
         if ((messagePreviewParams == null && (!fragment.isQuote || replyingMessageObject == null) || fragment.isQuote && replyingMessageObject == null) && forwardingMessage == null && selectedMessagesIds[0].size() == 0 && selectedMessagesIds[1].size() == 0) {
             return false;
         }
+        boolean noQuote = fragment.getArguments().getBoolean("aoiForwardNoQuote");
         ArrayList<MessageObject> fmessages = new ArrayList<>();
         if (forwardingMessage != null) {
             if (forwardingMessageGroup != null) {
@@ -35039,7 +35063,7 @@ public class ChatActivity extends BaseFragment implements
                         params.suggestionParams = messageSuggestionParams;
                         getSendMessagesHelper().sendMessage(params);
                     }
-                    getSendMessagesHelper().sendMessage(fmessages, did, false, false, notify, scheduleDate, scheduleRepeatPeriod, null, -1, price == null ? 0 : price, getSendMonoForumPeerId(), getSendMessageSuggestionParams());
+                    getSendMessagesHelper().sendMessage(fmessages, did, noQuote, false, notify, scheduleDate, scheduleRepeatPeriod, null, -1, price == null ? 0 : price, getSendMonoForumPeerId(), getSendMessageSuggestionParams());
                 }
                 fragment.finishFragment();
                 createUndoView();
@@ -35126,6 +35150,7 @@ public class ChatActivity extends BaseFragment implements
                         };
                         chatActivity.showFieldPanelForReplyQuote(replyingMessageObject, replyingQuote);
                     } else {
+                        chatActivity.aoiForwardNoQuote = noQuote;
                         chatActivity.showFieldPanelForForward(true, fmessages);
                     }
                     if (chatActivity.getDialogId() == getDialogId() && !AndroidUtilities.isTablet()) {
@@ -35154,6 +35179,7 @@ public class ChatActivity extends BaseFragment implements
                 if (fragment.isQuote && replyingMessageObject != null) {
                     showFieldPanelForReplyQuote(replyingMessageObject, replyingQuote);
                 } else {
+                    aoiForwardNoQuote = noQuote;
                     showFieldPanelForForward(true, fmessages);
                 }
                 if (AndroidUtilities.isTablet()) {

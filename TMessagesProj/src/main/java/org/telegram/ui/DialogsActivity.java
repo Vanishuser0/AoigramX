@@ -98,6 +98,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.dialogs.DialogsMoreMenu;
+import nu.gpu.aoigram.dialogs.FolderUnreadCounter;
 import nu.gpu.aoigram.typeface.Typefaces;
 
 import org.telegram.messenger.AccountInstance;
@@ -3670,7 +3671,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
                 @Override
                 public int getTabCounter(int tabId) {
-                    if (initialDialogsType == DIALOGS_TYPE_FORWARD) {
+                    if (initialDialogsType == DIALOGS_TYPE_FORWARD || FolderUnreadCounter.isHidden()) {
                         return 0;
                     }
                     if (tabId == filterTabsView.getDefaultTabId()) {

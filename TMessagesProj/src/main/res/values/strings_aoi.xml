@@ -72,6 +72,9 @@
     <string name="MoreMenu">More…</string>
     <string name="SortByUnread">Unread First</string>
     <string name="ShowSenderAvatar">Sender avatar in preview</string>
+    <string name="FolderUnreadCounter">Unread counter</string>
+    <string name="FolderUnreadCounterAll">All</string>
+    <string name="FolderUnreadCounterUnmuted">Unmuted only</string>
     <string name="HideAllChatsTab">Hide \"All Chats\" tab</string>
     <string name="MessageDetails">Details</string>
     <string name="MessageDetailsId">Message ID</string>

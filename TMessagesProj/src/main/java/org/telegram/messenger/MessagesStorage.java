@@ -76,6 +76,8 @@ import java.util.function.Consumer;
 
 import me.vkryl.core.BitwiseUtils;
 
+import nu.gpu.aoigram.dialogs.FolderUnreadCounter;
+
 public class MessagesStorage extends BaseController {
 
     private DispatchQueue storageQueue;
@@ -2938,7 +2940,7 @@ public class MessagesStorage extends BaseController {
                     if (filter.pendingUnreadCount >= 0) {
                         continue;
                     }
-                    flags = filter.flags;
+                    flags = FolderUnreadCounter.getFlags(filter.flags);
                 } else {
                     filter = null;
                     flags = MessagesController.DIALOG_FILTER_FLAG_ALL_CHATS;
@@ -3035,6 +3037,9 @@ public class MessagesStorage extends BaseController {
                 if (filter != null) {
                     for (int b = 0, N2 = filter.alwaysShow.size(); b < N2; b++) {
                         long did = filter.alwaysShow.get(b);
+                        if (FolderUnreadCounter.isUnmutedOnly() && mutedDialogs.indexOfKey(did) >= 0 && dialogsWithMentions.indexOfKey(did) < 0) {
+                            continue;
+                        }
                         if (DialogObject.isUserDialog(did)) {
                             for (int i = 0; i < 2; i++) {
                                 LongSparseArray<TLRPC.User> dict = i == 0 ? usersDict : encUsersDict;
@@ -6251,6 +6256,7 @@ public class MessagesStorage extends BaseController {
             }
         }*/
 
+        boolean recalc = FolderUnreadCounter.resetMentionChanged(dialogFilters, dialogsToUpdateMentions, mutedDialogs);
         for (int a = 0, N = dialogFilters.size(); a < N + 2; a++) {
             final boolean isFilter = a < N;
             final boolean isMain = a == N;
@@ -6265,7 +6271,7 @@ public class MessagesStorage extends BaseController {
                     continue;
                 }
                 unreadCount = filter.pendingUnreadCount;
-                flags = filter.flags;
+                flags = FolderUnreadCounter.getFlags(filter.flags);
             } else {
                 filter = null;
                 flags = MessagesController.DIALOG_FILTER_FLAG_ALL_CHATS;
@@ -6372,6 +6378,9 @@ public class MessagesStorage extends BaseController {
                 if (filter != null) {
                     for (int b = 0, N2 = filter.alwaysShow.size(); b < N2; b++) {
                         long did = filter.alwaysShow.get(b);
+                        if (FolderUnreadCounter.isUnmutedOnly() && mutedDialogs.indexOfKey(did) >= 0) {
+                            continue;
+                        }
                         if (DialogObject.isUserDialog(did)) {
                             for (int i = 0; i < 2; i++) {
                                 LongSparseArray<TLRPC.User> dict = i == 0 ? usersDict : encUsersDict;
@@ -6590,6 +6599,9 @@ public class MessagesStorage extends BaseController {
                         }
                         for (int b = 0, N2 = filter.alwaysShow.size(); b < N2; b++) {
                             long did = filter.alwaysShow.get(b);
+                            if (FolderUnreadCounter.isUnmutedOnly() && mutedDialogs.indexOfKey(did) >= 0) {
+                                continue;
+                            }
                             if (newUnreadDialogs.indexOfKey(did) < 0) {
                                 continue;
                             }
@@ -6685,6 +6697,9 @@ public class MessagesStorage extends BaseController {
             } else if (isArchive) {
                 pendingArchiveUnreadCount = unreadCount;
             }
+        }
+        if (recalc) {
+            calcUnreadCounters(false);
         }
         AndroidUtilities.runOnUIThread(() -> {
             ArrayList<MessagesController.DialogFilter> filters = getMessagesController().dialogFilters;
@@ -17895,7 +17910,7 @@ public class MessagesStorage extends BaseController {
         for (int a = 0, N = dialogFilters.size(); a < N; a++) {
             MessagesController.DialogFilter filter = dialogFilters.get(a);
             if (muted) {
-                if ((filter.flags & MessagesController.DIALOG_FILTER_FLAG_EXCLUDE_MUTED) != 0) {
+                if ((FolderUnreadCounter.getFlags(filter.flags) & MessagesController.DIALOG_FILTER_FLAG_EXCLUDE_MUTED) != 0) {
                     filter.pendingUnreadCount = -1;
                 }
             } else {

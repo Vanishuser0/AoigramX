@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import org.telegram.messenger.BuildConfig;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.browser.Browser;
@@ -29,6 +30,13 @@ public final class AoiAboutSettingsActivity extends BaseAoiSettingsActivity {
 
     private static final String CHECK_UPDATE_ITEM_KEY = "checkUpdate";
     private static final int CHECK_UPDATE_ROW = 1;
+    private static final int GITHUB_ROW = 2;
+    private static final int COMMIT_ROW = 3;
+    private static final int CHANNEL_ROW = 4;
+    private static final int DISCUSSION_ROW = 5;
+    private static final String REPO_URL = "https://github.com/risin42/Aoigram";
+    private static final String CHANNEL_USERNAME = "Aoigram";
+    private static final String DISCUSSION_USERNAME = "AoigramChat";
 
     private boolean checkingUpdate;
 
@@ -49,6 +57,11 @@ public final class AoiAboutSettingsActivity extends BaseAoiSettingsActivity {
 
     @Override
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
+        items.add(UItem.asButton(GITHUB_ROW, R.drawable.github, "GitHub", "Aoigram"));
+        items.add(UItem.asButton(COMMIT_ROW, R.drawable.git_commit, getString(R.string.Commit), BuildConfig.COMMIT_ID.substring(0, 7)));
+        items.add(UItem.asButton(CHANNEL_ROW, R.drawable.msg_channel, getString(R.string.ProfileChannel), "@" + CHANNEL_USERNAME));
+        items.add(UItem.asButton(DISCUSSION_ROW, R.drawable.msg_discussion, getString(R.string.Discussion), "@" + DISCUSSION_USERNAME));
+        items.add(UItem.asShadow(null));
         UItem channelItem = UItem.asButton(0, R.drawable.msg_download_settings, getString(R.string.UpdateChannel), AppUpdates.getLabel(AoiConfig.updateChannel.get()));
         channelItem.object = AoiConfig.updateChannel;
         items.add(channelItem);
@@ -62,7 +75,15 @@ public final class AoiAboutSettingsActivity extends BaseAoiSettingsActivity {
 
     @Override
     protected void onItemClick(UItem item, View view, int position, float x, float y) {
-        if (item.id == CHECK_UPDATE_ROW) {
+        if (item.id == GITHUB_ROW) {
+            Browser.openUrl(getParentActivity(), REPO_URL);
+        } else if (item.id == COMMIT_ROW) {
+            Browser.openUrl(getParentActivity(), REPO_URL + "/commit/" + BuildConfig.COMMIT_ID);
+        } else if (item.id == CHANNEL_ROW) {
+            getMessagesController().openByUserName(CHANNEL_USERNAME, this, 1);
+        } else if (item.id == DISCUSSION_ROW) {
+            getMessagesController().openByUserName(DISCUSSION_USERNAME, this, 1);
+        } else if (item.id == CHECK_UPDATE_ROW) {
             checkUpdate();
         } else if (item.object == AoiConfig.updateChannel) {
             showUpdateChannelDialog();

@@ -512,9 +512,20 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
             });
             o.addView(folderItem, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
         }
+        o.addGap();
+        if (getMessagesController().dialogs_dict.get(DialogObject.makeFolderDialogId(1)) != null) {
+            o.add(R.drawable.msg_archive, getString(R.string.ArchivedChats), () -> {
+                Bundle args = new Bundle();
+                args.putInt("folderId", 1);
+                presentFragment(new DialogsActivity(args));
+            });
+        }
+        o.add(R.drawable.outline_saved_24, getString(R.string.SavedMessages), () -> presentFragment(ChatActivity.of(getUserConfig().getClientUserId())));
 //        o.setBlur(true);
         o.translate(-dp(8), -dp(4));
-        o.setMaxHeight(dp(400));
+        final int[] location = new int[2];
+        anchor.getLocationInWindow(location);
+        o.setMaxHeight(location[1] - AndroidUtilities.statusBarHeight - dp(16));
         final ShapeDrawable bg = Theme.createRoundRectDrawable(dp(28), getThemedColor(Theme.key_windowBackgroundWhite));
         bg.getPaint().setShadowLayer(dp(6), 0, dp(1), Theme.multAlpha(0xFF000000, 0.15f));
         o.setScrimViewBackground(bg);

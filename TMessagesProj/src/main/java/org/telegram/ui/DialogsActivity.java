@@ -13802,14 +13802,21 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             return true;
         });
         io.addGap();
-        io.add(R.drawable.outline_groups_24, getString(R.string.NewGroup), () -> {
-            Bundle args = new Bundle();
-            presentFragment(new GroupCreateActivity(args));
-        });
+        if (getMessagesController().dialogs_dict.get(DialogObject.makeFolderDialogId(1)) != null) {
+            io.add(R.drawable.msg_archive, getString(R.string.ArchivedChats), () -> {
+                Bundle args = new Bundle();
+                args.putInt("folderId", 1);
+                presentFragment(new DialogsActivity(args));
+            });
+        }
         io.add(R.drawable.outline_saved_24, getString(R.string.SavedMessages), () -> {
             Bundle args = new Bundle();
             args.putLong("user_id", UserConfig.getInstance(currentAccount).getClientUserId());
             presentFragment(new ChatActivity(args));
+        });
+        io.add(R.drawable.outline_groups_24, getString(R.string.NewGroup), () -> {
+            Bundle args = new Bundle();
+            presentFragment(new GroupCreateActivity(args));
         });
         if (ApplicationLoader.applicationLoaderInstance != null) {
             ApplicationLoader.applicationLoaderInstance.addItemOptions(io);

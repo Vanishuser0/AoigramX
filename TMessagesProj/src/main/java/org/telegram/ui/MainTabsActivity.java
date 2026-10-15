@@ -90,6 +90,7 @@ import me.vkryl.android.animator.FactorAnimator;
 
 import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.dialogs.FolderIcons;
+import nu.gpu.aoigram.dialogs.RecentChats;
 
 public class MainTabsActivity extends ViewPagerActivity implements NotificationCenter.NotificationCenterDelegate, FactorAnimator.Target {
 
@@ -466,12 +467,11 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
     private boolean openFoldersSelector(View anchor) {
         if (getContext() == null || getParentActivity() == null) return false;
         final ArrayList<MessagesController.DialogFilter> filters = getMessagesController().getDialogFilters();
-        if (filters == null || filters.size() <= 1) return false;
 
-        final ItemOptions o = ItemOptions.makeOptions(this, anchor);
+        final ItemOptions o = ItemOptions.makeOptions(this, anchor, true);
         for (int i = 0; i < filters.size(); i++) {
             final MessagesController.DialogFilter folder = filters.get(i);
-            if (AoiConfig.hideAllChatsTab.get() && folder.isDefault()) continue;
+            if ((AoiConfig.hideAllChatsTab.get() || filters.size() <= 1) && folder.isDefault()) continue;
             final ActionBarMenuSubItem folderItem = new ActionBarMenuSubItem(getParentActivity(), 2, false, false, getResourceProvider());
             folderItem.setPadding(dp(18), 0, dp(18), 0);
             CharSequence title = folder.isDefault() ? getString(R.string.FilterAllChats) : folder.name;
@@ -512,7 +512,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
             });
             o.addView(folderItem, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
         }
-        o.addGap();
+        o.addGapIf(filters.size() > 1);
         if (getMessagesController().dialogs_dict.get(DialogObject.makeFolderDialogId(1)) != null) {
             o.add(R.drawable.msg_archive, getString(R.string.ArchivedChats), () -> {
                 Bundle args = new Bundle();
@@ -521,6 +521,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
             });
         }
         o.add(R.drawable.outline_saved_24, getString(R.string.SavedMessages), () -> presentFragment(ChatActivity.of(getUserConfig().getClientUserId())));
+        RecentChats.addMenu(this, o);
 //        o.setBlur(true);
         o.translate(-dp(8), -dp(4));
         final int[] location = new int[2];

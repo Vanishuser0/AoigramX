@@ -370,6 +370,7 @@ import me.vkryl.core.BitwiseUtils;
 import me.vkryl.core.reference.ReferenceList;
 
 import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.dialogs.RecentChats;
 import nu.gpu.aoigram.media.DownloadedMedia;
 import nu.gpu.aoigram.media.PhotoClipboard;
 import nu.gpu.aoigram.messages.DoubleTap;
@@ -3375,6 +3376,9 @@ public class ChatActivity extends BaseFragment implements
         }
         if (chatMode == MODE_SAVED) {
             getMessagesController().getSavedMessagesController().checkSavedDialogCount(getTopicId());
+        }
+        if (chatMode == MODE_DEFAULT && currentEncryptedChat == null && !isComments) {
+            RecentChats.add(currentAccount, currentUser != null ? currentUser.id : -currentChat.id);
         }
 
         return true;

@@ -146,6 +146,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.concurrent.CountDownLatch;
 
+import nu.gpu.aoigram.dialogs.RecentChats;
+
 public class TopicsFragment extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, ChatActivityInterface, RightSlidingDialogContainer.BaseFragmentWithFullscreen, MainTabsActivity.TabFragmentDelegate {
 
     private final static int BOTTOM_BUTTON_TYPE_JOIN = 0;
@@ -2715,6 +2717,9 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
             exceptionsReq.flags |= 1;
             ((TLRPC.TL_inputNotifyPeer) exceptionsReq.peer).peer = getMessagesController().getInputPeer(-chatId);
             getConnectionsManager().sendRequest(exceptionsReq, null);
+        }
+        if (!openedForSelect) {
+            RecentChats.add(currentAccount, -chatId);
         }
         return true;
     }

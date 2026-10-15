@@ -235,4 +235,5 @@
     <string name="UpdateChannel">Update channel</string>
     <string name="UpdateChannelBeta">Beta</string>
     <string name="UpdateChannelStable">Stable</string>
+    <string name="RecentChats">Recent chats</string>
 </resources>

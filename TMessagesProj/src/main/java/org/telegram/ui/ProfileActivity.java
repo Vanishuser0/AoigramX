@@ -351,6 +351,7 @@ import me.vkryl.android.animator.BoolAnimator;
 import me.vkryl.core.reference.ReferenceList;
 
 import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.dialogs.RecentChats;
 import nu.gpu.aoigram.profile.PeerIdDc;
 import nu.gpu.aoigram.profile.RegistrationDate;
 
@@ -2322,6 +2323,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
         additionNavigationBarHeight = hasMainTabs ? dp(DialogsActivity.MAIN_TABS_HEIGHT_WITH_MARGINS) : 0;
         additionFloatingButtonOffset = hasMainTabs ? dp(DialogsActivity.MAIN_TABS_HEIGHT + DialogsActivity.MAIN_TABS_MARGIN) : 0;
+        if (currentEncryptedChat == null) {
+            RecentChats.add(currentAccount, userId != 0 ? userId : -chatId);
+        }
 
         return true;
     }

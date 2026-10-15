@@ -270,7 +270,50 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         NotificationCenter.NotificationCenterDelegate, FactorAnimator.Target, IMessageCell {
     private final ForwardsCount forwardsCount = new ForwardsCount();
     private final EditedIcon editedIcon = new EditedIcon();
+    private int stickerTimeShift;
+    private int stickerSideButtonShift;
     private boolean shareButtonHidden;
+
+    private void layoutStickerTime() {
+        stickerTimeShift = stickerSideButtonShift = 0;
+        if (!currentMessageObject.isAnyKindOfSticker() || currentMessageObject.type == MessageObject.TYPE_EMOJIS || currentMessageObject.isAnimatedEmoji() || additionalTimeOffsetY != 0) {
+            return;
+        }
+        if (!isSideMenued) {
+            float panelBottom = dp(12);
+            if (drawForwardedName && forwardedNameLayout[0] != null) {
+                panelBottom += dp(10) + (int) Theme.chat_forwardNamePaint.getTextSize() * 2;
+            }
+            if (replyNameLayout != null) {
+                panelBottom += dp(12) + Theme.chat_replyNamePaint.getTextSize() + Math.max(replyTextHeight - dp(3.66f), Theme.chat_replyTextPaint.getTextSize());
+            }
+            if (panelBottom > photoImage.getImageY2() - dp(23)) {
+                return;
+            }
+        }
+        int width = timeWidth + dp(currentMessageObject.isOutOwner() ? 32 : 12);
+        int timeLeft = timeX - dp(effectId != 0 ? 30 : 12);
+        int nameRight = drawNameLayout && nameLayout != null && reactionsLayoutInBubble.isEmpty ? nameWidth + dp(currentNameBotVerificationId != 0 ? 54 : 34) : 0;
+        int sideButtonWidth = drawSideButton != 0 ? dp(40) : 0;
+        int left;
+        if (currentMessageObject.isOutOwner()) {
+            int backgroundLeft = getBackgroundDrawableLeft();
+            left = backgroundLeft - dp(8) - width;
+            if (left - sideButtonWidth < nameRight + dp(14)) {
+                return;
+            }
+            stickerSideButtonShift = left - backgroundLeft;
+        } else {
+            int backgroundRight = getBackgroundDrawableRight();
+            left = backgroundRight + nameRight + dp(8);
+            if (left + width + sideButtonWidth > layoutWidth - dp(8)) {
+                return;
+            }
+            stickerSideButtonShift = left + width - backgroundRight;
+        }
+        stickerTimeShift = left - timeLeft;
+        timeX += stickerTimeShift;
+    }
 
     private final static int TIME_APPEAR_MS = 200;
     private final static int UPLOADING_ALLOWABLE_ERROR = 1024 * 1024;
@@ -13863,6 +13906,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             if (effectId != 0) {
                 timeX += dp(14 + 4);
             }
+            layoutStickerTime();
 
             final boolean isInWelcomeMessages = delegate != null && delegate.getChatMode() == ChatActivity.MODE_WELCOME_MESSAGES;
             if ((currentMessageObject.messageOwner.flags & TLRPC.MESSAGE_FLAG_HAS_VIEWS) != 0 && !isInWelcomeMessages) {
@@ -20132,7 +20176,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         boolean isOut = currentMessageObject != null && currentMessageObject.isOutOwner();
         int avatarWidth = needDrawAvatar() ? dp(currentPosition != null ? 73 : (currentMessageObject != null && currentMessageObject.isRepostPreview ? 42 : 63)) : 0;
         int shareButtonWidth = (isOut && (checkNeedDrawShareButton(currentMessageObject) || useTranscribeButton) ? dp(48) : 0);
-        int left = getBackgroundDrawableLeft() - avatarWidth - shareButtonWidth;
+        int left = getBackgroundDrawableLeft() - avatarWidth - shareButtonWidth + Math.min(stickerSideButtonShift, 0);
         if (botButtons != null) {
             int buttonMostLeft = Integer.MAX_VALUE;
             int addX;
@@ -20161,7 +20205,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
     public int getBoundsRight() {
         boolean isIn = currentMessageObject != null && !currentMessageObject.isOutOwner();
         int shareButtonWidth = (isIn && (checkNeedDrawShareButton(currentMessageObject) || useTranscribeButton) ? dp(48) : 0);
-        int right = getBackgroundDrawableRight() + shareButtonWidth;
+        int right = getBackgroundDrawableRight() + shareButtonWidth + Math.max(stickerSideButtonShift, 0);
         if (botButtons != null) {
             int buttonMostRight = 0;
             int addX;
@@ -21686,6 +21730,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 sideStartX += currentMessagesGroup.transitionParams.offsetRight - animationOffsetX;
             }
         }
+        sideStartX += stickerSideButtonShift;
         if (drawSideButton == SIDE_BUTTON_SPONSORED_CLOSE) {
             sideStartY = dp(6);
         } else {
@@ -24812,7 +24857,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         }
         timeY -= dp(8.5f);
 
-        float offsetX = currentMessageObject != null && currentMessageObject.isAnyKindOfSticker() ? dp(-STICKER_STATUS_OFFSET) : 0;
+        float offsetX = (currentMessageObject != null && currentMessageObject.isAnyKindOfSticker() ? dp(-STICKER_STATUS_OFFSET) : 0) + stickerTimeShift;
         if (drawClock) {
             MsgClockDrawable drawable = Theme.chat_msgClockDrawable;
             int color;

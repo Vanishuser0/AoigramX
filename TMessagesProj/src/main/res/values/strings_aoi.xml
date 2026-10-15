@@ -48,6 +48,7 @@
     <string name="DownloadSpeedBoostExtreme">Extreme</string>
     <string name="UploadSpeedBoost">Upload speed boost</string>
     <string name="SpeedBoostInfo">Download boost only affects videos and audio. Extreme may be slower on unstable connections.</string>
+    <string name="HideShareButton">Hide share button</string>
     <string name="HideKeyboardOnScroll">Hide keyboard on scroll</string>
     <string name="HideChannelBottomBar">Hide channel bottom bar</string>
     <string name="DoubleTapActions">Double Tap Actions</string>

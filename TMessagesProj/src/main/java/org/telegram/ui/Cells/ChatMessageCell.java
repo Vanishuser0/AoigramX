@@ -270,6 +270,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         NotificationCenter.NotificationCenterDelegate, FactorAnimator.Target, IMessageCell {
     private final ForwardsCount forwardsCount = new ForwardsCount();
     private final EditedIcon editedIcon = new EditedIcon();
+    private boolean shareButtonHidden;
 
     private final static int TIME_APPEAR_MS = 200;
     private final static int UPLOADING_ALLOWABLE_ERROR = 1024 * 1024;
@@ -5183,7 +5184,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                         result = true;
                     } else if (
                         sideButtonVisible &&
-                        drawSideButton != 0 &&
+                        drawSideButton != 0 && !shareButtonHidden &&
                         x >= sideStartX - dp(24) && x <= sideStartX + dp(40) &&
                         y >= sideStartY - dp(drawSummarizeButton ? 6 : 24) && y <= sideStartY + dp(38 + (drawSideButton == 3 && commentLayout != null ? 18 : 0) + (drawSideButton2 == SIDE_BUTTON_SPONSORED_MORE ? 38 : 0))
                     ) {
@@ -7004,6 +7005,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 }
             }
             drawSummarizeButton = TranslateController.isSummarizable(messageObject);
+            shareButtonHidden = drawSideButton == 1 && AoiConfig.hideShareButton.get();
             hasReplyQuote = false;
             isReplyQuote = false;
             isReplyTaskOrPollOption = false;
@@ -21744,6 +21746,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 sideButtonVisible = false;
                 return;
             }
+            if (shareButtonHidden) {
+                return;
+            }
 
             final int sponosoredAlpha = (int) (255 * (1f - isSponsoredMessageHidden.getFloatValue()));
             int restoreToSponosoredAlpha = -1;
@@ -27515,7 +27520,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 if (commentLayout != null) {
                     info.addChild(ChatMessageCell.this, COMMENT);
                 }
-                if (drawSideButton == 1 || drawSideButton == 2) {
+                if ((drawSideButton == 1 || drawSideButton == 2) && !shareButtonHidden) {
                     info.addChild(ChatMessageCell.this, SHARE);
                 }
                 if (replyNameLayout != null) {

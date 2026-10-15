@@ -62,6 +62,7 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
 
     @Override
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
+        items.add(asConfigCheck(AoiConfig.hideShareButton, R.string.HideShareButton));
         items.add(asConfigCheck(AoiConfig.hideKeyboardOnScroll, R.string.HideKeyboardOnScroll));
         items.add(asConfigCheck(AoiConfig.hideChannelBottomBar, R.string.HideChannelBottomBar));
         items.add(UItem.asShadow(null));

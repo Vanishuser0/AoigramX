@@ -340,7 +340,7 @@ public class ContactsAdapter extends RecyclerListView.SectionsAdapter {
         } else {
             if (section == 0) {
                 if (isEmpty) {
-                    return (includeSearch ? 1 : 0) + 2;
+                    return (includeSearch ? 1 : 0) + (isAdmin ? 2 : 3);
                 }
 
                 if (isAdmin) {
@@ -348,7 +348,7 @@ public class ContactsAdapter extends RecyclerListView.SectionsAdapter {
                 } else if (needPhonebook) {
                     return (includeSearch ? 1 : 0) + 4;
                 } else {
-                    return (includeSearch ? 1 : 0) + 4;
+                    return (includeSearch ? 1 : 0) + 5;
                 }
             } else {
                 if (isEmpty) {
@@ -578,6 +578,8 @@ public class ContactsAdapter extends RecyclerListView.SectionsAdapter {
                             textCell.setTextAndValueAndColorfulIcon(getString(R.string.NewGroup), "", false, R.drawable.settings_group, 0xFF1CA5ED, 0xFF1488E1, false);
                         } else if (position == 1) {
                             textCell.setTextAndValueAndColorfulIcon(getString(R.string.NewChannel), "", false, R.drawable.settings_channel, 0xFF55CA47, 0xFF27B434, false);
+                        } else if (position == 2) {
+                            textCell.setTextAndValueAndColorfulIcon(getString(R.string.RecentCalls), "", false, R.drawable.settings_calls, 0xFFF09F1B, 0xFFE18A11, false);
                         }
                     }
                 } else {
@@ -663,10 +665,10 @@ public class ContactsAdapter extends RecyclerListView.SectionsAdapter {
                         return isEmpty ? SHADOW_CELL : (sortType == SORT_TYPE_BY_NAME || sortType == SORT_TYPE_BY_TIME ? HEADER_CELL : GRAY_CELL);
                     }
                 } else {
-                    if (position == 2) {
+                    if (position == 3) {
                         return SHADOW_CELL;
                     }
-                    if (position == 3) {
+                    if (position == 4) {
                         return isEmpty ? SHADOW_CELL : (sortType == SORT_TYPE_BY_NAME || sortType == SORT_TYPE_BY_TIME ? HEADER_CELL : GRAY_CELL);
                     }
                 }

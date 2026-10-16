@@ -719,6 +719,8 @@ public class ContactsActivity extends BaseFragment implements FactorAnimator.Tar
                                 presentFragment(new ActionIntroActivity(ActionIntroActivity.ACTION_TYPE_CHANNEL_CREATE));
                                 preferences.edit().putBoolean("channel_intro", true).commit();
                             }
+                        } else if (row == 2) {
+                            presentFragment(new CallLogActivity());
                         }
                     }
                 } else {

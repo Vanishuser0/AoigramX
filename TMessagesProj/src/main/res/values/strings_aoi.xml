@@ -48,6 +48,13 @@
     <string name="DownloadSpeedBoostExtreme">Extreme</string>
     <string name="UploadSpeedBoost">Upload speed boost</string>
     <string name="SpeedBoostInfo">Download boost only affects videos and audio. Extreme may be slower on unstable connections.</string>
+    <string name="StickerSize">Sticker size</string>
+    <string name="StickerSizeSmall">Small</string>
+    <string name="StickerSizeLarge">Large</string>
+    <string name="StickerSizePreviewName">Aoi</string>
+    <string name="StickerSizePreviewQuote">Show me!</string>
+    <string name="StickerSizePreviewReply">So cute! 🥰</string>
+    <string name="StickerSizePreviewMeow">Meow~</string>
     <string name="HideShareButton">Hide share button</string>
     <string name="HideKeyboardOnScroll">Hide keyboard on scroll</string>
     <string name="HideChannelBottomBar">Hide channel bottom bar</string>

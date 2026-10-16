@@ -9739,9 +9739,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     float maxHeight;
                     int maxWidth;
                     if (AndroidUtilities.isTablet()) {
-                        maxHeight = maxWidth = (int) (AndroidUtilities.getMinTabletSide() * 0.4f);
+                        maxHeight = maxWidth = (int) (AndroidUtilities.getMinTabletSide() * 0.4f * AoiConfig.stickerSize.get() / 100f);
                     } else {
-                        maxHeight = maxWidth = (int) (Math.min(getParentWidth(), AndroidUtilities.displaySize.y) * 0.5f);
+                        maxHeight = maxWidth = (int) (Math.min(getParentWidth(), AndroidUtilities.displaySize.y) * 0.5f * AoiConfig.stickerSize.get() / 100f);
                     }
                     String filter;
                     if (messageObject.isAnimatedEmoji() || messageObject.isDice()) {
@@ -9846,6 +9846,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                             photoImage.setImage(ImageLocation.getForPath(messageObject.messageOwner.attachPath), filter,
                                     ImageLocation.getForObject(currentPhotoObjectThumb, photoParentObject), "b1", thumb != null ? thumb : currentPhotoObjectThumbStripped,
                                     messageObject.getDocument().size, isWebpSticker ? "webp" : null, parentObject, 1);
+                        } else if (messageObject.useCustomPhoto) {
+                            photoImage.setImageBitmap(getResources().getDrawable(R.drawable.preview_sticker));
                         } else if (messageObject.getDocument().id != 0) {
                             photoImage.setImage(ImageLocation.getForDocument(messageObject.getDocument()), filter,
                                     ImageLocation.getForObject(currentPhotoObjectThumb, photoParentObject), "b1", thumb != null ? thumb : currentPhotoObjectThumbStripped,
@@ -14690,11 +14692,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         }
         if (documentAttachType == DOCUMENT_ATTACH_TYPE_GIF) {
             if (drawPhotoImage && !currentMessageObject.isRepostPreview && !currentMessageObject.isSponsored() && photoImage.getVisible() && !hasGamePreview && !currentMessageObject.needDrawBluredPreview() && !currentMessageObject.preview && !isSmallImage && !currentMessageObject.isSponsored()) {
-                int oldAlpha = ((BitmapDrawable) Theme.chat_msgMediaMenuDrawable).getPaint().getAlpha();
-                Theme.chat_msgMediaMenuDrawable.setAlpha((int) (oldAlpha * controlsAlpha));
-                setDrawableBounds(Theme.chat_msgMediaMenuDrawable, otherX = (int) (photoImage.getImageX() + photoImage.getImageWidth() - dp(14)), otherY = (int) (photoImage.getImageY() + dp(8.1f)));
-                Theme.chat_msgMediaMenuDrawable.draw(canvas);
-                Theme.chat_msgMediaMenuDrawable.setAlpha(oldAlpha);
+                otherX = (int) (photoImage.getImageX() + photoImage.getImageWidth() - dp(14));
+                otherY = (int) (photoImage.getImageY() + dp(8.1f));
             }
         } else if (documentAttachType == DOCUMENT_ATTACH_TYPE_MUSIC) {
             if (currentMessageObject.isOutOwner()) {
@@ -25061,15 +25060,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             if (photoImage.getVisible() && !currentMessageObject.isRepostPreview) {
                 if (!currentMessageObject.needDrawBluredPreview() && !currentMessageObject.isSponsored() && !currentMessageObject.isRepostPreview && !currentMessageObject.preview && !isSmallImage) {
                     if (documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO) {
-                        int oldAlpha = ((BitmapDrawable) Theme.chat_msgMediaMenuDrawable).getPaint().getAlpha();
-                        if (drawMediaCheckBox) {
-                            Theme.chat_msgMediaMenuDrawable.setAlpha((int) (oldAlpha * controlsAlpha * (1.0f - checkBoxAnimationProgress)));
-                        } else {
-                            Theme.chat_msgMediaMenuDrawable.setAlpha((int) (oldAlpha * controlsAlpha));
-                        }
-                        setDrawableBounds(Theme.chat_msgMediaMenuDrawable, otherX = (int) (photoImage.getImageX() + photoImage.getImageWidth() - dp(14)), otherY = (int) (photoImage.getImageY() + dp(8.1f)));
-                        Theme.chat_msgMediaMenuDrawable.draw(canvas);
-                        Theme.chat_msgMediaMenuDrawable.setAlpha(oldAlpha);
+                        otherX = (int) (photoImage.getImageX() + photoImage.getImageWidth() - dp(14));
+                        otherY = (int) (photoImage.getImageY() + dp(8.1f));
                     }
                 }
 

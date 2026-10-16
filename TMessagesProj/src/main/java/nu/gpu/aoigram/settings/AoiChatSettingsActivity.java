@@ -20,6 +20,7 @@ import nu.gpu.aoigram.config.BoolConfig;
 import nu.gpu.aoigram.config.IntConfig;
 import nu.gpu.aoigram.messages.DoubleTap;
 import nu.gpu.aoigram.messages.DoubleTapPreview;
+import nu.gpu.aoigram.messages.StickerSizePreview;
 import nu.gpu.aoigram.reactions.PinnedReactions;
 
 public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
@@ -41,6 +42,8 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
             new Option(AoiConfig.previewRecording, R.string.PreviewRecording),
     };
 
+    private StickerSizeCell stickerSizeCell;
+    private StickerSizePreview stickerSizePreview;
     private DoubleTapPreview doubleTapPreview;
     private final SparseBooleanArray expandedGroups = new SparseBooleanArray();
 
@@ -56,12 +59,20 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
 
     @Override
     protected void onCreateSettingsView(Context context) {
+        stickerSizePreview = new StickerSizePreview(context, this);
+        stickerSizeCell = new StickerSizeCell(context, stickerSizePreview::update);
         doubleTapPreview = new DoubleTapPreview(context, this);
         doubleTapPreview.setActions(AoiConfig.doubleTapIncomingAction.get(), AoiConfig.doubleTapOutgoingAction.get(), false);
     }
 
     @Override
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
+        UItem stickerSizeItem = UItem.asCustom(stickerSizeCell, 112);
+        stickerSizeItem.text = getString(R.string.StickerSize);
+        stickerSizeItem.object = AoiConfig.stickerSize;
+        items.add(stickerSizeItem);
+        items.add(UItem.asCustom(stickerSizePreview));
+        items.add(UItem.asShadow(null));
         items.add(asConfigCheck(AoiConfig.hideShareButton, R.string.HideShareButton));
         items.add(asConfigCheck(AoiConfig.hideKeyboardOnScroll, R.string.HideKeyboardOnScroll));
         items.add(asConfigCheck(AoiConfig.hideChannelBottomBar, R.string.HideChannelBottomBar));

@@ -82,6 +82,7 @@ public final class AoiConfig {
     public static final BoolConfig llmContext = register(new BoolConfig("llmContext", false));
     public static final IntConfig llmContextCount = register(new IntConfig("llmContextCount", 5));
 
+    public static final IntConfig stickerSize = register(new IntConfig("stickerSize", 80));
     public static final BoolConfig hideShareButton = register(new BoolConfig("hideShareButton", false));
     public static final BoolConfig hideKeyboardOnScroll = register(new BoolConfig("hideKeyboardOnScroll", false));
     public static final BoolConfig hideChannelBottomBar = register(new BoolConfig("hideChannelBottomBar", false));

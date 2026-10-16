@@ -167,10 +167,11 @@ public class JoinGroupAlert extends BottomSheet {
         if (chatInvite != null && origination == ORIGINATION_SPONSORED_CHAT) {
             textView.setText(getString(R.string.ChannelPublic).toLowerCase());
         } else {
-            textView.setText(isChannel
-                    ? getString(R.string.ChannelPrivate).toLowerCase()
-                    : getString(R.string.MegaPrivate).toLowerCase()
-            );
+            String text = getString(isChannel ? R.string.ChannelPrivate : R.string.MegaPrivate).toLowerCase();
+            if (participants_count > 0) {
+                text += ", " + LocaleController.formatPluralStringComma(isChannel ? "Subscribers" : "Members", participants_count);
+            }
+            textView.setText(text);
         }
         linearLayout.addView(textView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.CENTER_HORIZONTAL, 10, 0, 10, hasAbout ? 0 : 20));
 

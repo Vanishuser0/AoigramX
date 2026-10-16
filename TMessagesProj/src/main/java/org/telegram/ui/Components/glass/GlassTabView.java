@@ -53,6 +53,14 @@ import me.vkryl.android.animator.BoolAnimator;
 import me.vkryl.android.animator.FactorAnimator;
 
 public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, FactorAnimator.Target {
+    public void setCompact(float compact) {
+        textView.setAlpha(1f - compact);
+        imageView.setTranslationY(-dp(2) * compact);
+        if (backupImageView != null) {
+            backupImageView.setTranslationY(-dp(2) * compact);
+        }
+    }
+
     private final TextView textView;
     private final RLottieImageView imageView;
     private BackupImageView backupImageView;
@@ -125,6 +133,9 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
             final float offset = (visualWidth - getMeasuredWidth()) / 2f;
             imageView.setTranslationX(offset);
             textView.setTranslationX(offset);
+            if (backupImageView != null) {
+                backupImageView.setTranslationX(offset);
+            }
         }
     }
 

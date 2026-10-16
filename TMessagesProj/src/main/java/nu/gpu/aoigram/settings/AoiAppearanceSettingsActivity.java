@@ -18,10 +18,13 @@ import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.dialogs.FolderIcons;
 import nu.gpu.aoigram.dialogs.FolderTabsPreview;
 import nu.gpu.aoigram.dialogs.FolderUnreadCounter;
+import nu.gpu.aoigram.tabs.MainTabs;
+import nu.gpu.aoigram.tabs.MainTabsPreview;
 
 public final class AoiAppearanceSettingsActivity extends BaseAoiSettingsActivity {
 
     private FolderTabsPreview folderTabsPreview;
+    private MainTabsPreview mainTabsPreview;
 
     @Override
     protected CharSequence getActionBarTitle() {
@@ -36,11 +39,13 @@ public final class AoiAppearanceSettingsActivity extends BaseAoiSettingsActivity
     @Override
     protected void onCreateSettingsView(Context context) {
         folderTabsPreview = new FolderTabsPreview(context, this);
+        mainTabsPreview = new MainTabsPreview(context, this);
     }
 
     @Override
     protected void updateCustomColors() {
         folderTabsPreview.updateColors();
+        mainTabsPreview.updateColors();
     }
 
     @Override
@@ -77,6 +82,16 @@ public final class AoiAppearanceSettingsActivity extends BaseAoiSettingsActivity
         items.add(unreadCounterItem);
         items.add(asConfigCheck(AoiConfig.hideAllChatsTab, R.string.HideAllChatsTab));
         items.add(UItem.asShadow(null));
+        items.add(UItem.asHeader(getString(R.string.MainTabs)));
+        items.add(UItem.asCustom(mainTabsPreview));
+        UItem visibilityItem = UItem.asButton(0, getString(R.string.MainTabsVisibility), MainTabs.getLabel(AoiConfig.mainTabsVisibility.get()));
+        visibilityItem.object = AoiConfig.mainTabsVisibility;
+        items.add(visibilityItem);
+        if (!MainTabs.isHidden()) {
+            items.add(asConfigCheck(AoiConfig.hideMainTabsTitles, R.string.HideMainTabsTitles));
+            items.add(asConfigCheck(AoiConfig.hideContactsTab, R.string.HideContactsTab));
+        }
+        items.add(UItem.asShadow(null));
     }
 
     @Override
@@ -84,6 +99,7 @@ public final class AoiAppearanceSettingsActivity extends BaseAoiSettingsActivity
         super.onItemClick(item, view, position, x, y);
         if (item.object == AoiConfig.glareEffects) {
             folderTabsPreview.updateColors();
+            mainTabsPreview.updateColors();
         } else if (item.object == AoiConfig.hideSearchBar) {
             parentLayout.rebuildFragments(0);
         } else if (item.object == AoiConfig.folderTabStyle) {
@@ -104,6 +120,26 @@ public final class AoiAppearanceSettingsActivity extends BaseAoiSettingsActivity
             }));
         } else if (item.object == AoiConfig.hideAllChatsTab) {
             folderTabsPreview.updateTabs(true);
+            parentLayout.rebuildFragments(0);
+        } else if (item.object == AoiConfig.mainTabsVisibility) {
+            String[] labels = {MainTabs.getLabel(MainTabs.ALWAYS), MainTabs.getLabel(MainTabs.HIDE_ON_SCROLL), MainTabs.getLabel(MainTabs.HIDDEN)};
+            showDialog(AlertsCreator.createSingleChoiceDialog(getParentActivity(), labels, getString(R.string.MainTabsVisibility), AoiConfig.mainTabsVisibility.get(), (dialog, which) -> {
+                if (which == AoiConfig.mainTabsVisibility.get()) {
+                    return;
+                }
+                boolean rebuild = MainTabs.isHidden() || which == MainTabs.HIDDEN;
+                AoiConfig.mainTabsVisibility.set(which);
+                listView.adapter.update(true);
+                mainTabsPreview.updateVisibility();
+                if (rebuild) {
+                    parentLayout.rebuildFragments(0);
+                }
+            }));
+        } else if (item.object == AoiConfig.hideMainTabsTitles) {
+            mainTabsPreview.updateTitles();
+            parentLayout.rebuildFragments(0);
+        } else if (item.object == AoiConfig.hideContactsTab) {
+            mainTabsPreview.updateContactsTab();
             parentLayout.rebuildFragments(0);
         }
     }

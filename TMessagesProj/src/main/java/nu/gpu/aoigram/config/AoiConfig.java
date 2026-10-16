@@ -13,6 +13,7 @@ import nu.gpu.aoigram.messages.DoubleTap;
 import nu.gpu.aoigram.network.DownloadSpeedBoost;
 import nu.gpu.aoigram.profile.PeerIdDc;
 import nu.gpu.aoigram.remote.AppUpdates;
+import nu.gpu.aoigram.tabs.MainTabs;
 
 public final class AoiConfig {
 
@@ -44,6 +45,9 @@ public final class AoiConfig {
     public static final IntConfig folderTabStyle = register(new IntConfig("folderTabStyle", FolderIcons.TITLE));
     public static final IntConfig folderUnreadCounter = register(new IntConfig("folderUnreadCounter", FolderUnreadCounter.ALL));
     public static final BoolConfig hideAllChatsTab = register(new BoolConfig("hideAllChatsTab", false));
+    public static final IntConfig mainTabsVisibility = register(new IntConfig("mainTabsVisibility", MainTabs.ALWAYS));
+    public static final BoolConfig hideMainTabsTitles = register(new BoolConfig("hideMainTabsTitles", false));
+    public static final BoolConfig hideContactsTab = register(new BoolConfig("hideContactsTab", false));
 
     public static final StringConfig translationProvider = register(new StringConfig("translationProvider", "google"));
     public static final StringConfig translationLanguage = register(new StringConfig("translationLanguage", ""));

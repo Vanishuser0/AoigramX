@@ -123,7 +123,15 @@ import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import nu.gpu.aoigram.tabs.MainTabs;
+
 public class CallLogActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, MainTabsActivity.TabFragmentDelegate {
+	private MainTabsActivityController mainTabsActivityController;
+
+	public void setMainTabsActivityController(MainTabsActivityController controller) {
+		mainTabsActivityController = controller;
+	}
+
 	private final int ADDITIONAL_LIST_HEIGHT_DP = Build.VERSION.SDK_INT >= 31 ? 48 : 0;
 
 	private EmptyTextProgressView emptyView;
@@ -706,9 +714,6 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
 			hasMainTabs = arguments.getBoolean("hasMainTabs", false);
 		}
 
-		additionNavigationBarHeight = hasMainTabs ? dp(DialogsActivity.MAIN_TABS_HEIGHT_WITH_MARGINS) : 0;
-		additionFloatingButtonOffset = hasMainTabs ? dp(DialogsActivity.MAIN_TABS_HEIGHT + DialogsActivity.MAIN_TABS_MARGIN) : 0;
-
 		return true;
 	}
 
@@ -725,6 +730,8 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
 	@SuppressLint("UseCompatLoadingForDrawables")
     @Override
 	public View createView(Context context) {
+		additionNavigationBarHeight = hasMainTabs ? dp(MainTabs.getInset()) : 0;
+		additionFloatingButtonOffset = hasMainTabs ? dp(MainTabs.getOffset()) : 0;
 		if (!hasMainTabs) {
 			actionBar.setBackButtonDrawable(new BackDrawable(false));
 		}
@@ -871,6 +878,9 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
 
 				if (dy != 0 && scrollUpdated) {
 					floatingButton.setButtonVisible(dy < 0, true);
+					if (mainTabsActivityController != null) {
+						mainTabsActivityController.setTabsHiddenByScroll(CallLogActivity.this, dy > 0);
+					}
 				}
 				scrollUpdated = true;
 
@@ -2071,7 +2081,7 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
 
 		final int additionalList = dp(48) + (int) topPanelLayout.getAnimatedHeightWithPadding(dp(7));
 		final int mainTabBottom = fragmentView.getMeasuredHeight() - navigationBarHeight - dp(DialogsActivity.MAIN_TABS_MARGIN);
-		final int mainTabTop = mainTabBottom - dp(DialogsActivity.MAIN_TABS_HEIGHT);
+		final int mainTabTop = mainTabBottom - dp(MainTabs.getHeight());
 
 		iBlur3PositionActionBar.set(0, -additionalList, fragmentView.getMeasuredWidth(), actionBar.getMeasuredHeight() + additionalList);
 		iBlur3PositionMainTabs.set(0, mainTabTop, fragmentView.getMeasuredWidth(), mainTabBottom);

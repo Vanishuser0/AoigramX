@@ -82,6 +82,12 @@
     <string name="FolderUnreadCounterAll">All</string>
     <string name="FolderUnreadCounterUnmuted">Unmuted only</string>
     <string name="HideAllChatsTab">Hide \"All Chats\" tab</string>
+    <string name="MainTabs">Main Tabs</string>
+    <string name="MainTabsVisibility">Visibility</string>
+    <string name="MainTabsAlways">Always</string>
+    <string name="MainTabsHideOnScroll">Hide on scroll</string>
+    <string name="HideMainTabsTitles">Hide titles</string>
+    <string name="HideContactsTab">Hide \"Contacts\" tab</string>
     <string name="MessageDetails">Details</string>
     <string name="MessageDetailsId">Message ID</string>
     <string name="MessageDetailsChat">Chat</string>

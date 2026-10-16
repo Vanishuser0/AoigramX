@@ -117,7 +117,15 @@ import java.util.ArrayList;
 import me.vkryl.android.animator.BoolAnimator;
 import me.vkryl.android.animator.FactorAnimator;
 
+import nu.gpu.aoigram.tabs.MainTabs;
+
 public class ContactsActivity extends BaseFragment implements FactorAnimator.Target, NotificationCenter.NotificationCenterDelegate, MainTabsActivity.TabFragmentDelegate, WindowAnimatedInsetsProvider.Listener {
+    private MainTabsActivityController mainTabsActivityController;
+
+    public void setMainTabsActivityController(MainTabsActivityController controller) {
+        mainTabsActivityController = controller;
+    }
+
     private final int ADDITIONAL_LIST_HEIGHT_DP = Build.VERSION.SDK_INT >= 31 ? 48 : 0;
 
     private static final int ANIMATOR_ID_SEARCH_FIELD_VISIBLE = 0;
@@ -252,9 +260,6 @@ public class ContactsActivity extends BaseFragment implements FactorAnimator.Tar
         getContactsController().checkInviteText();
         getContactsController().reloadContactsStatusesMaybe(false);
 
-        additionNavigationBarHeight = hasMainTabs ? dp(DialogsActivity.MAIN_TABS_HEIGHT_WITH_MARGINS) : 0;
-        additionFloatingButtonOffset = hasMainTabs ? dp(DialogsActivity.MAIN_TABS_HEIGHT + DialogsActivity.MAIN_TABS_MARGIN) : 0;
-
         return true;
     }
 
@@ -278,6 +283,8 @@ public class ContactsActivity extends BaseFragment implements FactorAnimator.Tar
 
     @Override
     public View createView(Context context) {
+        additionNavigationBarHeight = hasMainTabs ? dp(MainTabs.getInset()) : 0;
+        additionFloatingButtonOffset = hasMainTabs ? dp(MainTabs.getOffset()) : 0;
         searching = false;
         searchWas = false;
 
@@ -903,6 +910,9 @@ public class ContactsActivity extends BaseFragment implements FactorAnimator.Tar
                     if (dy != 0 && scrollUpdated && (goingDown || scrollingManually)) {
                         floatingButtonVisibleByScroll = !goingDown;
                         checkUi_floatingButtonVisible();
+                        if (mainTabsActivityController != null) {
+                            mainTabsActivityController.setTabsHiddenByScroll(ContactsActivity.this, goingDown);
+                        }
                     }
                     scrollUpdated = true;
                 }
@@ -1699,7 +1709,7 @@ public class ContactsActivity extends BaseFragment implements FactorAnimator.Tar
         final int additionalSearch = dp(DialogsActivity.SEARCH_FIELD_HEIGHT);
 
         final int mainTabBottom = fragmentView.getMeasuredHeight() - navigationBarHeight - dp(DialogsActivity.MAIN_TABS_MARGIN);
-        final int mainTabTop = mainTabBottom - dp(DialogsActivity.MAIN_TABS_HEIGHT);
+        final int mainTabTop = mainTabBottom - dp(MainTabs.getHeight());
 
         iBlur3PositionActionBar.set(0, -additionalList, fragmentView.getMeasuredWidth(), actionBar.getMeasuredHeight() + additionalList + additionalSearch );
         iBlur3PositionMainTabs.set(0, mainTabTop, fragmentView.getMeasuredWidth(), mainTabBottom);

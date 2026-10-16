@@ -100,6 +100,7 @@ import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.dialogs.DialogsMoreMenu;
 import nu.gpu.aoigram.dialogs.FolderIcons;
 import nu.gpu.aoigram.dialogs.FolderUnreadCounter;
+import nu.gpu.aoigram.tabs.MainTabs;
 import nu.gpu.aoigram.typeface.Typefaces;
 
 import org.telegram.messenger.AccountInstance;
@@ -1131,7 +1132,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     blurredView.draw(canvas);
                 }
             }
-            if (!hasMainTabs && communityId == 0) {
+            if ((!hasMainTabs || MainTabs.isHidden()) && communityId == 0) {
                 AndroidUtilities.drawNavigationBarProtection(canvas, this, getThemedColor(Theme.key_windowBackgroundWhite), navigationBarHeight);
             }
             wasDrawn = true;
@@ -2989,8 +2990,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         }
 
         BirthdayController.getInstance(currentAccount).check();
-        additionNavigationBarHeight = hasMainTabs ? dp(MAIN_TABS_HEIGHT_WITH_MARGINS) : 0;
-        additionFloatingButtonOffset = hasMainTabs ? dp(DialogsActivity.MAIN_TABS_HEIGHT + DialogsActivity.MAIN_TABS_MARGIN) : 0;
 
         return true;
     }
@@ -3210,6 +3209,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
     @Override
     public View createView(final Context context) {
+        additionNavigationBarHeight = hasMainTabs ? dp(MainTabs.getInset()) : 0;
+        additionFloatingButtonOffset = hasMainTabs ? dp(MainTabs.getOffset()) : 0;
         searching = false;
         searchWas = false;
         wasDrawn = false;
@@ -11199,6 +11200,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
         floatingButtonHidden = hide;
         updateFloatingButtonVisibility(true);
+        if (mainTabsActivityController != null && !rightSlidingDialogContainer.hasFragment()) {
+            mainTabsActivityController.setTabsHiddenByScroll(this, hide);
+        }
 
         if (hide) {
             if (storyHint != null) {
@@ -13851,7 +13855,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 }
             }
         }
-        if (getUserConfig().showCallsTab) {
+        if (getUserConfig().showCallsTab || MainTabs.isHidden()) {
             io.add(R.drawable.msg_settings_old, getString(R.string.Settings), () -> {
                 presentFragment(new SettingsActivity());
             });
@@ -14265,7 +14269,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
         final int additionalList = dp(48);
         final int mainTabBottom = fragmentView.getMeasuredHeight() - navigationBarHeight - dp(DialogsActivity.MAIN_TABS_MARGIN);
-        final int mainTabTop = mainTabBottom - dp(DialogsActivity.MAIN_TABS_HEIGHT);
+        final int mainTabTop = mainTabBottom - dp(MainTabs.getHeight());
 
         final int actionBarHeight = actionBar.getMeasuredHeight()
             + aoiSearchFieldHeight()

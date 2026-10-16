@@ -66,6 +66,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.settings.AoiDeveloperSettingsActivity;
 import nu.gpu.aoigram.settings.AoiSettingsActivity;
+import nu.gpu.aoigram.tabs.MainTabs;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AndroidUtilities;
@@ -159,6 +160,11 @@ import me.vkryl.android.animator.BoolAnimator;
 import me.vkryl.android.animator.FactorAnimator;
 
 public class SettingsActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, ImageUpdater.ImageUpdaterDelegate, MainTabsActivity.TabFragmentDelegate, FactorAnimator.Target {
+    private MainTabsActivityController mainTabsActivityController;
+
+    public void setMainTabsActivityController(MainTabsActivityController controller) {
+        mainTabsActivityController = controller;
+    }
 
     private static final int ANIMATOR_ID_SEARCH_PAGE_VISIBLE = 0;
     private static final int AOI_SETTINGS_ROW = 1000;
@@ -225,7 +231,6 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
             hasMainTabs = arguments.getBoolean("hasMainTabs", false);
         }
 
-        additionNavigationBarHeight = hasMainTabs ? dp(DialogsActivity.MAIN_TABS_HEIGHT_WITH_MARGINS) : 0;
         return super.onFragmentCreate();
     }
 
@@ -238,6 +243,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
 
     @Override
     public View createView(Context context) {
+        additionNavigationBarHeight = hasMainTabs ? dp(MainTabs.getInset()) : 0;
         contentView = new SizeNotifierFrameLayout(context) {
             @Override
             protected void dispatchDraw(Canvas canvas) {
@@ -374,6 +380,9 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 updateActionBarVisible();
+                if (mainTabsActivityController != null && dy != 0) {
+                    mainTabsActivityController.setTabsHiddenByScroll(SettingsActivity.this, dy > 0);
+                }
                 if (listView.scrollingByUser) {
                     AndroidUtilities.hideKeyboard(fragmentView);
                 }
@@ -2139,7 +2148,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
 
         final int additionalList = dp(48);
         final int mainTabBottom = fragmentView.getMeasuredHeight() - navigationBarHeight - dp(DialogsActivity.MAIN_TABS_MARGIN);
-        final int mainTabTop = mainTabBottom - dp(DialogsActivity.MAIN_TABS_HEIGHT);
+        final int mainTabTop = mainTabBottom - dp(MainTabs.getHeight());
 
         iBlur3PositionActionBar.set(0, -additionalList, fragmentView.getMeasuredWidth(), actionBar.getMeasuredHeight() + additionalList);
         iBlur3PositionMainTabs.set(0, mainTabTop, fragmentView.getMeasuredWidth(), mainTabBottom);

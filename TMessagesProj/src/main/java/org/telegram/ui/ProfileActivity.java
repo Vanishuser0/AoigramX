@@ -354,8 +354,15 @@ import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.dialogs.RecentChats;
 import nu.gpu.aoigram.profile.PeerIdDc;
 import nu.gpu.aoigram.profile.RegistrationDate;
+import nu.gpu.aoigram.tabs.MainTabs;
 
 public class ProfileActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate, SharedMediaLayout.SharedMediaPreloaderDelegate, ImageUpdater.ImageUpdaterDelegate, SharedMediaLayout.Delegate, MainTabsActivity.TabFragmentDelegate {
+    private MainTabsActivityController mainTabsActivityController;
+
+    public void setMainTabsActivityController(MainTabsActivityController controller) {
+        mainTabsActivityController = controller;
+    }
+
     private int idDcRow;
     private HintView2 registrationHint;
 
@@ -2321,8 +2328,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
         setActionsMode();
 
-        additionNavigationBarHeight = hasMainTabs ? dp(DialogsActivity.MAIN_TABS_HEIGHT_WITH_MARGINS) : 0;
-        additionFloatingButtonOffset = hasMainTabs ? dp(DialogsActivity.MAIN_TABS_HEIGHT + DialogsActivity.MAIN_TABS_MARGIN) : 0;
         if (currentEncryptedChat == null) {
             RecentChats.add(currentAccount, userId != 0 ? userId : -chatId);
         }
@@ -2556,6 +2561,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
     @Override
     public View createView(Context context) {
+        additionNavigationBarHeight = hasMainTabs ? dp(MainTabs.getInset()) : 0;
+        additionFloatingButtonOffset = hasMainTabs ? dp(MainTabs.getOffset()) : 0;
         Theme.createProfileResources(context);
         Theme.createChatResources(context, false);
         BaseFragment lastFragment = parentLayout.getLastFragment();
@@ -5822,6 +5829,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (mainTabsActivityController != null && dy != 0) {
+                    mainTabsActivityController.setTabsHiddenByScroll(ProfileActivity.this, dy > 0);
+                }
                 if (fwdRestrictedHint != null) {
                     fwdRestrictedHint.hide();
                 }
@@ -17068,7 +17078,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
         final int additionalList = dp(48);
         final int mainTabBottom = fragmentView.getMeasuredHeight() - navigationBarHeight - dp(DialogsActivity.MAIN_TABS_MARGIN);
-        final int mainTabTop = mainTabBottom - dp(DialogsActivity.MAIN_TABS_HEIGHT);
+        final int mainTabTop = mainTabBottom - dp(MainTabs.getHeight());
 
         iBlur3PositionActionBar.set(0, -additionalList, fragmentView.getMeasuredWidth(), actionBar.getMeasuredHeight() + additionalList);
         iBlur3PositionMainTabs.set(0, mainTabTop, fragmentView.getMeasuredWidth(), mainTabBottom);

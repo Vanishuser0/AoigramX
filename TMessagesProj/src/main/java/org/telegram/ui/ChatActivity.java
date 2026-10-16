@@ -32876,11 +32876,12 @@ public class ChatActivity extends BaseFragment implements
                     }
                     tv.setMaxWidth(popupLayout.getMeasuredWidth() - AndroidUtilities.dp(38));
 
-                    Drawable shadowDrawable2 = ContextCompat.getDrawable(contentView.getContext(), R.drawable.popup_fixed_alert4).mutate();
-                    shadowDrawable2.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_actionBarDefaultSubmenuBackground), PorterDuff.Mode.MULTIPLY));
-
                     FrameLayout fl = new FrameLayout(contentView.getContext());
-                    fl.setBackground(shadowDrawable2);
+                    fl.setBackground(scrimBlur3Factory.create(fl, true)
+                        .setColorProvider(BlurredBackgroundProviderImpl.messageMenuBackground(resourceProvider))
+                        .setRadius(dp(12))
+                        .setPadding(dp(8))
+                        .setHasPadding(true));
                     fl.addView(tv, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 11, 11, 11, 11));
                     scrimPopupContainerLayout.addView(fl, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT, isReactionsAvailable ? 16 : 0, -8, isReactionsAvailable ? 36 : 0, 0));
                     scrimPopupContainerLayout.applyViewBottom(fl);
@@ -32899,11 +32900,12 @@ public class ChatActivity extends BaseFragment implements
                     tv.setText(text);
                     tv.setMaxWidth(popupLayout.getMeasuredWidth() - AndroidUtilities.dp(38));
 
-                    Drawable shadowDrawable2 = ContextCompat.getDrawable(contentView.getContext(), R.drawable.popup_fixed_alert4).mutate();
-                    shadowDrawable2.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_actionBarDefaultSubmenuBackground), PorterDuff.Mode.MULTIPLY));
-
                     FrameLayout fl = new FrameLayout(contentView.getContext());
-                    fl.setBackground(shadowDrawable2);
+                    fl.setBackground(scrimBlur3Factory.create(fl, true)
+                        .setColorProvider(BlurredBackgroundProviderImpl.messageMenuBackground(resourceProvider))
+                        .setRadius(dp(12))
+                        .setPadding(dp(8))
+                        .setHasPadding(true));
                     fl.addView(tv, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 11, 11, 11, 11));
                     scrimPopupContainerLayout.addView(fl, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT, isReactionsAvailable ? 16 : 0, -8, isReactionsAvailable ? 36 : 0, 0));
                     scrimPopupContainerLayout.applyViewBottom(fl);

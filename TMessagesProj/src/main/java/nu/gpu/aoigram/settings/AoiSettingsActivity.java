@@ -27,8 +27,11 @@ import org.telegram.ui.Components.EmptyTextProgressView;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.UItem;
 import org.telegram.ui.Components.UniversalAdapter;
+import org.telegram.ui.LauncherIconController;
+import org.telegram.ui.LauncherIconController.LauncherIcon;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 
 public class AoiSettingsActivity extends BaseAoiSettingsActivity {
@@ -41,6 +44,9 @@ public class AoiSettingsActivity extends BaseAoiSettingsActivity {
     private static final int ABOUT_ROW = 6;
 
     private FrameLayout topView;
+    private BackupImageView logoView;
+    private int logoRes;
+    private LauncherIcon launcherIcon;
     private TextView titleView;
     private TextView subtitleView;
     private EmptyTextProgressView searchEmptyView;
@@ -91,8 +97,9 @@ public class AoiSettingsActivity extends BaseAoiSettingsActivity {
         topView = new FrameLayout(context);
 
         FrameLayout logoContainer = new FrameLayout(context);
-        BackupImageView logoView = new BackupImageView(context);
-        logoView.setImageResource(R.mipmap.ic_launcher);
+        logoView = new BackupImageView(context);
+        logoRes = 0;
+        launcherIcon = Arrays.stream(LauncherIcon.values()).filter(LauncherIconController::isEnabled).findFirst().orElse(LauncherIcon.DEFAULT);
         logoContainer.addView(logoView, LayoutHelper.createFrame(90, 90, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 15, 0, 0));
         topView.addView(logoContainer, LayoutHelper.createFrame(120, 120, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 11, 0, 0));
 
@@ -266,6 +273,18 @@ public class AoiSettingsActivity extends BaseAoiSettingsActivity {
 
     @Override
     protected void updateCustomColors() {
+        int res = switch (launcherIcon) {
+            case INVERTED -> R.mipmap.icon_aoi_inverted_launcher;
+            case SORA -> R.mipmap.icon_aoi_sora_launcher;
+            case UMI -> R.mipmap.icon_aoi_umi_launcher;
+            case SAKURA -> R.mipmap.icon_aoi_sakura_launcher;
+            case YORU -> R.mipmap.icon_aoi_yoru_launcher;
+            default -> Theme.isCurrentThemeDark() ? R.mipmap.icon_aoi_inverted_launcher : R.mipmap.ic_launcher;
+        };
+        if (logoRes != res) {
+            logoRes = res;
+            logoView.setImageResource(res);
+        }
         titleView.setTextColor(getThemedColor(Theme.key_windowBackgroundWhiteBlackText));
         subtitleView.setTextColor(getThemedColor(Theme.key_windowBackgroundWhiteGrayText));
         searchEmptyView.setTextColor(getThemedColor(Theme.key_emptyListPlaceholder));

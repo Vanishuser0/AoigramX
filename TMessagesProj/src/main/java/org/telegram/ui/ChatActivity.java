@@ -369,6 +369,7 @@ import me.vkryl.android.animator.FactorAnimator;
 import me.vkryl.core.BitwiseUtils;
 import me.vkryl.core.reference.ReferenceList;
 
+import nu.gpu.aoigram.chat.BotCommandConfirm;
 import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.dialogs.RecentChats;
 import nu.gpu.aoigram.media.DownloadedMedia;
@@ -37206,9 +37207,16 @@ public class ChatActivity extends BaseFragment implements
                 }
             } else if (messageObject != null && str.startsWith("/")) {
                 if (URLSpanBotCommand.enabled) {
-                    chatActivityEnterView.setCommand(messageObject, str, longPress, currentChat != null && currentChat.megagroup);
-                    if (!longPress && chatActivityEnterView.getFieldText() == null) {
-                        hideFieldPanel(false);
+                    if (longPress) {
+                        chatActivityEnterView.setCommand(messageObject, str, true, currentChat != null && currentChat.megagroup);
+                    } else {
+                        MessageObject message = messageObject;
+                        BotCommandConfirm.run(this, str, () -> {
+                            chatActivityEnterView.setCommand(message, str, false, currentChat != null && currentChat.megagroup);
+                            if (chatActivityEnterView.getFieldText() == null) {
+                                hideFieldPanel(false);
+                            }
+                        });
                     }
                 }
                 if (longPress && cell != null) {
@@ -38029,10 +38037,12 @@ public class ChatActivity extends BaseFragment implements
                         fragment.setSearchString(url);
                         presentFragment(fragment);
                     } else if (url.startsWith("/")) {
-                        chatActivityEnterView.setCommand(null, url, false, false);
-                        if (chatActivityEnterView.getFieldText() == null) {
-                            hideFieldPanel(false);
-                        }
+                        BotCommandConfirm.run(ChatActivity.this, url, () -> {
+                            chatActivityEnterView.setCommand(null, url, false, false);
+                            if (chatActivityEnterView.getFieldText() == null) {
+                                hideFieldPanel(false);
+                            }
+                        });
                     } else {
                         processExternalUrl(0, url, null, null, false, false);
                     }

@@ -350,6 +350,7 @@ import java.util.zip.ZipOutputStream;
 import me.vkryl.android.animator.BoolAnimator;
 import me.vkryl.core.reference.ReferenceList;
 
+import nu.gpu.aoigram.chat.BotCommandConfirm;
 import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.dialogs.RecentChats;
 import nu.gpu.aoigram.profile.PeerIdDc;
@@ -15324,8 +15325,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             if (parentLayout.getFragmentStack().size() > 1) {
                 BaseFragment previousFragment = parentLayout.getFragmentStack().get(parentLayout.getFragmentStack().size() - 2);
                 if (previousFragment instanceof ChatActivity) {
-                    finishFragment();
-                    ((ChatActivity) previousFragment).chatActivityEnterView.setCommand(null, url, false, false);
+                    BotCommandConfirm.run(this, url, () -> {
+                        finishFragment();
+                        ((ChatActivity) previousFragment).chatActivityEnterView.setCommand(null, url, false, false);
+                    });
                 }
             }
         }

@@ -102,6 +102,7 @@ public final class AoiConfig {
     public static final BoolConfig showClear = register(new BoolConfig("showClear", true));
     public static final BoolConfig showDetails = register(new BoolConfig("showDetails", true));
     public static final BoolConfig repeatConfirm = register(new BoolConfig("repeatConfirm", true));
+    public static final BoolConfig botCommandConfirm = register(new BoolConfig("botCommandConfirm", false));
     public static final BoolConfig previewRecording = register(new BoolConfig("previewRecording", true));
 
     public static final IntConfig updateChannel = register(new IntConfig("updateChannel", AppUpdates.STABLE));

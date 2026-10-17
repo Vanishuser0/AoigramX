@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.typeface.Typefaces;
+
 public class CompoundEmoji {
 
     public static List<String> skinTones = Arrays.asList("🏻", "🏼", "🏽", "🏾", "🏿");
@@ -163,6 +166,26 @@ public class CompoundEmoji {
     }
 
     public static class CompoundEmojiDrawable extends Emoji.EmojiDrawable {
+        private String systemEmoji;
+
+        private void updateSystemEmoji() {
+            DrawableInfo l = newLeft != null ? newLeft : left;
+            DrawableInfo r = newRight != null ? newRight : right;
+            if (!AoiConfig.systemEmoji.get() || l.placeholder || r.placeholder) {
+                systemEmoji = null;
+                return;
+            }
+            String tone1 = l.skin >= 0 ? skinTones.get(l.skin) : "";
+            String tone2 = r.skin >= 0 ? skinTones.get(r.skin) : "";
+            systemEmoji = Typefaces.systemEmoji(l.skin == r.skin ? "🤝" + tone1 : "🫱" + tone1 + (char) 0x200D + "🫲" + tone2);
+            if (systemEmoji != null) {
+                left = l;
+                right = r;
+                newLeft = null;
+                newRight = null;
+            }
+        }
+
         private DrawableInfo left, right;
         private static Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
         private static Rect rect = new Rect();
@@ -174,6 +197,7 @@ public class CompoundEmoji {
         public CompoundEmojiDrawable(DrawableInfo left, DrawableInfo right) {
             this.left = left;
             this.right = right;
+            updateSystemEmoji();
         }
 
         public Rect getDrawRect() {
@@ -204,6 +228,10 @@ public class CompoundEmoji {
             }
 
             if (!canvas.quickReject(b.left, b.top, b.right, b.bottom, Canvas.EdgeType.AA)) {
+                if (systemEmoji != null) {
+                    Typefaces.drawEmoji(canvas, systemEmoji, b, paint.getAlpha());
+                    return;
+                }
                 if (newLeft != null) {
                     if (leftUpdateT == null) {
                         leftUpdateT = new AnimatedFloat(0, this::invalidate, 0, 320, CubicBezierInterpolator.EASE_OUT);
@@ -266,6 +294,7 @@ public class CompoundEmoji {
                     rightUpdateT.set(0, true);
                 }
             }
+            updateSystemEmoji();
             invalidate();
         }
 
@@ -300,7 +329,7 @@ public class CompoundEmoji {
 
         @Override
         public boolean isLoaded() {
-            return left.isLoaded() && right.isLoaded();
+            return systemEmoji != null || left.isLoaded() && right.isLoaded();
         }
 
         @Override

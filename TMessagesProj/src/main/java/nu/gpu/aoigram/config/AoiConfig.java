@@ -36,6 +36,8 @@ public final class AoiConfig {
     public static final IntConfig downloadSpeedBoost = register(new IntConfig("downloadSpeedBoost", DownloadSpeedBoost.OFF));
     public static final BoolConfig uploadSpeedBoost = register(new BoolConfig("uploadSpeedBoost", false));
 
+    public static final BoolConfig systemFonts = register(new BoolConfig("systemFonts", true));
+    public static final BoolConfig systemEmoji = register(new BoolConfig("systemEmoji", false));
     public static final BoolConfig glareEffects = register(new BoolConfig("glareEffects", false));
     public static final BoolConfig predictiveBack = register(new BoolConfig("predictiveBack", false));
     public static final BoolConfig hideStories = register(new BoolConfig("hideStories", false));

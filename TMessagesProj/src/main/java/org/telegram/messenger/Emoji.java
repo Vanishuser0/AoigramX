@@ -44,6 +44,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 
+import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.typeface.Typefaces;
+
 public class Emoji {
 
     private final static HashMap<CharSequence, DrawableInfo> rects = new HashMap<>();
@@ -291,6 +294,7 @@ public class Emoji {
     }
 
     public static class SimpleEmojiDrawable extends EmojiDrawable {
+        private final String systemEmoji;
         private DrawableInfo info;
         private static Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
         private static Rect rect = new Rect();
@@ -299,6 +303,7 @@ public class Emoji {
         public SimpleEmojiDrawable(DrawableInfo i, boolean invert) {
             info = i;
             this.invert = invert;
+            systemEmoji = AoiConfig.systemEmoji.get() ? Typefaces.systemEmoji(i.page, i.page2) : null;
         }
 
         public DrawableInfo getDrawableInfo() {
@@ -337,7 +342,11 @@ public class Emoji {
                     canvas.save();
                     canvas.scale(-1, 1, b.centerX(), b.centerY());
                 }
-                canvas.drawBitmap(emojiBmp[info.page][info.page2], null, b, paint);
+                if (systemEmoji != null) {
+                    Typefaces.drawEmoji(canvas, systemEmoji, b, paint.getAlpha());
+                } else {
+                    canvas.drawBitmap(emojiBmp[info.page][info.page2], null, b, paint);
+                }
                 if (invert) {
                     canvas.restore();
                 }
@@ -361,7 +370,7 @@ public class Emoji {
 
         @Override
         public boolean isLoaded() {
-            return emojiBmp[info.page][info.page2] != null;
+            return systemEmoji != null || emojiBmp[info.page][info.page2] != null;
         }
 
         @Override

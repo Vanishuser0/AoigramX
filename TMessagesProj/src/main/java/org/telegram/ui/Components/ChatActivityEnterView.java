@@ -14430,6 +14430,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                 textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
                 textPaint.setTextSize(dp(15));
                 textPaint.setTypeface(AndroidUtilities.bold());
+                textPaint.setFontFeatureSettings("tnum");
                 textPaint.setColor(getThemedColor(Theme.key_chat_recordTime));
             }
             long currentTimeMillis = System.currentTimeMillis();

@@ -86,6 +86,8 @@ import org.telegram.ui.Stories.recorder.KeyboardNotifier;
 
 import java.util.ArrayList;
 
+import nu.gpu.aoigram.typeface.Typefaces;
+
 public class MessageSendPreview extends Dialog implements NotificationCenter.NotificationCenterDelegate {
     private int aoiOptionsWidth = -1;
     private int aoiOptionsHeight = -1;
@@ -166,6 +168,7 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
 
     public MessageSendPreview(Context context, Theme.ResourcesProvider resourcesProvider) {
         super(context, R.style.TransparentDialog);
+        Typefaces.applyTheme(getContext().getTheme());
         this.context = context;
         this.resourcesProvider = resourcesProvider;
 

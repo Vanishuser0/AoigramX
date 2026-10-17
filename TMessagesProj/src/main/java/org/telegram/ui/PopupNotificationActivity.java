@@ -83,6 +83,8 @@ import org.telegram.ui.Components.TypingDotsDrawable;
 import java.io.File;
 import java.util.ArrayList;
 
+import nu.gpu.aoigram.typeface.Typefaces;
+
 public class PopupNotificationActivity extends Activity implements NotificationCenter.NotificationCenterDelegate {
 
     private ActionBar actionBar;
@@ -161,6 +163,7 @@ public class PopupNotificationActivity extends Activity implements NotificationC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Typefaces.applyTheme(getTheme());
         Theme.createDialogsResources(this);
         Theme.createChatResources(this, false);
 

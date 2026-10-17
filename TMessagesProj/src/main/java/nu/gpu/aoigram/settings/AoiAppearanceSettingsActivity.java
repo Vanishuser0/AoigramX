@@ -9,20 +9,31 @@ import android.view.View;
 
 import org.telegram.messenger.R;
 import org.telegram.ui.Components.AlertsCreator;
+import org.telegram.ui.Components.Bulletin;
+import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.UItem;
 import org.telegram.ui.Components.UniversalAdapter;
 
 import java.util.ArrayList;
 
 import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.config.BoolConfig;
 import nu.gpu.aoigram.dialogs.FolderIcons;
 import nu.gpu.aoigram.dialogs.FolderTabsPreview;
 import nu.gpu.aoigram.dialogs.FolderUnreadCounter;
 import nu.gpu.aoigram.tabs.MainTabs;
 import nu.gpu.aoigram.tabs.MainTabsPreview;
+import nu.gpu.aoigram.utils.AppUtil;
 
 public final class AoiAppearanceSettingsActivity extends BaseAoiSettingsActivity {
 
+    private static final int SYSTEM_FONTS = 1;
+    private static final Option[] SYSTEM_FONTS_OPTIONS = {
+            new Option(AoiConfig.systemFonts, R.string.SystemFontsText),
+            new Option(AoiConfig.systemEmoji, R.string.SystemFontsEmoji),
+    };
+
+    private Bulletin restartBulletin;
     private FolderTabsPreview folderTabsPreview;
     private MainTabsPreview mainTabsPreview;
 
@@ -62,6 +73,7 @@ public final class AoiAppearanceSettingsActivity extends BaseAoiSettingsActivity
 
     @Override
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
+        addGroup(items, adapter, SYSTEM_FONTS, 0, R.string.SystemFonts, SYSTEM_FONTS_OPTIONS);
         items.add(asConfigCheck(AoiConfig.glareEffects, R.string.GlareEffects));
         if (Build.VERSION.SDK_INT >= 34) {
             items.add(asConfigCheck(AoiConfig.predictiveBack, R.string.PredictiveBack));
@@ -92,6 +104,13 @@ public final class AoiAppearanceSettingsActivity extends BaseAoiSettingsActivity
             items.add(asConfigCheck(AoiConfig.hideContactsTab, R.string.HideContactsTab));
         }
         items.add(UItem.asShadow(null));
+    }
+
+    @Override
+    protected void onConfigToggled(BoolConfig config) {
+        if ((config == AoiConfig.systemFonts || config == AoiConfig.systemEmoji) && (restartBulletin == null || !restartBulletin.isShowing())) {
+            restartBulletin = BulletinFactory.of(this).createSimpleBulletin(R.raw.chats_infotip, getString(R.string.RestartToApply), getString(R.string.RestartApp), () -> AppUtil.restart(getParentActivity())).show();
+        }
     }
 
     @Override

@@ -51,6 +51,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import nu.gpu.aoigram.typeface.Typefaces;
+
 public class SimpleTextView extends View implements Drawable.Callback {
 
     private float layoutX, layoutY;
@@ -145,6 +147,7 @@ public class SimpleTextView extends View implements Drawable.Callback {
     public SimpleTextView(Context context) {
         super(context);
         textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+        Typefaces.setRegular(textPaint);
         setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
     }
 

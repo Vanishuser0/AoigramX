@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="SystemFontsFlex">
+        <item name="android:textViewStyle">@style/SystemFontsFlex.TextView</item>
+        <item name="android:editTextStyle">@style/SystemFontsFlex.EditText</item>
+    </style>
+
+    <style name="SystemFontsFlex.TextView" parent="MyTextViewStyle">
+        <item name="android:fontFamily">google-sans-flex</item>
+    </style>
+
+    <style name="SystemFontsFlex.EditText" parent="android:Widget.Material.EditText">
+        <item name="android:fontFamily">google-sans-flex</item>
+    </style>
+
+    <style name="SystemFontsText">
+        <item name="android:textViewStyle">@style/SystemFontsText.TextView</item>
+        <item name="android:editTextStyle">@style/SystemFontsText.EditText</item>
+    </style>
+
+    <style name="SystemFontsText.TextView" parent="MyTextViewStyle">
+        <item name="android:fontFamily">google-sans-text</item>
+    </style>
+
+    <style name="SystemFontsText.EditText" parent="android:Widget.Material.EditText">
+        <item name="android:fontFamily">google-sans-text</item>
+    </style>
+</resources>

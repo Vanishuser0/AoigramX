@@ -241,6 +241,8 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
 
 import me.vkryl.core.BitwiseUtils;
+import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.typeface.Typefaces;
 
 public class AndroidUtilities {
     public final static int REPLACING_TAG_TYPE_LINK = 0;
@@ -261,7 +263,7 @@ public class AndroidUtilities {
 
     public static Typeface bold() {
         if (mediumTypeface == null) {
-            if (SharedConfig.useSystemBoldFont && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            if (!AoiConfig.systemFonts.get() && SharedConfig.useSystemBoldFont && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 mediumTypeface = Typeface.create(null, 500, false);
             } else {
                 mediumTypeface = getTypeface(TYPEFACE_ROBOTO_MEDIUM);
@@ -2393,8 +2395,8 @@ public class AndroidUtilities {
         synchronized (typefaceCache) {
             if (!typefaceCache.containsKey(assetPath)) {
                 try {
-                    Typeface t;
-                    if (Build.VERSION.SDK_INT >= 26) {
+                    Typeface t = AoiConfig.systemFonts.get() ? Typefaces.system(assetPath) : null;
+                    if (t == null && Build.VERSION.SDK_INT >= 26) {
                         Typeface.Builder builder = new Typeface.Builder(ApplicationLoader.applicationContext.getAssets(), assetPath);
                         if (assetPath.contains("rextrabold")) {
                             builder.setWeight(800);
@@ -2406,7 +2408,7 @@ public class AndroidUtilities {
                             builder.setItalic(true);
                         }
                         t = builder.build();
-                    } else {
+                    } else if (t == null) {
                         t = Typeface.createFromAsset(ApplicationLoader.applicationContext.getAssets(), assetPath);
                     }
                     typefaceCache.put(assetPath, t);
@@ -6430,6 +6432,7 @@ public class AndroidUtilities {
             return;
         }
         context.setTheme(Theme.isCurrentThemeDark() && open ? R.style.Theme_TMessages_Dark : R.style.Theme_TMessages);
+        Typefaces.applyTheme(context.getTheme());
     }
 
     private static Boolean isHonor;

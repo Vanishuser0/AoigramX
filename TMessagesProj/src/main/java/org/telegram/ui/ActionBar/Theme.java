@@ -147,6 +147,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 
+import nu.gpu.aoigram.typeface.Typefaces;
+
 public class Theme {
 
     public static final String DEFAULT_BACKGROUND_SLUG = "d";
@@ -7786,8 +7788,10 @@ public class Theme {
         if (dialogs_countTextPaint == null) {
             dialogs_countTextPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
             dialogs_countTextPaint.setTypeface(AndroidUtilities.bold());
+            dialogs_countTextPaint.setFontFeatureSettings("tnum");
             dialogs_countTextPaint2 = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
             dialogs_countTextPaint2.setTypeface(AndroidUtilities.bold());
+            dialogs_countTextPaint2.setFontFeatureSettings("tnum");
             dialogs_countPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             dialogs_onlineCirclePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             dialogs_tagPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -7830,6 +7834,7 @@ public class Theme {
             dialogs_archiveTextPaintSmall.setTypeface(AndroidUtilities.bold());
             dialogs_onlinePaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
             dialogs_offlinePaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+            Typefaces.setRegular(dialogs_messagePaint[0], dialogs_messagePaint[1], dialogs_messagePrintingPaint[0], dialogs_messagePrintingPaint[1], dialogs_timePaint, dialogs_onlinePaint, dialogs_offlinePaint);
             dialogs_tagTextPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
             dialogs_tagTextPaint.setTypeface(AndroidUtilities.bold());
 
@@ -8022,6 +8027,8 @@ public class Theme {
                 chat_msgTextCode3Paint.setTypeface(Typeface.MONOSPACE);
                 chat_msgCodeBgPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
                 chat_ephemeralPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+                Typefaces.setRegular(chat_msgTextPaint, chat_msgGameTextPaint, chat_replyTextPaint, chat_quoteTextPaint, chat_explanationTextPaint, chat_titleLabelTextPaint, chat_forwardNamePaint, chat_adminPaint, chat_timePaint, chat_ephemeralPaint);
+                chat_timePaint.setFontFeatureSettings("tnum");
             }
 
             final float[] emojiSizePercents = new float[] {.68f, .46f, .34f, .28f, .22f, .19f};
@@ -8142,6 +8149,9 @@ public class Theme {
             chat_radialProgressPausedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             chat_radialProgressPausedSeekbarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             chat_videoProgressPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            Typefaces.setRegular(chat_infoPaint, chat_locationAddressPaint, chat_audioTimePaint, chat_audioPerformerPaint, chat_contactPhonePaint, chat_durationPaint, chat_shipmentPaint, chat_timePaint, chat_adminPaint, chat_ephemeralPaint, chat_forwardNamePaint, chat_replyTextPaint, chat_titleLabelTextPaint, chat_actionTextPaint2, chat_actionTextPaint3, chat_contextResult_descriptionTextPaint);
+            chat_infoPaint.setFontFeatureSettings("tnum");
+            chat_timePaint.setFontFeatureSettings("tnum");
 
             chat_messageBackgroundSelectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             chat_actionBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG | Paint.DITHER_FLAG);

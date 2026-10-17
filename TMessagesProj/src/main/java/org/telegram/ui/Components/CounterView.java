@@ -132,6 +132,7 @@ public class CounterView extends View {
                 circlePaint.setColor(Color.BLACK);
             }
             textPaint.setTypeface(AndroidUtilities.bold());
+            textPaint.setFontFeatureSettings("tnum");
             textPaint.setTextSize(AndroidUtilities.dp(13));
         }
 

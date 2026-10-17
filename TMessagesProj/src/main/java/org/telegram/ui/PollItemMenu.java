@@ -92,6 +92,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import nu.gpu.aoigram.typeface.Typefaces;
+
 public class PollItemMenu extends Dialog {
 
     public final Context context;
@@ -119,6 +121,7 @@ public class PollItemMenu extends Dialog {
 
     public PollItemMenu(Context context, Theme.ResourcesProvider resourcesProvider) {
         super(context, R.style.TransparentDialog);
+        Typefaces.applyTheme(getContext().getTheme());
         this.context = context;
         this.resourcesProvider = resourcesProvider;
 

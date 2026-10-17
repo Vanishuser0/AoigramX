@@ -115,6 +115,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import nu.gpu.aoigram.typeface.Typefaces;
+
 public class BotWebViewSheet extends Dialog implements NotificationCenter.NotificationCenterDelegate, BottomSheetTabsOverlay.Sheet {
     public final static int TYPE_WEB_VIEW_BUTTON = 0,
             TYPE_SIMPLE_WEB_VIEW_BUTTON = 1,
@@ -436,6 +438,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
 
     public BotWebViewSheet(@NonNull Context context, Theme.ResourcesProvider resourcesProvider) {
         super(context, R.style.TransparentDialog);
+        Typefaces.applyTheme(getContext().getTheme());
         this.resourcesProvider = resourcesProvider;
         lineColor = Theme.getColor(Theme.key_sheet_scrollUp);
 

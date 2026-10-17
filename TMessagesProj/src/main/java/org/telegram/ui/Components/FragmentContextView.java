@@ -31,7 +31,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.RectF;
 import android.graphics.Shader;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -102,6 +101,7 @@ import java.util.ArrayList;
 import me.vkryl.android.animator.ListAnimator;
 import me.vkryl.android.animator.ReplaceAnimator;
 import me.vkryl.core.lambda.Destroyable;
+import nu.gpu.aoigram.typeface.Typefaces;
 
 public class FragmentContextView extends FrameLayout implements NotificationCenter.NotificationCenterDelegate, VoIPService.StateListener, GroupCallMessagesController.CallMessageListener  {
     public final static int STYLE_NOT_SET = -1,
@@ -441,7 +441,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                 textView.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
                 if (currentStyle == STYLE_AUDIO_PLAYER || currentStyle == STYLE_LIVE_LOCATION) {
                     textView.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-                    textView.setTypeface(Typeface.DEFAULT);
+                    textView.setTypeface(Typefaces.regular());
                     textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
                 } else if (currentStyle == STYLE_INACTIVE_GROUP_CALL) {
                     textView.setGravity(Gravity.TOP | Gravity.LEFT);
@@ -1223,7 +1223,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                 }
                 textView.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
                 textView.setTextColor(getThemedColor(Theme.key_inappPlayerTitle));
-                textView.setTypeface(Typeface.DEFAULT);
+                textView.setTypeface(Typefaces.regular());
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
             }
             titleTextView.setTag(Theme.key_inappPlayerTitle);
@@ -1261,7 +1261,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                 }
                 textView.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
                 textView.setTextColor(getThemedColor(Theme.key_inappPlayerTitle));
-                textView.setTypeface(Typeface.DEFAULT);
+                textView.setTypeface(Typefaces.regular());
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
             }
             titleTextView.setTag(Theme.key_inappPlayerTitle);

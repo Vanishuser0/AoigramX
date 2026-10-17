@@ -8005,7 +8005,7 @@ public class MessageObject {
     }
 
     public void replaceEmojiToLottieFrame(CharSequence text, int[] emojiOnly) {
-        if (!(text instanceof Spannable)) {
+        if (!(text instanceof Spannable) || AoiConfig.systemEmoji.get()) {
             return;
         }
         Spannable spannable = (Spannable) text;
@@ -8397,6 +8397,9 @@ public class MessageObject {
             } else {
                 setRun = true;
                 spannable.setSpan(new TextStyleSpan(run), run.start, run.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            if (!setRun && AoiConfig.systemFonts.get() && run.urlEntity != null && run.getTypeface() != null) {
+                spannable.setSpan(new TypefaceSpan(run.getTypeface()), run.start, run.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
             if (!setRun && (run.flags & TextStyleSpan.FLAG_STYLE_SPOILER) != 0) {
                 if (spoilersCount >= SpoilerEffect.MAX_SPOILERS_COUNT) continue;

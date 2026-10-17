@@ -74,6 +74,10 @@
     <string name="BotCommandConfirmText">Send this command?</string>
     <string name="DisableInstantCamera">Disable instant camera</string>
     <string name="PreviewRecording">Before sending recordings</string>
+    <string name="SystemFonts">System fonts</string>
+    <string name="SystemFontsText">Text</string>
+    <string name="SystemFontsEmoji">Emoji</string>
+    <string name="RestartToApply">Restart the app to apply changes</string>
     <string name="GlareEffects">Glare effects</string>
     <string name="PredictiveBack">Predictive back animation</string>
     <string name="DialogList">Chat List</string>

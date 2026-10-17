@@ -39,6 +39,8 @@ import org.telegram.ui.Components.ThemeEditorView;
 
 import java.util.ArrayList;
 
+import nu.gpu.aoigram.typeface.Typefaces;
+
 public class BubbleActivity extends BasePermissionsActivity implements INavigationLayout.INavigationLayoutDelegate {
 
     public static BubbleActivity instance;
@@ -66,6 +68,7 @@ public class BubbleActivity extends BasePermissionsActivity implements INavigati
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setTheme(R.style.Theme_TMessages);
+        Typefaces.applyTheme(getTheme());
         getWindow().setBackgroundDrawable(new ActivityWindowEmptyBackgroundDrawable());
         if (!SharedConfig.passcodeHash.isEmpty() && !SharedConfig.allowScreenCapture) {
             try {

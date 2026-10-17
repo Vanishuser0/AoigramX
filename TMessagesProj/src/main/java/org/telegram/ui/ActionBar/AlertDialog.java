@@ -86,6 +86,8 @@ import org.telegram.ui.Stars.StarsIntroActivity;
 import java.util.ArrayList;
 import java.util.Map;
 
+import nu.gpu.aoigram.typeface.Typefaces;
+
 public class AlertDialog extends Dialog implements Drawable.Callback, NotificationCenter.NotificationCenterDelegate {
 
     public static final int ALERT_TYPE_MESSAGE = 0;
@@ -301,6 +303,7 @@ public class AlertDialog extends Dialog implements Drawable.Callback, Notificati
     
     public AlertDialog(Context context, int progressStyle, Theme.ResourcesProvider resourcesProvider) {
         super(context, R.style.TransparentDialog);
+        Typefaces.applyTheme(getContext().getTheme());
         this.resourcesProvider = resourcesProvider;
 
         progressViewStyle = progressStyle;

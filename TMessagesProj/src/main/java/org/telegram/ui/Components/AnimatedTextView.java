@@ -49,6 +49,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import nu.gpu.aoigram.typeface.Typefaces;
+
 public class AnimatedTextView extends View {
 
     public static class AnimatedTextDrawable extends Drawable {
@@ -226,6 +228,7 @@ public class AnimatedTextView extends View {
             this.startFromEnd = startFromEnd;
             this.enforceByLetter = enforceByLetter;
             this.startEndDiff = startEndDiff;
+            Typefaces.setRegular(textPaint);
         }
 
         public void setAllowCancel(boolean allowCancel) {

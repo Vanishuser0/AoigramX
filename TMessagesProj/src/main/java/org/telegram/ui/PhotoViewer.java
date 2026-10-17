@@ -353,6 +353,7 @@ import nu.gpu.aoigram.translate.InputTranslationMenu;
 import nu.gpu.aoigram.translate.TranslationOptions;
 import nu.gpu.aoigram.translate.TranslationSignature;
 import nu.gpu.aoigram.translate.TranslationTask;
+import nu.gpu.aoigram.typeface.Typefaces;
 
 @SuppressLint("WrongConstant")
 @SuppressWarnings("unchecked")
@@ -4777,6 +4778,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         inBubbleMode = activity instanceof BubbleActivity;
         parentActivity = activity;
         activityContext = new ContextThemeWrapper(parentActivity, R.style.Theme_TMessages);
+        Typefaces.applyTheme(activityContext.getTheme());
         touchSlop = ViewConfiguration.get(parentActivity).getScaledTouchSlop();
 
         if (progressDrawables == null) {

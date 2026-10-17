@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import nu.gpu.aoigram.typeface.Typefaces;
+
 public class EditTextEffects extends EditText {
     private final static int SPOILER_TIMEOUT = 10000;
 
@@ -69,6 +71,7 @@ public class EditTextEffects extends EditText {
 
     public EditTextEffects(Context context) {
         super(context, null, 0, R.style.EditTextNoBackgroundStyle);
+        setTypeface(Typefaces.regular());
 
         if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
             clickDetector = new SpoilersClickDetector(this, spoilers, this::onSpoilerClicked);

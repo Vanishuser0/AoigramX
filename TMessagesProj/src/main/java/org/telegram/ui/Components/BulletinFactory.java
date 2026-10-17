@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -58,6 +57,8 @@ import org.telegram.ui.Stories.recorder.HintView2;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import nu.gpu.aoigram.typeface.Typefaces;
 
 public final class BulletinFactory {
 
@@ -286,7 +287,7 @@ public final class BulletinFactory {
         layout.titleTextView.setSingleLine(true);
         layout.titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
         layout.titleTextView.setMaxLines(1);
-        layout.titleTextView.setTypeface(null);
+        layout.titleTextView.setTypeface(Typefaces.regular());
         layout.subtitleTextView.setVisibility(View.GONE);
         return create(layout, text.length() < 20 ? Bulletin.DURATION_SHORT : Bulletin.DURATION_LONG);
     }
@@ -306,7 +307,7 @@ public final class BulletinFactory {
         layout.titleTextView.setText(text);
         layout.titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         layout.titleTextView.setMaxLines(3);
-        layout.titleTextView.setTypeface(null);
+        layout.titleTextView.setTypeface(Typefaces.regular());
         layout.subtitleTextView.setVisibility(View.GONE);
         return create(layout, text.length() < 20 ? Bulletin.DURATION_SHORT : Bulletin.DURATION_LONG);
     }
@@ -1627,7 +1628,7 @@ public final class BulletinFactory {
         layout.setAnimation(R.raw.tag_icon_3, 36, 36);
         layout.removeView(layout.textView);
         layout.textView = new AnimatedEmojiSpan.TextViewEmojis(layout.getContext());
-        layout.textView.setTypeface(Typeface.SANS_SERIF);
+        layout.textView.setTypeface(Typefaces.regular());
         layout.textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
         layout.textView.setEllipsize(TextUtils.TruncateAt.END);
         layout.textView.setPadding(0, 0, 0, dp(8));

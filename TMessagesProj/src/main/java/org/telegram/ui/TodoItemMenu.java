@@ -86,6 +86,8 @@ import org.telegram.ui.Components.chat.ViewPositionWatcher;
 import java.util.ArrayList;
 import java.util.List;
 
+import nu.gpu.aoigram.typeface.Typefaces;
+
 public class TodoItemMenu extends Dialog {
 
     public final Context context;
@@ -113,6 +115,7 @@ public class TodoItemMenu extends Dialog {
 
     public TodoItemMenu(Context context, Theme.ResourcesProvider resourcesProvider) {
         super(context, R.style.TransparentDialog);
+        Typefaces.applyTheme(getContext().getTheme());
         this.context = context;
         this.resourcesProvider = resourcesProvider;
 

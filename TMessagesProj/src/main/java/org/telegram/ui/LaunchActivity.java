@@ -262,6 +262,7 @@ import java.util.zip.ZipInputStream;
 
 import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.remote.AppUpdates;
+import nu.gpu.aoigram.typeface.Typefaces;
 
 public class LaunchActivity extends BasePermissionsActivity implements INavigationLayout.INavigationLayoutDelegate, NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate, IPipActivity {
     public final static String EXTRA_FORCE_NOT_INTERNAL_APPS = "force_not_internal_apps";
@@ -437,6 +438,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         }
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setTheme(R.style.Theme_TMessages);
+        Typefaces.applyTheme(getTheme());
         try {
             setTaskDescription(new ActivityManager.TaskDescription(null, null, Theme.getColor(Theme.key_actionBarDefault) | 0xff000000));
         } catch (Throwable ignore) {

@@ -80,6 +80,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import nu.gpu.aoigram.typeface.Typefaces;
+
 public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener {
 
     public final boolean isChannel;
@@ -782,6 +784,7 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
 
             bioText.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText, fragment.getResourceProvider()));
             bioText.setTextSize(14);
+            bioText.setTypeface(Typefaces.regular());
             contentView.addView(bioText);
 
             ActionBarMenuSubItem addCell = new ActionBarMenuSubItem(context, true, false);

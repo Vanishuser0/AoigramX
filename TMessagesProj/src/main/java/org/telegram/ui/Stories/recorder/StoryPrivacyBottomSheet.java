@@ -114,6 +114,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import nu.gpu.aoigram.typeface.Typefaces;
+
 public class StoryPrivacyBottomSheet extends BottomSheet implements NotificationCenter.NotificationCenterDelegate {
 
     private ViewPagerFixed viewPager;
@@ -3126,7 +3128,7 @@ public class StoryPrivacyBottomSheet extends BottomSheet implements Notification
                 titleTextView.setTranslationX(0);
                 setChat((TLRPC.Chat) object, 0);
             } else if (object instanceof String) {
-                titleTextView.setTypeface(null);
+                titleTextView.setTypeface(Typefaces.regular());
                 titleTextView.setTranslationX(-dp(52) * (LocaleController.isRTL ? -1 : 1));
                 titleTextView.setText((String) object);
             }

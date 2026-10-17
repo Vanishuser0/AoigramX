@@ -105,6 +105,7 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
 
         counter = new AnimatedTextView.AnimatedTextDrawable();
         counter.setTypeface(AndroidUtilities.bold());
+        counter.getPaint().setFontFeatureSettings("tnum");
         counter.setCallback(this);
         counter.setGravity(Gravity.CENTER);
         counter.setTextColor(Color.WHITE);

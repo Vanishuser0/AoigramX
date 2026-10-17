@@ -1519,7 +1519,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                 SharedConfig.canBlurChat() && Build.VERSION.SDK_INT >= 31 ? SharedConfig.useNewBlur ? "back to cpu blur" : "use new gpu blur" : null,
                 SharedConfig.adaptableColorInBrowser ? "Disabled adaptive browser colors" : "Enable adaptive browser colors",
                 SharedConfig.debugVideoQualities ? "Disable video qualities debug" : "Enable video qualities debug",
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ? getString(SharedConfig.useSystemBoldFont ? R.string.DebugMenuDontUseSystemBoldFont : R.string.DebugMenuUseSystemBoldFont) : null,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !AoiConfig.systemFonts.get() ? getString(SharedConfig.useSystemBoldFont ? R.string.DebugMenuDontUseSystemBoldFont : R.string.DebugMenuUseSystemBoldFont) : null,
                 "Reload app config",
                 !SharedConfig.forceForumTabs ? "Force Forum Tabs" : "Do Not Force Forum Tabs",
                 "Make Memory Dump",

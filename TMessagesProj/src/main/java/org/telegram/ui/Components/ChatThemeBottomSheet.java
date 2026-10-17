@@ -87,6 +87,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import nu.gpu.aoigram.typeface.Typefaces;
+
 public class ChatThemeBottomSheet extends BottomSheet implements NotificationCenter.NotificationCenterDelegate {
 
     private final ImageView backButtonView;
@@ -1056,7 +1058,7 @@ public class ChatThemeBottomSheet extends BottomSheet implements NotificationCen
                 } else {
                     layout.titleTextView.setText(AndroidUtilities.replaceTags(LocaleController.formatString("ThemeAlsoAppliedForHint", R.string.ThemeAlsoAppliedForHint, user.first_name)));
                 }
-                layout.titleTextView.setTypeface(null);
+                layout.titleTextView.setTypeface(Typefaces.regular());
                 bulletin = Bulletin.make(chatActivity, layout, Bulletin.DURATION_LONG);
             }
         }

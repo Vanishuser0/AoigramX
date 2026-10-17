@@ -83,6 +83,8 @@ import org.telegram.ui.LaunchActivity;
 
 import java.util.ArrayList;
 
+import nu.gpu.aoigram.typeface.Typefaces;
+
 public class BottomSheet extends Dialog implements BaseFragment.AttachedSheet {
     private final static boolean AVOID_SYSTEM_CUTOUT_FULLSCREEN = false;
 
@@ -1196,6 +1198,7 @@ public class BottomSheet extends Dialog implements BaseFragment.AttachedSheet {
 
     public BottomSheet(Context context, boolean needFocus, EdgeToEdge edgeToEdge, Theme.ResourcesProvider resourcesProvider) {
         super(context, R.style.TransparentDialog);
+        Typefaces.applyTheme(getContext().getTheme());
         this.resourcesProvider = resourcesProvider;
         if (BuildConfig.DEBUG_PRIVATE_VERSION) {
             LeakDetector.getInstance().add(this);

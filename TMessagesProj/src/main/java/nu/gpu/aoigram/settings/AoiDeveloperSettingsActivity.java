@@ -2,8 +2,6 @@ package nu.gpu.aoigram.settings;
 
 import static org.telegram.messenger.LocaleController.getString;
 
-import android.view.View;
-
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.UserConfig;
@@ -13,6 +11,7 @@ import org.telegram.ui.Components.UniversalAdapter;
 import java.util.ArrayList;
 
 import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.config.BoolConfig;
 
 public final class AoiDeveloperSettingsActivity extends BaseAoiSettingsActivity {
 
@@ -32,9 +31,8 @@ public final class AoiDeveloperSettingsActivity extends BaseAoiSettingsActivity 
     }
 
     @Override
-    protected void onItemClick(UItem item, View view, int position, float x, float y) {
-        super.onItemClick(item, view, position, x, y);
-        if (item.object == AoiConfig.disableAds) {
+    protected void onConfigToggled(BoolConfig config) {
+        if (config == AoiConfig.disableAds) {
             for (int account = 0; account < UserConfig.MAX_ACCOUNT_COUNT; account++) {
                 if (UserConfig.getInstance(account).isClientActivated()) {
                     MessagesController.getInstance(account).checkPromoInfo(true);

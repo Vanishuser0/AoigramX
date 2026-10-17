@@ -109,16 +109,18 @@ public final class ExpandableSettingsCell extends FrameLayout {
         boolean animated = this.item != null && this.item.id == item.id && this.item.object == item.object;
         this.item = item;
         this.divider = divider;
-        group = item.iconResId != 0;
+        group = isGroup(item);
         textView.setText(item.text);
-        textLayout.setLayoutParams(LayoutHelper.createFrameRelatively(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_VERTICAL, group ? 64 : 105, 0, group ? 79 : 21, 0));
-        iconView.setVisibility(group ? VISIBLE : GONE);
+        textLayout.setLayoutParams(LayoutHelper.createFrameRelatively(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_VERTICAL, getTextInset(), 0, group ? 79 : 21, 0));
+        iconView.setVisibility(group && item.iconResId != 0 ? VISIBLE : GONE);
         switchView.setVisibility(group ? VISIBLE : GONE);
         countView.setVisibility(group ? VISIBLE : GONE);
         arrowView.setVisibility(group ? VISIBLE : GONE);
         checkBoxView.setVisibility(group ? GONE : VISIBLE);
         if (group) {
-            iconView.setImageResource(item.iconResId);
+            if (item.iconResId != 0) {
+                iconView.setImageResource(item.iconResId);
+            }
             countView.setText(item.intValue + "/" + item.longValue, animated && !LocaleController.isRTL);
             switchView.setChecked(item.checked, animated);
             arrowView.animate().cancel();
@@ -139,6 +141,14 @@ public final class ExpandableSettingsCell extends FrameLayout {
         invalidate();
     }
 
+    private int getTextInset() {
+        return group ? item.iconResId != 0 ? 64 : 21 : 105;
+    }
+
+    public static boolean isGroup(UItem item) {
+        return item.instanceOf(Factory.class) && item.clickCallback != null;
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(50), MeasureSpec.EXACTLY));
@@ -152,7 +162,7 @@ public final class ExpandableSettingsCell extends FrameLayout {
             canvas.drawRect(x - dp(.66f), (getHeight() - dp(20)) / 2f, x, (getHeight() + dp(20)) / 2f, Theme.dividerPaint);
         }
         if (divider) {
-            int inset = dp(group ? 64 : 105);
+            int inset = dp(getTextInset());
             canvas.drawLine(LocaleController.isRTL ? 0 : inset, getHeight() - 1, LocaleController.isRTL ? getWidth() - inset : getWidth(), getHeight() - 1, Theme.dividerPaint);
         }
     }

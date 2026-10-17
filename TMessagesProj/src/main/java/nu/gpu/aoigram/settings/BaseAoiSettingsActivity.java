@@ -13,6 +13,7 @@ import android.graphics.RectF;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.View;
 
@@ -25,6 +26,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.ui.ActionBar.ActionBar;
@@ -61,6 +63,7 @@ public abstract class BaseAoiSettingsActivity extends BaseFragment {
     private ValueAnimator actionBarVisibleAnimator;
     private int navigationBarHeight;
     private String initialItemKey;
+    private final SparseBooleanArray expandedGroups = new SparseBooleanArray();
 
     private final DownscaleScrollableNoiseSuppressor scrollableViewNoiseSuppressor;
     private final BlurredBackgroundSourceRenderNode iBlur3SourceGlassFrosted;
@@ -219,11 +222,50 @@ public abstract class BaseAoiSettingsActivity extends BaseFragment {
         return item;
     }
 
+    protected void addGroup(ArrayList<UItem> items, UniversalAdapter adapter, int id, int iconResId, @StringRes int titleResId, Option[] options) {
+        int enabled = 0;
+        for (Option option : options) {
+            if (option.config.get()) {
+                enabled++;
+            }
+        }
+        boolean expanded = expandedGroups.get(id);
+        UItem group = ExpandableSettingsCell.Factory.group(id, iconResId, getString(titleResId), enabled, options.length, expanded, view -> {
+            expandedGroups.put(id, !expandedGroups.get(id));
+            listView.adapter.update(true);
+        });
+        group.object = options;
+        items.add(group);
+        if (adapter == null || expanded) {
+            for (Option option : options) {
+                UItem item = ExpandableSettingsCell.Factory.option(getString(option.titleResId), option.config.get());
+                item.object = option.config;
+                items.add(item);
+            }
+        }
+    }
+
     protected void onItemClick(UItem item, View view, int position, float x, float y) {
-        if (item.object instanceof BoolConfig config) {
+        if (ExpandableSettingsCell.isGroup(item)) {
+            if (LocaleController.isRTL ? x > dp(75) : x < view.getWidth() - dp(75)) {
+                item.clickCallback.onClick(view);
+                return;
+            }
+            for (Option option : (Option[]) item.object) {
+                if (option.config.get() == item.checked) {
+                    option.config.set(!item.checked);
+                    onConfigToggled(option.config);
+                }
+            }
+            listView.adapter.update(true);
+        } else if (item.object instanceof BoolConfig config) {
             config.toggle();
             listView.adapter.update(true);
+            onConfigToggled(config);
         }
+    }
+
+    protected void onConfigToggled(BoolConfig config) {
     }
 
     protected boolean onItemLongClick(UItem item, View view, int position, float x, float y) {
@@ -276,9 +318,23 @@ public abstract class BaseAoiSettingsActivity extends BaseFragment {
         return hasCollapsingHeader() ? dp(12) : ActionBar.getCurrentActionBarHeight();
     }
 
+    @Nullable
     public BaseAoiSettingsActivity setInitialItemKey(@Nullable String itemKey) {
         initialItemKey = itemKey;
-        return this;
+        boolean found = TextUtils.isEmpty(itemKey);
+        ArrayList<UItem> items = new ArrayList<>();
+        fillItems(items, null);
+        for (UItem item : items) {
+            found = found || itemKey.equals(getItemKey(item));
+            if (ExpandableSettingsCell.isGroup(item)) {
+                for (Option option : (Option[]) item.object) {
+                    if (option.config.getKey().equals(itemKey)) {
+                        expandedGroups.put(item.id, true);
+                    }
+                }
+            }
+        }
+        return found ? this : null;
     }
 
     private void applyInitialItem() {
@@ -381,4 +437,6 @@ public abstract class BaseAoiSettingsActivity extends BaseFragment {
     public boolean drawEdgeNavigationBar() {
         return false;
     }
+
+    protected record Option(BoolConfig config, @StringRes int titleResId) {}
 }

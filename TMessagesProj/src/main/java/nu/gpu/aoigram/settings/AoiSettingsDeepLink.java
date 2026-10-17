@@ -5,9 +5,6 @@ import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 
-import org.telegram.ui.Components.UItem;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public final class AoiSettingsDeepLink {
@@ -111,13 +108,6 @@ public final class AoiSettingsDeepLink {
             fragment = new AoiAboutSettingsActivity();
         } else {
             return null;
-        }
-        if (!TextUtils.isEmpty(itemKey)) {
-            ArrayList<UItem> items = new ArrayList<>();
-            fragment.fillItems(items, null);
-            if (items.stream().noneMatch(item -> itemKey.equals(fragment.getItemKey(item)))) {
-                return null;
-            }
         }
         return fragment.setInitialItemKey(itemKey);
     }

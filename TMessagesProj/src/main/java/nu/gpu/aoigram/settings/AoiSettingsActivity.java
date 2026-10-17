@@ -168,15 +168,23 @@ public class AoiSettingsActivity extends BaseAoiSettingsActivity {
         String pageKey = fragment.getSettingsPageKey();
         ArrayList<UItem> items = new ArrayList<>();
         fragment.fillItems(items, null);
+        String header = null;
         String section = null;
         for (UItem item : items) {
-            if (item.viewType == UniversalAdapter.VIEW_TYPE_HEADER || item.instanceOf(ExpandableSettingsCell.Factory.class) && item.iconResId != 0) {
-                section = TextUtils.equals(item.text, pageTitle) ? null : item.text.toString();
+            if (item.viewType == UniversalAdapter.VIEW_TYPE_HEADER) {
+                header = section = TextUtils.equals(item.text, pageTitle) ? null : item.text.toString();
+                continue;
+            }
+            if (ExpandableSettingsCell.isGroup(item)) {
+                section = item.text.toString();
                 continue;
             }
             if (item.viewType == UniversalAdapter.VIEW_TYPE_SHADOW) {
-                section = null;
+                header = section = null;
                 continue;
+            }
+            if (!item.instanceOf(ExpandableSettingsCell.Factory.class)) {
+                section = header;
             }
             String itemKey = fragment.getItemKey(item);
             if (!TextUtils.isEmpty(itemKey)) {

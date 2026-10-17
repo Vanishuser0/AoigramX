@@ -252,4 +252,5 @@
     <string name="UpdateChannelBeta">Beta</string>
     <string name="UpdateChannelStable">Stable</string>
     <string name="RecentChats">Recent chats</string>
+    <string name="RestartApp">Restart app</string>
 </resources>

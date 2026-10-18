@@ -333,7 +333,7 @@ public class ActionBarMenuItem extends FrameLayout {
                     View child = popupLayout.getItemAt(a);
                     child.getHitRect(rect);
                     Object tag = child.getTag();
-                    if (tag instanceof Integer && (Integer) tag < 100) {
+                    if (tag instanceof Integer && (Integer) tag < 100 || child instanceof ActionBarMenuSubItem && ((ActionBarMenuSubItem) child).openSwipeBackLayout != null) {
                         if (!rect.contains((int) x, (int) y)) {
                             child.setPressed(false);
                             child.setSelected(false);
@@ -353,7 +353,12 @@ public class ActionBarMenuItem extends FrameLayout {
                 }
             }
         } else if (popupWindow != null && popupWindow.isShowing() && event.getActionMasked() == MotionEvent.ACTION_UP) {
-            if (selectedMenuView != null) {
+            if (selectedMenuView instanceof ActionBarMenuSubItem && ((ActionBarMenuSubItem) selectedMenuView).openSwipeBackLayout != null) {
+                selectedMenuView.setSelected(false);
+                selectedMenuView.setPressed(false);
+                selectedMenuView.performClick();
+                selectedMenuView = null;
+            } else if (selectedMenuView != null) {
                 selectedMenuView.setSelected(false);
                 if (parentMenu != null) {
                     parentMenu.onItemClick((Integer) selectedMenuView.getTag());
@@ -422,6 +427,8 @@ public class ActionBarMenuItem extends FrameLayout {
                     .setColorProvider(subMenuProvider)
                     .setRadius(dp(12))
                     .setPadding(dp(8)));
+            popupLayout.getSwipeBack().setForegroundBackground(subMenuFactory.create(popupLayout.getSwipeBack(), true)
+                    .setColorProvider(subMenuProvider));
         }
 
         popupLayout.setOnTouchListener((v, event) -> {

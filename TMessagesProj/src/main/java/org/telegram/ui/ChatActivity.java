@@ -403,6 +403,7 @@ public class ChatActivity extends BaseFragment implements
     private static final int OPTION_CLEAR = 1006;
     public static final int OPTION_FORWARD_NO_QUOTE = 1007;
     private static final int MENU_RECENT_ACTIONS = 90;
+    private static final int MENU_TO_BEGINNING = 91;
     private ChatManualTranslation aoiChatManualTranslation;
     private QuickActions quickActions;
     private boolean aoiHideChannelBottomBar;
@@ -447,6 +448,29 @@ public class ChatActivity extends BaseFragment implements
 
     private boolean aoiCanOpenDirect() {
         return ChatObject.isChannel(currentChat) && !ChatObject.isMonoForum(currentChat) && currentChat.linked_monoforum_id != 0 && (ChatObject.canManageMonoForum(currentAccount, -currentChat.linked_monoforum_id) || aoiHideChannelBottomBar && currentChat.broadcast_messages_allowed);
+    }
+
+    private View aoiCreateMoreMenu(Context context) {
+        ActionBarPopupWindow.ActionBarPopupWindowLayout layout = new ActionBarPopupWindow.ActionBarPopupWindowLayout(context, 0, themeDelegate);
+        layout.setFitItems(true);
+        ActionBarMenuItem.addItem(layout, R.drawable.msg_arrow_back, getString(R.string.Back), false, themeDelegate).setOnClickListener(v -> headerItem.getPopupLayout().getSwipeBack().closeForeground());
+        ActionBarPopupWindow.GapView gap = new ActionBarPopupWindow.GapView(context, themeDelegate, Theme.key_actionBarDefaultSubmenuSeparator);
+        gap.setTag(R.id.fit_width_tag, 1);
+        layout.addView(gap, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8));
+        aoiAddMoreMenuItem(layout, MENU_TO_BEGINNING, R.drawable.msg_go_up, null, getString(R.string.ToBeginning));
+        if (ChatObject.isBoostSupported(currentChat) && (getUserConfig().isPremium() || ChatObject.isBoosted(chatInfo) || ChatObject.hasAdminRights(currentChat))) {
+            aoiAddMoreMenuItem(layout, boost_group, 0, new RLottieDrawable(R.raw.boosts, dp(24), dp(24)), getString(ChatObject.isChannelAndNotMegaGroup(currentChat) ? R.string.BoostingBoostChannelMenu : R.string.BoostingBoostGroupMenu));
+        }
+        return layout;
+    }
+
+    private void aoiAddMoreMenuItem(ViewGroup layout, int id, int icon, Drawable iconDrawable, CharSequence text) {
+        ActionBarMenuSubItem item = ActionBarMenuItem.addItem(layout, 0, text, false, themeDelegate);
+        item.setTextAndIcon(text, icon, iconDrawable);
+        item.setOnClickListener(v -> {
+            headerItem.closeSubMenu();
+            actionBar.getActionBarMenuOnItemClick().onItemClick(id);
+        });
     }
 
     private int getDoubleTapOption(ChatMessageCell cell, int action) {
@@ -3975,6 +3999,8 @@ public class ChatActivity extends BaseFragment implements
                     presentFragment(ChatActivity.of(-currentChat.linked_monoforum_id));
                 } else if (id == MENU_RECENT_ACTIONS) {
                     presentFragment(new ChannelAdminLogActivity(currentChat));
+                } else if (id == MENU_TO_BEGINNING) {
+                    scrollToMessageId(1, 0, false, 0, true, 0);
                 } else if (id == charge_fee ) {
                     long user_id = dialog_id;
                     long parent_id = 0;
@@ -4633,10 +4659,6 @@ public class ChatActivity extends BaseFragment implements
             if (searchItem != null) {
                 headerItem.lazilyAddSubItem(search, R.drawable.msg_search, LocaleController.getString(R.string.Search));
             }
-            if (ChatObject.isBoostSupported(currentChat) && (getUserConfig().isPremium() || ChatObject.isBoosted(chatInfo) || ChatObject.hasAdminRights(currentChat))) {
-                RLottieDrawable drawable = new RLottieDrawable(R.raw.boosts, dp(24), dp(24));
-                headerItem.lazilyAddSubItem(boost_group, drawable, LocaleController.getString(ChatObject.isChannelAndNotMegaGroup(currentChat) ? R.string.BoostingBoostChannelMenu : R.string.BoostingBoostGroupMenu));
-            }
             translateItem = headerItem.lazilyAddSubItem(translate, R.drawable.msg_translate, LocaleController.getString(R.string.TranslateMessage));
             updateTranslateItemVisibility();
             if (currentChat != null && !currentChat.creator && !ChatObject.hasAdminRights(currentChat)) {
@@ -4664,15 +4686,14 @@ public class ChatActivity extends BaseFragment implements
             boolean addedSettings = false;
             if (!isTopic) {
                 if (ChatObject.isChannel(currentChat) && !currentChat.creator) {
-                    if (!ChatObject.isNotInChat(currentChat)) {
-                        if (currentChat.monoforum) {
-                            headerItem.lazilyAddSubItem(delete_chat, R.drawable.msg_leave, LocaleController.getString(R.string.LeaveConversationMenu));
-                        } else if (currentChat.megagroup) {
-                            headerItem.lazilyAddSubItem(delete_chat, R.drawable.msg_leave, LocaleController.getString(R.string.LeaveMegaMenu));
-                        } else {
-                            headerItem.lazilyAddSubItem(delete_chat, R.drawable.msg_leave, LocaleController.getString(R.string.LeaveChannelMenu));
-                        }
+                    if (currentChat.monoforum) {
+                        headerItem.lazilyAddSubItem(delete_chat, R.drawable.msg_leave, LocaleController.getString(R.string.LeaveConversationMenu));
+                    } else if (currentChat.megagroup) {
+                        headerItem.lazilyAddSubItem(delete_chat, R.drawable.msg_leave, LocaleController.getString(R.string.LeaveMegaMenu));
+                    } else {
+                        headerItem.lazilyAddSubItem(delete_chat, R.drawable.msg_leave, LocaleController.getString(R.string.LeaveChannelMenu));
                     }
+                    headerItem.setSubItemShown(delete_chat, !ChatObject.isNotInChat(currentChat));
                 } else if (!ChatObject.isChannel(currentChat) && getDialogId() != UserObject.VERIFY) {
                     if (currentChat != null) {
                         headerItem.lazilyAddSubItem(delete_chat, R.drawable.msg_leave, LocaleController.getString(R.string.DeleteAndExit));
@@ -4729,9 +4750,12 @@ public class ChatActivity extends BaseFragment implements
             closeTopicItem = headerItem.lazilyAddSubItem(topic_close, R.drawable.msg_topic_close, LocaleController.getString(R.string.CloseTopic));
             closeTopicItem.setVisibility(currentChat != null && ChatObject.canManageTopic(currentAccount, currentChat, forumTopic) && forumTopic != null && !forumTopic.closed ? View.VISIBLE : View.GONE);
         }
-        if (headerItem != null && ChatObject.isChannel(currentChat) && !ChatObject.isMonoForum(currentChat) && ChatObject.hasAdminRights(currentChat)) {
+        if (headerItem != null && chatMode != MODE_EDIT_BUSINESS_LINK && currentEncryptedChat == null) {
             headerItem.lazilyAddColoredGap();
-            headerItem.lazilyAddSubItem(MENU_RECENT_ACTIONS, R.drawable.msg_log, getString(R.string.EventLog));
+            if (ChatObject.isChannel(currentChat) && !ChatObject.isMonoForum(currentChat) && ChatObject.hasAdminRights(currentChat)) {
+                headerItem.lazilyAddSubItem(MENU_RECENT_ACTIONS, R.drawable.msg_log, getString(R.string.EventLog));
+            }
+            headerItem.lazilyAddSwipeBackItem(R.drawable.iv_media_dots, null, getString(R.string.MoreMenu), () -> aoiCreateMoreMenu(context));
         }
         menu.setVisibility(inMenuMode ? View.GONE : View.VISIBLE);
 
@@ -44992,6 +45016,9 @@ public class ChatActivity extends BaseFragment implements
 
     private void checkLeaveChannelButton() {
         if (headerItem == null || chatMode == MODE_SAVED) return;
+        if (ChatObject.isChannel(currentChat) && !currentChat.creator) {
+            headerItem.setSubItemShown(delete_chat, !ChatObject.isNotInChat(currentChat));
+        }
         if (!headerItem.hasSubItem(delete_chat)) {
             if (!isTopic) {
                 if (ChatObject.isChannel(currentChat) && !currentChat.creator) {

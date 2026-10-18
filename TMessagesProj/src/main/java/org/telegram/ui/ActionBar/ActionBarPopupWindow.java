@@ -959,8 +959,14 @@ public class ActionBarPopupWindow extends PopupWindow {
                 finalScaleY = content.backScaleY;
             }
             windowAnimatorSet = new AnimatorSet();
+            ActionBarPopupWindowLayout aoiContent = content;
+            ValueAnimator aoiBackScaleY = ValueAnimator.ofFloat(0f, 1f);
+            aoiBackScaleY.addUpdateListener(a -> {
+                aoiContent.getSwipeBack().invalidateTransforms();
+                aoiContent.setBackScaleY(aoiContent.getBackScaleY() * (float) a.getAnimatedValue());
+            });
             windowAnimatorSet.playTogether(
-                    ObjectAnimator.ofFloat(content, "backScaleY", 0.0f, finalScaleY),
+                    content.getSwipeBack() != null ? aoiBackScaleY : ObjectAnimator.ofFloat(content, "backScaleY", 0.0f, finalScaleY),
                     ObjectAnimator.ofInt(content, "backAlpha", 0, 255));
             windowAnimatorSet.setDuration(150 + 16 * visibleCount);
             windowAnimatorSet.addListener(new AnimatorListenerAdapter() {

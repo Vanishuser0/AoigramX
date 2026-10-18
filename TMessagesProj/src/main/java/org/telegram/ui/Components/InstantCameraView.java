@@ -126,6 +126,8 @@ import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
+import nu.gpu.aoigram.chat.VideoMessageCamera;
+
 @SuppressLint("ViewConstructor")
 public class InstantCameraView extends InstantCameraViewBase implements NotificationCenter.NotificationCenterDelegate {
 
@@ -739,6 +741,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
             if (!useCamera2) {
                 isFrontface = true;
             }
+            isFrontface = VideoMessageCamera.isFrontface(isFrontface);
             updateFlash();
             recordedTime = 0;
             progress = 0;
@@ -797,6 +800,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                 if (camera2SessionCurrent != null && camera2Sessions[isFrontface ? 1 : 0] == null) {
                     bothCameras = false;
                 }
+                surfaceIndex = bothCameras && !isFrontface ? 1 : 0;
                 if (BuildVars.LOGS_ENABLED) {
                     FileLog.d("InstantCamera legacy switch capability: dual=" + bothCameras
                             + ", initialFacing=" + (isFrontface ? "FRONT" : "BACK")

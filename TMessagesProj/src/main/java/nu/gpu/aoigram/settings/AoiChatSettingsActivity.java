@@ -12,6 +12,7 @@ import org.telegram.ui.Components.UniversalAdapter;
 
 import java.util.ArrayList;
 
+import nu.gpu.aoigram.chat.VideoMessageCamera;
 import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.config.BoolConfig;
 import nu.gpu.aoigram.config.IntConfig;
@@ -86,6 +87,9 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
         items.add(UItem.asShadow(null));
         items.add(UItem.asHeader(getString(R.string.VoipCamera)));
         items.add(asConfigCheck(AoiConfig.disableInstantCamera, R.string.DisableInstantCamera));
+        UItem videoMessageCameraItem = UItem.asButton(0, getString(R.string.VideoMessageCamera), VideoMessageCamera.getLabel(AoiConfig.videoMessageCamera.get()));
+        videoMessageCameraItem.object = AoiConfig.videoMessageCamera;
+        items.add(videoMessageCameraItem);
         items.add(UItem.asShadow(null));
         items.add(asConfigCheck(AoiConfig.groupMessageMenu, R.string.GroupMessageMenu, R.string.GroupMessageMenuInfo));
         addGroup(items, adapter, MESSAGE_MENU, R.drawable.msg_list, R.string.MessageMenu, MESSAGE_MENU_OPTIONS);
@@ -115,6 +119,15 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
     protected void onItemClick(UItem item, View view, int position, float x, float y) {
         if (item.id == PINNED_REACTIONS) {
             presentFragment(new AoiPinnedReactionsActivity());
+        } else if (item.object == AoiConfig.videoMessageCamera) {
+            String[] labels = new String[VideoMessageCamera.REAR + 1];
+            for (int type = VideoMessageCamera.DEFAULT; type <= VideoMessageCamera.REAR; type++) {
+                labels[type] = VideoMessageCamera.getLabel(type);
+            }
+            showDialog(AlertsCreator.createSingleChoiceDialog(getParentActivity(), labels, getString(R.string.VideoMessageCamera), AoiConfig.videoMessageCamera.get(), (dialog, which) -> {
+                AoiConfig.videoMessageCamera.set(which);
+                listView.adapter.update(true);
+            }));
         } else if (item.object == AoiConfig.doubleTapIncomingAction || item.object == AoiConfig.doubleTapOutgoingAction) {
             IntConfig config = (IntConfig) item.object;
             String[] labels = new String[DoubleTap.DELETE + 1];

@@ -75,6 +75,10 @@
     <string name="BotCommandConfirm">Before sending bot commands</string>
     <string name="BotCommandConfirmText">Send this command?</string>
     <string name="DisableInstantCamera">Disable instant camera</string>
+    <string name="VideoMessageCamera">Video message camera</string>
+    <string name="VideoMessageCameraAsk">Ask</string>
+    <string name="FrontCamera">Front camera</string>
+    <string name="RearCamera">Rear camera</string>
     <string name="PreviewRecording">Before sending recordings</string>
     <string name="SystemFonts">System fonts</string>
     <string name="SystemFontsText">Text</string>

@@ -230,6 +230,7 @@ import java.util.Locale;
 import me.vkryl.android.animator.BoolAnimator;
 import me.vkryl.android.animator.FactorAnimator;
 
+import nu.gpu.aoigram.chat.VideoMessageCamera;
 import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.translate.InputTranslation;
 import nu.gpu.aoigram.translate.InputTranslationMenu;
@@ -243,6 +244,33 @@ public class ChatActivityEnterView extends FrameLayout implements
 {
     private final InputTranslation aoiInputTranslation = new InputTranslation();
     public ViewGroup aoiStoryMenuContainer;
+    private boolean aoiVideoCameraChosen;
+
+    private boolean aoiAskVideoCamera() {
+        if (aoiVideoCameraChosen || AoiConfig.videoMessageCamera.get() != VideoMessageCamera.ASK) {
+            VideoMessageCamera.apply(AoiConfig.videoMessageCamera.get());
+            return false;
+        }
+        calledRecordRunnable = false;
+        ItemOptions options = isStories ? ItemOptions.makeOptions(aoiStoryMenuContainer, resourcesProvider, audioVideoButtonContainer) : ItemOptions.makeOptions(parentFragment, audioVideoButtonContainer);
+        options.add(R.drawable.msg_openprofile, getString(R.string.FrontCamera), () -> aoiStartVideoRecord(VideoMessageCamera.FRONT))
+            .add(R.drawable.msg_camera, getString(R.string.RearCamera), () -> aoiStartVideoRecord(VideoMessageCamera.REAR))
+            .forceTop(true)
+            .show();
+        audioVideoButtonContainer.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
+        return true;
+    }
+
+    private void aoiStartVideoRecord(int camera) {
+        VideoMessageCamera.apply(camera);
+        aoiVideoCameraChosen = true;
+        recordAudioVideoRunnable.run();
+        aoiVideoCameraChosen = false;
+        if (recordingAudioVideo) {
+            sendButtonVisible = true;
+            startLockTransition();
+        }
+    }
 
     private boolean aoiPreviewRecording() {
         if (!AoiConfig.previewRecording.get()) {
@@ -961,6 +989,9 @@ public class ChatActivityEnterView extends FrameLayout implements
                         parentActivity.requestPermissions(permissions, BasePermissionsActivity.REQUEST_CODE_VIDEO_MESSAGE);
                         return;
                     }
+                }
+                if (aoiAskVideoCamera()) {
+                    return;
                 }
                 if (!CameraController.getInstance().isCameraInitied()) {
                     CameraController.getInstance().initCamera(onFinishInitCameraRunnable);

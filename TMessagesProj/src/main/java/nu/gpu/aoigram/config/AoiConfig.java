@@ -7,6 +7,7 @@ import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.ConnectionsManager;
 
+import nu.gpu.aoigram.chat.VideoMessageCamera;
 import nu.gpu.aoigram.dialogs.FolderIcons;
 import nu.gpu.aoigram.dialogs.FolderUnreadCounter;
 import nu.gpu.aoigram.messages.DoubleTap;
@@ -97,6 +98,7 @@ public final class AoiConfig {
     public static final IntConfig doubleTapIncomingAction = register(new IntConfig("doubleTapIncomingAction", DoubleTap.REACTION));
     public static final IntConfig doubleTapOutgoingAction = register(new IntConfig("doubleTapOutgoingAction", DoubleTap.REACTION));
     public static final BoolConfig disableInstantCamera = register(new BoolConfig("disableInstantCamera", true));
+    public static final IntConfig videoMessageCamera = register(new IntConfig("videoMessageCamera", VideoMessageCamera.DEFAULT));
     public static final BoolConfig groupMessageMenu = register(new BoolConfig("groupMessageMenu", true));
     public static final BoolConfig showCopyPhoto = register(new BoolConfig("showCopyPhoto", true));
     public static final BoolConfig showSave = register(new BoolConfig("showSave", true));

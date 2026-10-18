@@ -403,6 +403,7 @@ public class ChatActivity extends BaseFragment implements
     private static final int OPTION_SAVE = 1005;
     private static final int OPTION_CLEAR = 1006;
     public static final int OPTION_FORWARD_NO_QUOTE = 1007;
+    public static final int OPTION_REPLY_PRIVATE = 1008;
     private static final int MENU_RECENT_ACTIONS = 90;
     private static final int MENU_TO_BEGINNING = 91;
     private static final int MENU_MY_MESSAGES = 92;
@@ -516,6 +517,10 @@ public class ChatActivity extends BaseFragment implements
         button.setVisibility(View.GONE);
         searchContainer.addView(button, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT, Gravity.RIGHT | Gravity.FILL_VERTICAL));
         return button;
+    }
+
+    private boolean aoiCanReplyPrivately(MessageObject message) {
+        return message.getDialogId() < 0 && !isPeerNoForwards() && !message.messageOwner.noforwards && message.messageOwner.from_id instanceof TLRPC.TL_peerUser && message.messageOwner.from_id.user_id != getUserConfig().getClientUserId();
     }
 
     private int getDoubleTapOption(ChatMessageCell cell, int action) {
@@ -32422,7 +32427,7 @@ public class ChatActivity extends BaseFragment implements
                     }
                 }
                 quickActions = AoiConfig.groupMessageMenu.get() && selectedObject != null
-                    ? QuickActions.create(getParentActivity(), selectedObject, icons, items, options, OPTION_COPY_PHOTO, this::processSelectedOption, themeDelegate)
+                    ? QuickActions.create(getParentActivity(), selectedObject, icons, items, options, OPTION_COPY_PHOTO, aoiCanReplyPrivately(selectedObject), this::processSelectedOption, themeDelegate)
                     : null;
                 scrimPopupWindowItems = new ActionBarMenuSubItem[items.size()];
                 for (int a = 0, N = items.size(); a < N; a++) {
@@ -32481,6 +32486,12 @@ public class ChatActivity extends BaseFragment implements
                     if (option == OPTION_FORWARD) {
                         cell.setOnLongClickListener(v1 -> {
                             processSelectedOption(OPTION_FORWARD_NO_QUOTE);
+                            return true;
+                        });
+                    }
+                    if (option == OPTION_REPLY && aoiCanReplyPrivately(message)) {
+                        cell.setOnLongClickListener(v1 -> {
+                            processSelectedOption(OPTION_REPLY_PRIVATE);
                             return true;
                         });
                     }
@@ -34336,6 +34347,15 @@ public class ChatActivity extends BaseFragment implements
                     presentFragment(fragment);
                 } else {
                     showFieldPanelForReply(selectedObject);
+                }
+                break;
+            }
+            case OPTION_REPLY_PRIVATE: {
+                ChatActivity chatActivity = ChatActivity.of(selectedObject.messageOwner.from_id.user_id);
+                if (presentFragment(chatActivity)) {
+                    chatActivity.replyingQuoteGroup = getGroup(selectedObject.getGroupId());
+                    chatActivity.replyingTopMessage = threadMessageObject;
+                    chatActivity.showFieldPanelForReplyQuote(selectedObject, null);
                 }
                 break;
             }

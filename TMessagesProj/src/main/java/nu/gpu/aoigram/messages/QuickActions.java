@@ -9,6 +9,7 @@ import static org.telegram.ui.ChatActivity.OPTION_EDIT;
 import static org.telegram.ui.ChatActivity.OPTION_FORWARD;
 import static org.telegram.ui.ChatActivity.OPTION_FORWARD_NO_QUOTE;
 import static org.telegram.ui.ChatActivity.OPTION_REPLY;
+import static org.telegram.ui.ChatActivity.OPTION_REPLY_PRIVATE;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -50,7 +51,7 @@ public final class QuickActions extends LinearLayout {
 
     public static QuickActions create(Context context, MessageObject message,
                                       ArrayList<Integer> icons, ArrayList<CharSequence> items,
-                                      ArrayList<Integer> options, int copyPhotoOption,
+                                      ArrayList<Integer> options, int copyPhotoOption, boolean replyPrivately,
                                       Utilities.Callback<Integer> onOption, Theme.ResourcesProvider resourcesProvider) {
         int reply = options.indexOf(OPTION_REPLY);
         int copy = options.indexOf(OPTION_COPY);
@@ -108,6 +109,12 @@ public final class QuickActions extends LinearLayout {
                 if (index == forward) {
                     button.setOnLongClickListener(view -> {
                         onOption.run(OPTION_FORWARD_NO_QUOTE);
+                        return true;
+                    });
+                }
+                if (index == reply && replyPrivately) {
+                    button.setOnLongClickListener(view -> {
+                        onOption.run(OPTION_REPLY_PRIVATE);
                         return true;
                     });
                 }

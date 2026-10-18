@@ -370,6 +370,7 @@ import me.vkryl.core.BitwiseUtils;
 import me.vkryl.core.reference.ReferenceList;
 
 import nu.gpu.aoigram.chat.BotCommandConfirm;
+import nu.gpu.aoigram.chat.MyMessages;
 import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.dialogs.RecentChats;
 import nu.gpu.aoigram.media.DownloadedMedia;
@@ -404,8 +405,13 @@ public class ChatActivity extends BaseFragment implements
     public static final int OPTION_FORWARD_NO_QUOTE = 1007;
     private static final int MENU_RECENT_ACTIONS = 90;
     private static final int MENU_TO_BEGINNING = 91;
+    private static final int MENU_MY_MESSAGES = 92;
     private ChatManualTranslation aoiChatManualTranslation;
     private QuickActions quickActions;
+    private AnimatedTextView aoiDeleteMyMessagesButton;
+    private AnimatedTextView aoiReturnMyMessagesButton;
+    private boolean aoiMyMessagesJumped;
+    private int aoiMyMessagesReturnId;
     private boolean aoiHideChannelBottomBar;
     private boolean aoiForwardNoQuote;
 
@@ -458,6 +464,9 @@ public class ChatActivity extends BaseFragment implements
         gap.setTag(R.id.fit_width_tag, 1);
         layout.addView(gap, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8));
         aoiAddMoreMenuItem(layout, MENU_TO_BEGINNING, R.drawable.msg_go_up, null, getString(R.string.ToBeginning));
+        if (MyMessages.isAvailable(currentChat)) {
+            aoiAddMoreMenuItem(layout, MENU_MY_MESSAGES, R.drawable.msg_usersearch, null, getString(R.string.MyMessages));
+        }
         if (ChatObject.isBoostSupported(currentChat) && (getUserConfig().isPremium() || ChatObject.isBoosted(chatInfo) || ChatObject.hasAdminRights(currentChat))) {
             aoiAddMoreMenuItem(layout, boost_group, 0, new RLottieDrawable(R.raw.boosts, dp(24), dp(24)), getString(ChatObject.isChannelAndNotMegaGroup(currentChat) ? R.string.BoostingBoostChannelMenu : R.string.BoostingBoostGroupMenu));
         }
@@ -471,6 +480,42 @@ public class ChatActivity extends BaseFragment implements
             headerItem.closeSubMenu();
             actionBar.getActionBarMenuOnItemClick().onItemClick(id);
         });
+    }
+
+    private boolean aoiFilteringMyMessages() {
+        return searchingFiltered && UserObject.isUserSelf(searchingUserMessages);
+    }
+
+    private boolean aoiCanReturnToMyMessages() {
+        return aoiMyMessagesJumped && !searchingFiltered && UserObject.isUserSelf(searchingUserMessages);
+    }
+
+    private void aoiReturnToMyMessages() {
+        int id = aoiMyMessagesReturnId;
+        setFilterMessages(searchingFiltered = true);
+        AndroidUtilities.runOnUIThread(() -> scrollToMessageId(id, 0, true, 0, true, 0), 80);
+    }
+
+    private void aoiUpdateMyMessagesButtons() {
+        if (aoiDeleteMyMessagesButton == null) return;
+        searchExpandList.setVisibility(aoiFilteringMyMessages() || aoiCanReturnToMyMessages() ? View.GONE : View.VISIBLE);
+        aoiDeleteMyMessagesButton.setVisibility(aoiFilteringMyMessages() && searchLastCount > 0 && TextUtils.isEmpty(searchingQuery) ? View.VISIBLE : View.GONE);
+        aoiReturnMyMessagesButton.setVisibility(aoiCanReturnToMyMessages() ? View.VISIBLE : View.GONE);
+    }
+
+    private AnimatedTextView aoiAddSearchTextButton(int text, int color, View.OnClickListener listener) {
+        AnimatedTextView button = new AnimatedTextView(getContext(), true, false, true);
+        button.setTextSize(dp(15));
+        button.setGravity(Gravity.RIGHT);
+        button.setTypeface(AndroidUtilities.bold());
+        button.setTextColor(color);
+        button.setText(getString(text));
+        button.setPadding(dp(15.33f), 0, dp(15.33f), 0);
+        button.setBackground(Theme.createSelectorDrawable(Theme.multAlpha(color, .12f), Theme.RIPPLE_MASK_ROUNDRECT_6DP));
+        button.setOnClickListener(listener);
+        button.setVisibility(View.GONE);
+        searchContainer.addView(button, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT, Gravity.RIGHT | Gravity.FILL_VERTICAL));
+        return button;
     }
 
     private int getDoubleTapOption(ChatMessageCell cell, int action) {
@@ -4001,6 +4046,9 @@ public class ChatActivity extends BaseFragment implements
                     presentFragment(new ChannelAdminLogActivity(currentChat));
                 } else if (id == MENU_TO_BEGINNING) {
                     scrollToMessageId(1, 0, false, 0, true, 0);
+                } else if (id == MENU_MY_MESSAGES) {
+                    searchingFiltered = true;
+                    openSearchWithUser(getUserConfig().getCurrentUser());
                 } else if (id == charge_fee ) {
                     long user_id = dialog_id;
                     long parent_id = 0;
@@ -9460,6 +9508,9 @@ public class ChatActivity extends BaseFragment implements
     private void setFilterMessages(boolean filter, boolean ignoreMessageNotFound, boolean animated) {
         if (chatAdapter == null || chatAdapter.isFiltered == filter) return;
         chatAdapter.isFiltered = filter;
+        aoiMyMessagesJumped = !filter && UserObject.isUserSelf(searchingUserMessages);
+        if (aoiMyMessagesJumped) searchingFiltered = false;
+        aoiMyMessagesReturnId = 0;
         createEmptyView(true);
         if (filter) {
             updateFilteredMessages(false);
@@ -9471,6 +9522,7 @@ public class ChatActivity extends BaseFragment implements
             searchOtherButton.setText(LocaleController.getString(chatAdapter.isFiltered ? R.string.SavedTagShowOtherMessages : R.string.SavedTagHideOtherMessages));
         }
         updateSearchUpDownButtonVisibility(true);
+        aoiUpdateMyMessagesButtons();
         showProgressView(!chatAdapter.isFiltered ? loading && messages.isEmpty() && chatAdapter.botInfoRow < 0 : getMediaDataController().isSearchLoading() && chatAdapter.filteredMessages.isEmpty());
         if (chatListView != null) {
             createEmptyView(false);
@@ -10831,6 +10883,13 @@ public class ChatActivity extends BaseFragment implements
         searchExpandList.setClickable(false);
         searchContainer.addView(searchExpandList, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT, Gravity.RIGHT | Gravity.FILL_VERTICAL));
 
+        aoiDeleteMyMessagesButton = aoiAddSearchTextButton(R.string.DeleteAll, getThemedColor(Theme.key_text_RedBold), v -> MyMessages.showDeleteAlert(this, currentChat, (int) getTopicId(), mergeDialogId, 0, count -> {
+            if (aoiFilteringMyMessages()) {
+                updateSearchButtons(0, 0, Math.max(0, searchLastCount - count));
+            }
+        }));
+        aoiReturnMyMessagesButton = aoiAddSearchTextButton(R.string.MyMessages, getThemedColor(Theme.key_windowBackgroundWhiteBlueText2), v -> aoiReturnToMyMessages());
+
         searchOtherButton = new AnimatedTextView(getContext(), true, true, true);
         searchOtherButton.setGravity(Gravity.CENTER);
         searchOtherButton.setTypeface(AndroidUtilities.bold());
@@ -10863,6 +10922,8 @@ public class ChatActivity extends BaseFragment implements
                 searchingForUser = true;
                 searchingUserMessages = null;
                 searchingChatMessages = null;
+                setFilterMessages(searchingFiltered = aoiMyMessagesJumped = false);
+                aoiUpdateMyMessagesButtons();
                 searchItem.setSearchFieldHint(LocaleController.getString(R.string.SearchMembers));
                 searchItem.setSearchFieldCaption(LocaleController.getString(R.string.SearchFrom));
                 AndroidUtilities.showKeyboard(searchItem.getSearchField());
@@ -17459,6 +17520,7 @@ public class ChatActivity extends BaseFragment implements
         returnToMessageId = fromMessageId;
         returnToLoadIndex = loadIndex;
         needSelectFromMessageId = select;
+        if (aoiMyMessagesJumped && aoiMyMessagesReturnId == 0) aoiMyMessagesReturnId = fromMessageId;
     }
 
     private void showPinnedProgress(boolean show) {
@@ -24175,7 +24237,7 @@ public class ChatActivity extends BaseFragment implements
                 if (jumpToMessage) {
                     int messageId = (Integer) args[1];
                     long did = (Long) args[3];
-                    if (searchingReaction != null && searchingFiltered) {
+                    if (searchingReaction != null && searchingFiltered || aoiFilteringMyMessages()) {
                         if (chatAdapter.isFiltered) {
                             updateFilteredMessages(true);
                         } else {
@@ -24194,7 +24256,7 @@ public class ChatActivity extends BaseFragment implements
                         updateVisibleRows();
                     }
                     onSearchLoadingUpdate(false);
-                } else if (searchingReaction != null) {
+                } else if (searchingReaction != null || aoiFilteringMyMessages()) {
                     if (chatAdapter.isFiltered) {
                         updateFilteredMessages(true);
                     } else {
@@ -27522,6 +27584,7 @@ public class ChatActivity extends BaseFragment implements
             searchExpandList.setClickable(count > 0);
             searchExpandList.animate().alpha(count > 0 ? 1f : 0.5f).start();
         }
+        aoiUpdateMyMessagesButtons();
     }
 
     private void updateSearchCountText() {
@@ -39336,7 +39399,7 @@ public class ChatActivity extends BaseFragment implements
             if (hashtagSearchTabs != null) {
                 hashtagSearchTabs.show(false);
             }
-            setFilterMessages(false);
+            setFilterMessages(searchingFiltered = aoiMyMessagesJumped = false);
         }
 
         @Override

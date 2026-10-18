@@ -4112,8 +4112,8 @@ public class MediaDataController extends BaseController {
                                 searchMessagesInChat(lastSearchQuery, dialogId, mergeDialogId, guid, 0, replyMessageId, true, user, chat, jumpToMessage, lastReaction);
                             }
                         };
-                        if (isSaved) {
-                            loadReplyMessagesForMessages(messageObjects, dialogId, 0, lastReplyMessageId, done, guid, null);
+                        if (isSaved || UserObject.isUserSelf(user)) {
+                            loadReplyMessagesForMessages(messageObjects, queryWithDialogFinal, 0, lastReplyMessageId, done, guid, null);
                         } else {
                             done.run();
                         }

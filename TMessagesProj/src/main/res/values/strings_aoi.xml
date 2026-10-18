@@ -264,4 +264,12 @@
     <string name="RecentChats">Recent chats</string>
     <string name="RestartApp">Restart app</string>
     <string name="ToBeginning">To Beginning</string>
+    <string name="MyMessages">My Messages</string>
+    <string name="DeleteMyMessages">Delete My Messages</string>
+    <string name="DeleteMyMessagesAlert">This will **delete all your messages** in this chat for **all** participants.</string>
+    <string name="DeleteMyMessagesBeforeAlert">This will **delete all your messages sent before %1$s** in this chat for **all** participants.</string>
+    <string name="DeleteMyMessagesOlderThan">Older than…</string>
+    <string name="DeleteMyMessagesAdmin">Use admin rights</string>
+    <string name="MyMessagesDeleted">Your messages deleted</string>
+    <string name="NoMessagesToDelete">No messages to delete</string>
 </resources>

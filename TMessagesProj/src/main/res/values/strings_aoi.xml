@@ -68,8 +68,10 @@
     <string name="OutgoingMessages">Outgoing messages</string>
     <string name="SendReaction">Send reaction</string>
     <string name="MessageMenu">Message Menu</string>
-    <string name="GroupMessageMenu">Group Message Menu</string>
-    <string name="GroupMessageMenuInfo">Grouping moves the main actions to the bottom of the message menu.</string>
+    <string name="GroupMessageMenu">Message Menu Style</string>
+    <string name="GroupMessageMenuList">List</string>
+    <string name="GroupMessageMenuGrouped">Grouped</string>
+    <string name="GroupMessageMenuInfo">Grouped shows common actions as icons at the bottom of the message menu. Long press them for more actions.</string>
     <string name="Confirmations">Confirmations</string>
     <string name="Repeat">Repeat</string>
     <string name="RepeatConfirm">Before repeating</string>

@@ -26,6 +26,7 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
     private static final int PINNED_REACTIONS = 1;
     private static final int MESSAGE_MENU = 2;
     private static final int CONFIRMATIONS = 3;
+    private static final int GROUP_MESSAGE_MENU = 4;
 
     private static final Option[] MESSAGE_MENU_OPTIONS = {
             new Option(AoiConfig.showCopyPhoto, R.string.CopyPhoto),
@@ -44,6 +45,7 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
     private StickerSizeCell stickerSizeCell;
     private StickerSizePreview stickerSizePreview;
     private DoubleTapPreview doubleTapPreview;
+    private GroupMessageMenuCell groupMessageMenuCell;
 
     @Override
     protected CharSequence getActionBarTitle() {
@@ -61,6 +63,7 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
         stickerSizeCell = new StickerSizeCell(context, stickerSizePreview::update);
         doubleTapPreview = new DoubleTapPreview(context, this);
         doubleTapPreview.setActions(AoiConfig.doubleTapIncomingAction.get(), AoiConfig.doubleTapOutgoingAction.get(), false);
+        groupMessageMenuCell = new GroupMessageMenuCell(context, this);
     }
 
     @Override
@@ -91,7 +94,10 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
         videoMessageCameraItem.object = AoiConfig.videoMessageCamera;
         items.add(videoMessageCameraItem);
         items.add(UItem.asShadow(null));
-        items.add(asConfigCheck(AoiConfig.groupMessageMenu, R.string.GroupMessageMenu, R.string.GroupMessageMenuInfo));
+        UItem groupMessageMenuItem = UItem.asCustom(GROUP_MESSAGE_MENU, groupMessageMenuCell);
+        groupMessageMenuItem.text = getString(R.string.GroupMessageMenu);
+        items.add(groupMessageMenuItem);
+        items.add(UItem.asShadow(getString(R.string.GroupMessageMenuInfo)));
         addGroup(items, adapter, MESSAGE_MENU, R.drawable.msg_list, R.string.MessageMenu, MESSAGE_MENU_OPTIONS);
         addGroup(items, adapter, CONFIRMATIONS, R.drawable.msg2_ask_question, R.string.Confirmations, CONFIRMATION_OPTIONS);
         items.add(UItem.asShadow(null));
@@ -105,7 +111,12 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
 
     @Override
     protected String getItemKey(UItem item) {
-        return item.id == PINNED_REACTIONS ? AoiSettingsDeepLink.PINNED_REACTIONS_PAGE : super.getItemKey(item);
+        if (item.id == PINNED_REACTIONS) {
+            return AoiSettingsDeepLink.PINNED_REACTIONS_PAGE;
+        } else if (item.id == GROUP_MESSAGE_MENU) {
+            return AoiConfig.groupMessageMenu.getKey();
+        }
+        return super.getItemKey(item);
     }
 
     @Override

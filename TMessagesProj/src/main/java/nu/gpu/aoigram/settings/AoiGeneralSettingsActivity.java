@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
+import org.telegram.messenger.UserConfig;
 import org.telegram.ui.Cells.HeaderCell;
 import org.telegram.ui.Components.AlertsCreator;
 import org.telegram.ui.Components.SlideChooseView;
@@ -60,6 +61,10 @@ public final class AoiGeneralSettingsActivity extends BaseAoiSettingsActivity {
         items.add(asConfigCheck(AoiConfig.showFullAbout, R.string.ShowFullAbout));
         items.add(asConfigCheck(AoiConfig.skipGiftsTab, R.string.SkipGiftsTab, R.string.SkipGiftsTabInfo));
         items.add(UItem.asShadow(null));
+        items.add(UItem.asHeader(getString(R.string.ArchivedChats)));
+        items.add(asConfigCheck(AoiConfig.removeArchive, R.string.RemoveArchive));
+        items.add(asConfigCheck(AoiConfig.disableUnarchiveSwipe, R.string.DisableUnarchiveSwipe));
+        items.add(UItem.asShadow(getString(R.string.ArchivedChatsInfo)));
         UItem downloadSpeedBoostItem = UItem.asCustom(downloadSpeedBoostView);
         downloadSpeedBoostItem.text = getString(R.string.DownloadSpeedBoost);
         downloadSpeedBoostItem.object = AoiConfig.downloadSpeedBoost;
@@ -82,6 +87,13 @@ public final class AoiGeneralSettingsActivity extends BaseAoiSettingsActivity {
             parentLayout.rebuildFragments(0);
         } else if (item.object == AoiConfig.hidePhone) {
             getNotificationCenter().postNotificationName(NotificationCenter.updateInterfaces, MessagesController.UPDATE_MASK_PHONE);
+        } else if (item.object == AoiConfig.removeArchive) {
+            for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) {
+                if (UserConfig.getInstance(a).isClientActivated()) {
+                    MessagesController.getInstance(a).sortDialogs(null);
+                }
+            }
+            parentLayout.rebuildFragments(0);
         }
     }
 }

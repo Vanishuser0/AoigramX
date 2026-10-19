@@ -9681,7 +9681,7 @@ public class MessagesController extends BaseController implements NotificationCe
     }
 
     public boolean hasHiddenArchive() {
-        return SharedConfig.archiveHidden && dialogs_dict.get(DialogObject.makeFolderDialogId(1)) != null;
+        return SharedConfig.archiveHidden && !AoiConfig.removeArchive.get() && dialogs_dict.get(DialogObject.makeFolderDialogId(1)) != null;
     }
 
 
@@ -22560,7 +22560,7 @@ public class MessagesController extends BaseController implements NotificationCe
                 continue;
             }
 
-            boolean addToFolder = true;
+            boolean addToFolder = !(d instanceof TLRPC.TL_dialogFolder && AoiConfig.removeArchive.get());
             if (addDialogToItsCommunity(d)) {
                 if (ChatObject.isCollapsedInCommunity(currentAccount, d.id)) {
                     addToFolder = false;

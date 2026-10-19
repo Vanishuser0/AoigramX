@@ -86,6 +86,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
 
+import nu.gpu.aoigram.config.AoiConfig;
+
 public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements DialogCell.DialogCellDelegate {
     public final static int VIEW_TYPE_DIALOG = 0,
             VIEW_TYPE_FLICKER = 1,
@@ -1465,7 +1467,7 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
 
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
             int size = itemInternals.size();
-            boolean hasArchive = folderId == 0 && dialogsType == 0 && MessagesController.getInstance(currentAccount).dialogs_dict.get(DialogObject.makeFolderDialogId(1)) != null;
+            boolean hasArchive = folderId == 0 && dialogsType == 0 && !AoiConfig.removeArchive.get() && MessagesController.getInstance(currentAccount).dialogs_dict.get(DialogObject.makeFolderDialogId(1)) != null;
             View parent = (View) getParent();
             int height;
             int blurOffset = 0;

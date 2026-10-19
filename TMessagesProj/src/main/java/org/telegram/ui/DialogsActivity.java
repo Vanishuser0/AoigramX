@@ -2449,6 +2449,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     swipeFolderBack = false;
                     return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0);
                 } else {
+                    if (folderId != 0 && AoiConfig.disableUnarchiveSwipe.get()) {
+                        return 0;
+                    }
                     int currentDialogsType = initialDialogsType;
                     try {
                         currentDialogsType = parentPage.dialogsAdapter.getDialogsType();
@@ -2567,6 +2570,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         parentPage.updateList(true);
                     } else {
                         int added = getMessagesController().addDialogToFolder(dialog.id, folderId == 0 ? 1 : 0, -1, 0);
+                        if (added == 2 && AoiConfig.removeArchive.get()) {
+                            added = 1;
+                        }
                         if (added != 2 || position != 0) {
                             parentPage.dialogsItemAnimator.prepareForRemove();
                             parentPage.updateList(true);
@@ -2616,13 +2622,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                     int index = dialogs.indexOf(dialog);
                                     if (index >= 0) {
                                         ArrayList<TLRPC.Dialog> archivedDialogs = getMessagesController().getDialogs(1);
-                                        if (!archivedDialogs.isEmpty() || index != 1) {
+                                        if (!archivedDialogs.isEmpty() || AoiConfig.removeArchive.get() || index != 1) {
                                             setDialogsListFrozen(true);
                                             parentPage.dialogsItemAnimator.prepareForRemove();
                                             parentPage.updateList(true);
                                             checkAnimationFinished();
                                         }
-                                        if (archivedDialogs.isEmpty()) {
+                                        if (archivedDialogs.isEmpty() && !AoiConfig.removeArchive.get()) {
                                             dialogs.remove(0);
                                             if (index == 1) {
                                                 setDialogsListFrozen(true);

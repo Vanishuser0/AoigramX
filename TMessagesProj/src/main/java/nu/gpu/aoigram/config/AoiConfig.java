@@ -34,6 +34,8 @@ public final class AoiConfig {
     public static final BoolConfig hidePhone = register(new BoolConfig("hidePhone", false));
     public static final BoolConfig showFullAbout = register(new BoolConfig("showFullAbout", false));
     public static final BoolConfig skipGiftsTab = register(new BoolConfig("skipGiftsTab", false));
+    public static final BoolConfig removeArchive = register(new BoolConfig("removeArchive", false));
+    public static final BoolConfig disableUnarchiveSwipe = register(new BoolConfig("disableUnarchiveSwipe", false));
     public static final IntConfig downloadSpeedBoost = register(new IntConfig("downloadSpeedBoost", DownloadSpeedBoost.OFF));
     public static final BoolConfig uploadSpeedBoost = register(new BoolConfig("uploadSpeedBoost", false));
 

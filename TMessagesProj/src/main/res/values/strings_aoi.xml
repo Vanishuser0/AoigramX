@@ -42,6 +42,9 @@
     <string name="ShowFullAbout">Expand bio and description</string>
     <string name="SkipGiftsTab">Skip Gifts tab</string>
     <string name="SkipGiftsTabInfo">Profiles open on the next tab instead.</string>
+    <string name="RemoveArchive">Remove from chat list</string>
+    <string name="DisableUnarchiveSwipe">Disable unarchive swipe</string>
+    <string name="ArchivedChatsInfo">Archived chats remain accessible from the chat list menu.</string>
     <string name="DownloadSpeedBoost">Download speed boost</string>
     <string name="DownloadSpeedBoostOff">Off</string>
     <string name="DownloadSpeedBoostOn">On</string>

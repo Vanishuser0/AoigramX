@@ -262,6 +262,7 @@ import me.vkryl.core.BitwiseUtils;
 
 import nu.gpu.aoigram.chat.OnlineStatus;
 import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.messages.ChannelSenderIcon;
 import nu.gpu.aoigram.messages.EditedIcon;
 import nu.gpu.aoigram.messages.ForwardsCount;
 import nu.gpu.aoigram.translate.TranslationDisplay;
@@ -18962,6 +18963,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 adminString = new SpannableStringBuilder(messageObject.messageOwner.post_author.replace("\n", ""));
             } else if (isMegagroup && currentChat != null && currentMessageObject.isForwardedChannelPost()) {
                 adminString = new SpannableStringBuilder(getString(R.string.DiscussChannel));
+            } else if (isMegagroup && ChatObject.isChannelAndNotMegaGroup(currentChat)) {
+                adminString = ChannelSenderIcon.create();
             } else if ((currentUser != null || currentChat != null) && !currentMessageObject.isOutOwner() && !currentMessageObject.isAnyKindOfSticker() && currentMessageObject.type != MessageObject.TYPE_ROUND_VIDEO && delegate != null) {
                 adminLabel = delegate.getAdminRank(currentUser != null ? currentUser.id : currentChat.id);
                 if (messageObject.messageOwner.from_rank != null) {

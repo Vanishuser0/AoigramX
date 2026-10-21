@@ -26257,6 +26257,7 @@ public class ChatActivity extends BaseFragment implements
             MessageObject lastActionSetChatThemeMessageObject = null;
             boolean addedAdUnder = false;
             boolean hasSentMessages = false;
+            ArrayList<MessageObject> translateMessages = new ArrayList<>();
             for (int a = 0; a < arr.size(); a++) {
                 MessageObject obj = arr.get(a);
                 if (obj.getId() < 0) {
@@ -26577,6 +26578,7 @@ public class ChatActivity extends BaseFragment implements
                 }
                 obj.stableId = lastStableId++;
                 getMessagesController().getTranslateController().checkTranslation(obj, false);
+                translateMessages.add(obj);
                 messages.add(placeToPaste, obj);
                 if (placeToPaste == 0 && !obj.isSponsored()) {
                     needMoveScrollToLastMessage = true;
@@ -26665,6 +26667,15 @@ public class ChatActivity extends BaseFragment implements
                             } else {
                                 forceScrollToTop = true;
                                 moveScrollToLastMessage(true);
+                                if (getMessagesController().getTranslateController().isTranslatingDialog(dialog_id)) {
+                                    int start = Math.max(0, translateMessages.size() - 7);
+                                    while (start > 0 && translateMessages.get(start).hasValidGroupId() && translateMessages.get(start - 1).getGroupId() == translateMessages.get(start).getGroupId()) {
+                                        start--;
+                                    }
+                                    for (int i = start; i < translateMessages.size(); i++) {
+                                        getMessagesController().getTranslateController().checkTranslation(translateMessages.get(i), true);
+                                    }
+                                }
                             }
                         }
                     } else {

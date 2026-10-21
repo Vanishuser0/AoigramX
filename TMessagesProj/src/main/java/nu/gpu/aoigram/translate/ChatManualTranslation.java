@@ -101,13 +101,15 @@ public final class ChatManualTranslation {
         }
         manual.add(message);
         PollText cachedPoll = message.messageOwner.translatedPoll;
+        TLRPC.TL_textWithEntities cachedText = transcription ? message.messageOwner.translatedVoiceTranscription : message.messageOwner.translatedText;
         boolean cached;
         if (summary) {
             cached = message.messageOwner.translatedSummaryText != null
                     && TextUtils.equals(options.language(), message.messageOwner.translatedSummaryLanguage);
         } else {
             cached = signature.equals(message.messageOwner.aoiTranslationSignature)
-                    && (cachedPoll == null || PollText.isFullyTranslated(message, cachedPoll));
+                    && (cachedPoll == null || PollText.isFullyTranslated(message, cachedPoll))
+                    && (cachedText != null || cachedPoll != null || message.messageOwner.translatedRichMessage != null);
         }
         if (cached) {
             refresh(message);

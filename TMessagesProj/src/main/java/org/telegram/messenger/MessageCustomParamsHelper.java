@@ -17,6 +17,7 @@ public class MessageCustomParamsHelper {
     public static boolean isEmpty(TLRPC.Message message) {
         return (
             !isCommentEncryptionPreparing(message) &&
+            message.aoiTranslationSignature == null &&
             message.voiceTranscription == null &&
             message.translatedVoiceTranscription == null &&
             !message.voiceTranscriptionOpen &&
@@ -40,6 +41,7 @@ public class MessageCustomParamsHelper {
     }
 
     public static void copyParams(TLRPC.Message fromMessage, TLRPC.Message toMessage) {
+        toMessage.aoiTranslationSignature = fromMessage.aoiTranslationSignature;
         toMessage.voiceTranscription = fromMessage.voiceTranscription;
         toMessage.voiceTranscriptionOpen = fromMessage.voiceTranscriptionOpen;
         toMessage.voiceTranscriptionFinal = fromMessage.voiceTranscriptionFinal;
@@ -121,6 +123,7 @@ public class MessageCustomParamsHelper {
 
             flags = setFlag(flags, FLAG_13, message.translatedRichMessage != null);
             flags = setFlag(flags, FLAG_14, isCommentEncryptionPreparing(message));
+            flags = setFlag(flags, FLAG_30, message.aoiTranslationSignature != null);
         }
 
         @Override
@@ -173,6 +176,7 @@ public class MessageCustomParamsHelper {
             if (hasFlag(flags, FLAG_13)) {
                 message.translatedRichMessage.serializeToStream(stream);
             }
+            if (hasFlag(flags, FLAG_30)) stream.writeString(message.aoiTranslationSignature);
         }
 
         @Override
@@ -228,6 +232,7 @@ public class MessageCustomParamsHelper {
             if (hasFlag(flags, FLAG_13)) {
                 message.translatedRichMessage = TL_iv.RichMessage.TLdeserialize(stream, stream.readInt32(exception), exception);
             }
+            if (hasFlag(flags, FLAG_30)) message.aoiTranslationSignature = stream.readString(exception);
         }
 
     }

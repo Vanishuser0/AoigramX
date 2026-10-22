@@ -201,6 +201,7 @@ import org.telegram.ui.Stars.StarsController;
 import org.telegram.ui.Stars.StarsIntroActivity;
 import org.telegram.ui.StickersActivity;
 import org.telegram.ui.Stories.HighlightMessageSheet;
+import org.telegram.ui.Stories.PeerStoriesView;
 import org.telegram.ui.Stories.recorder.CaptionContainerView;
 import org.telegram.ui.Stories.recorder.HintView2;
 import org.telegram.ui.bots.BotCommandsMenuContainer;
@@ -229,6 +230,9 @@ import java.util.Locale;
 import me.vkryl.android.animator.BoolAnimator;
 import me.vkryl.android.animator.FactorAnimator;
 
+import nu.gpu.aoigram.translate.InputTranslation;
+import nu.gpu.aoigram.translate.InputTranslationMenu;
+
 public class ChatActivityEnterView extends FrameLayout implements
     NotificationCenter.NotificationCenterDelegate,
     SizeNotifierFrameLayout.SizeNotifierFrameLayoutDelegate,
@@ -236,6 +240,8 @@ public class ChatActivityEnterView extends FrameLayout implements
     SuggestEmojiView.AnchorViewDelegate,
     FactorAnimator.Target, Theme.Colorable
 {
+    private final InputTranslation aoiInputTranslation = new InputTranslation();
+    public ViewGroup aoiStoryMenuContainer;
 
     private int commonInputType;
     private boolean stickersEnabled;
@@ -4780,6 +4786,19 @@ public class ChatActivityEnterView extends FrameLayout implements
             return false;
         }
 
+        if (isStories && !messageEditText.getText().toString().isBlank()) {
+            ItemOptions options = ItemOptions.makeOptions(aoiStoryMenuContainer, resourcesProvider, view, true, false, true)
+                .forceTop(true)
+                .add(R.drawable.input_notify_off, getString(R.string.SendWithoutSound), () -> sendMessageInternal(false, 0, 0, 0, true));
+            InputTranslationMenu.add(options, view, resourcesProvider, translation -> {
+                options.dismiss();
+                aoiInputTranslation.translate(currentAccount, dialog_id, replyingMessageObject, translation, messageEditText, this::setFieldText, BulletinFactory.of(((PeerStoriesView) sizeNotifierLayout).storyContainer, resourcesProvider), resourcesProvider);
+            });
+            options.setGravity(Gravity.RIGHT).show();
+            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
+            return true;
+        }
+
         if (isStories || (messageEditText == null || TextUtils.isEmpty(messageEditText.getText())) && parentFragment != null && parentFragment.messagePreviewParams != null && parentFragment.messagePreviewParams.forwardMessages != null && parentFragment.messagePreviewParams.forwardMessages.messages != null && !parentFragment.messagePreviewParams.forwardMessages.messages.isEmpty()) {
 
             boolean self = parentFragment != null && UserObject.isUserSelf(parentFragment.getCurrentUser());
@@ -5062,7 +5081,7 @@ public class ChatActivityEnterView extends FrameLayout implements
             messageSendPreview.setEffectId(effectId);
         }
 
-        ItemOptions options = ItemOptions.makeOptions(this, resourcesProvider, sendButton);
+        ItemOptions options = ItemOptions.makeOptions(this, resourcesProvider, sendButton, true, false, true);
 
         final boolean self = parentFragment != null && UserObject.isUserSelf(parentFragment.getCurrentUser());
         boolean scheduleButtonValue = parentFragment != null && parentFragment.canScheduleMessage();
@@ -5135,6 +5154,14 @@ public class ChatActivityEnterView extends FrameLayout implements
                     AndroidUtilities.cancelRunOnUIThread(dismissSendPreview);
                     AndroidUtilities.runOnUIThread(dismissSendPreview, 500);
                 }
+            });
+        }
+        if (parentFragment != null && audioToSend == null && videoToSendMessageObject == null && richDraftMessage == null
+                && messageEditText != null && !messageEditText.getText().toString().isBlank()) {
+            InputTranslationMenu.add(options, sendButton, resourcesProvider, translation -> {
+                messageSendPreview.dismiss(false);
+                aoiInputTranslation.translate(currentAccount, dialog_id, replyingMessageObject, translation,
+                        messageEditText, this::setFieldText, BulletinFactory.of(parentFragment), resourcesProvider);
             });
         }
         options.setupSelectors();
@@ -6491,6 +6518,7 @@ public class ChatActivityEnterView extends FrameLayout implements
     }
 
     public void onDestroy() {
+        aoiInputTranslation.cancel();
         if (audioTimelineView != null) {
             audioTimelineView.destroy();
         }
@@ -6667,6 +6695,7 @@ public class ChatActivityEnterView extends FrameLayout implements
     }
 
     public void setDialogId(long id, int account) {
+        if (dialog_id != id || currentAccount != account) aoiInputTranslation.cancel();
         dialog_id = id;
         if (currentAccount != account) {
             notificationsLocker.unlock();
@@ -7272,6 +7301,7 @@ public class ChatActivityEnterView extends FrameLayout implements
     }
 
     protected boolean sendMessageInternal(boolean notify, int scheduleDate, int scheduleRepeatPeriod, long payStars, boolean allowConfirm) {
+        aoiInputTranslation.cancel();
         final boolean allowConfirmFinal = allowConfirm && !animatorEphemeralMessageVisibility.getValue();
 
         final Runnable send = () -> {
@@ -9925,6 +9955,7 @@ public class ChatActivityEnterView extends FrameLayout implements
     }
 
     public void setEditingMessageObject(MessageObject messageObject, MessageObject.GroupedMessages groupedMessages, boolean caption) {
+        aoiInputTranslation.cancel();
         if (audioToSend != null || videoToSendMessageObject != null || editingMessageObject == messageObject) {
             return;
         }

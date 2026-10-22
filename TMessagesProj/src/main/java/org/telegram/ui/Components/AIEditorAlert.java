@@ -279,7 +279,7 @@ public class AIEditorAlert extends BottomSheetWithRecyclerListView implements No
         updateStyles();
         styleTabs.selectTab(-1);
 
-        to_lang = TranslateAlert2.getToLanguage();
+        to_lang = MessagesController.getGlobalMainSettings().getString("translate_to_language", LocaleController.getInstance().getCurrentLocale().getLanguage());
         if (to_lang == null) {
             to_lang = TranslateController.currentLanguage();
         }

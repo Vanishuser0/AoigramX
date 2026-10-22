@@ -368,7 +368,7 @@ public abstract class BaseAoiSettingsActivity extends BaseFragment {
     }
 
     @NonNull
-    private WindowInsetsCompat onApplyWindowInsets(@NonNull View view, @NonNull WindowInsetsCompat insets) {
+    protected WindowInsetsCompat onApplyWindowInsets(@NonNull View view, @NonNull WindowInsetsCompat insets) {
         Insets systemInsets = AndroidUtilities.getDefaultWindowInsets(insets, false);
         navigationBarHeight = systemInsets.bottom;
         listView.setPadding(0, systemInsets.top + getListTopPadding(), 0, navigationBarHeight);

@@ -20,6 +20,39 @@ public final class AoiConfig {
     public static final BoolConfig hidePhone = register(new BoolConfig("hidePhone", false));
     public static final BoolConfig showFullAbout = register(new BoolConfig("showFullAbout", false));
 
+    public static final StringConfig translationProvider = register(new StringConfig("translationProvider", "google"));
+    public static final StringConfig translationLanguage = register(new StringConfig("translationLanguage", ""));
+    public static final IntConfig translationShowOriginal = register(new IntConfig("translationShowOriginal", 0));
+    public static final StringConfig inputTranslationLanguage = register(new StringConfig("inputTranslationLanguage", "en"));
+    public static final StringConfig llmProvider = register(new StringConfig("llmProvider", "custom"));
+    public static final StringConfig llmUrl = register(new StringConfig("llmUrl", ""));
+    public static final StringConfig llmCustomKey = register(new StringConfig("llmCustomKey", ""));
+    public static final StringConfig llmCustomModel = register(new StringConfig("llmCustomModel", ""));
+    public static final StringConfig llmCerebrasKey = register(new StringConfig("llmCerebrasKey", ""));
+    public static final StringConfig llmCerebrasModel = register(new StringConfig("llmCerebrasModel", ""));
+    public static final StringConfig llmDeepSeekKey = register(new StringConfig("llmDeepSeekKey", ""));
+    public static final StringConfig llmDeepSeekModel = register(new StringConfig("llmDeepSeekModel", ""));
+    public static final StringConfig llmGoogleAgentPlatformKey = register(new StringConfig("llmGoogleAgentPlatformKey", ""));
+    public static final StringConfig llmGoogleAgentPlatformModel = register(new StringConfig("llmGoogleAgentPlatformModel", ""));
+    public static final StringConfig llmGoogleAIStudioKey = register(new StringConfig("llmGoogleAIStudioKey", ""));
+    public static final StringConfig llmGoogleAIStudioModel = register(new StringConfig("llmGoogleAIStudioModel", ""));
+    public static final StringConfig llmGroqKey = register(new StringConfig("llmGroqKey", ""));
+    public static final StringConfig llmGroqModel = register(new StringConfig("llmGroqModel", ""));
+    public static final StringConfig llmOllamaKey = register(new StringConfig("llmOllamaKey", ""));
+    public static final StringConfig llmOllamaModel = register(new StringConfig("llmOllamaModel", ""));
+    public static final StringConfig llmOpenAIKey = register(new StringConfig("llmOpenAIKey", ""));
+    public static final StringConfig llmOpenAIModel = register(new StringConfig("llmOpenAIModel", ""));
+    public static final StringConfig llmOpenRouterKey = register(new StringConfig("llmOpenRouterKey", ""));
+    public static final StringConfig llmOpenRouterModel = register(new StringConfig("llmOpenRouterModel", ""));
+    public static final StringConfig llmXAIKey = register(new StringConfig("llmXAIKey", ""));
+    public static final StringConfig llmXAIModel = register(new StringConfig("llmXAIModel", ""));
+    public static final StringConfig llmVercelKey = register(new StringConfig("llmVercelKey", ""));
+    public static final StringConfig llmVercelModel = register(new StringConfig("llmVercelModel", ""));
+    public static final StringConfig llmSystemPrompt = register(new StringConfig("llmSystemPrompt", ""));
+    public static final StringConfig llmUserPrompt = register(new StringConfig("llmUserPrompt", ""));
+    public static final BoolConfig llmContext = register(new BoolConfig("llmContext", false));
+    public static final IntConfig llmContextCount = register(new IntConfig("llmContextCount", 5));
+
     public static final BoolConfig hideKeyboardOnScroll = register(new BoolConfig("hideKeyboardOnScroll", false));
 
     private AoiConfig() {

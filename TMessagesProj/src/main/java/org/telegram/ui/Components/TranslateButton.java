@@ -54,7 +54,11 @@ import org.telegram.ui.Stories.recorder.ButtonWithCounterView;
 import org.telegram.ui.Stories.recorder.HintView2;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+
+import nu.gpu.aoigram.translate.TranslationLanguages;
+import nu.gpu.aoigram.translate.TranslationOptions;
 
 public class TranslateButton extends FrameLayout implements Theme.Colorable {
 
@@ -113,8 +117,7 @@ public class TranslateButton extends FrameLayout implements Theme.Colorable {
         menuView.setScaleType(ImageView.ScaleType.CENTER);
         menuView.setImageResource(R.drawable.msg_mini_customize);
         menuView.setOnClickListener(e -> {
-            final TLRPC.Chat chat = MessagesController.getInstance(currentAccount).getChat(-dialogId);
-            if (UserConfig.getInstance(currentAccount).isPremium() || chat != null && chat.autotranslation) {
+            if (MessagesController.getInstance(currentAccount).getTranslateController().isFeatureAvailable(dialogId)) {
                 onMenuClick();
             } else {
                 onCloseClick();
@@ -210,9 +213,12 @@ public class TranslateButton extends FrameLayout implements Theme.Colorable {
         String detectedLanguageName = TranslateAlert2.languageName(detectedLanguage);
         String detectedLanguageNameAccusative = TranslateAlert2.languageName(detectedLanguage, accusative);
         String currentTranslateTo = translateController.getDialogTranslateTo(dialogId);
+        final int provider = TranslationOptions.defaultProvider();
+        final String selectedLanguage = currentTranslateTo == null ? null : TranslationLanguages.map(provider, currentTranslateTo);
+        final String sourceLanguage = detectedLanguage == null ? null : TranslationLanguages.map(provider, detectedLanguage);
 
         final ArrayList<TranslateController.Language> suggestedLanguages = TranslateController.getSuggestedLanguages(currentTranslateTo);
-        final ArrayList<TranslateController.Language> allLanguages = TranslateController.getLanguages();
+        final ArrayList<TranslationLanguages.Language> allLanguages = TranslationLanguages.list(provider);
 
         swipeBackScroll.addView(new ActionBarPopupWindow.GapView(getContext(), resourcesProvider), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8));
 
@@ -220,7 +226,7 @@ public class TranslateButton extends FrameLayout implements Theme.Colorable {
         final Runnable addLanguages = () -> {
             if (addedLanguages[0]) return;
 
-            if (currentTranslateTo != null) {
+            if (currentTranslateTo != null && TranslationLanguages.supports(provider, currentTranslateTo)) {
                 String displayName = TranslateAlert2.capitalFirst(TranslateAlert2.languageName(currentTranslateTo));
                 if (displayName != null) {
                     ActionBarMenuSubItem button = new ActionBarMenuSubItem(getContext(), 2, false, false, resourcesProvider);
@@ -229,23 +235,22 @@ public class TranslateButton extends FrameLayout implements Theme.Colorable {
                     swipeBackScroll.addView(button);
                 }
             }
+            HashSet<String> suggestedCodes = new HashSet<>();
             for (TranslateController.Language lng : suggestedLanguages) {
-                final String code = lng.code;
-                if (TextUtils.equals(code, detectedLanguage)) {
+                if (!TranslationLanguages.supports(provider, lng.code)) continue;
+                final String code = TranslationLanguages.map(provider, lng.code);
+                if (TextUtils.equals(code, sourceLanguage) || TextUtils.equals(code, selectedLanguage) || !suggestedCodes.add(code)) {
                     continue;
                 }
 
                 ActionBarMenuSubItem button = new ActionBarMenuSubItem(getContext(), 2, false, false, resourcesProvider);
-                final boolean checked = currentTranslateTo != null && currentTranslateTo.equals(code);
-                button.setChecked(checked);
+                button.setChecked(false);
                 button.setText(lng.displayName);
-                if (!checked) {
-                    button.setOnClickListener(e -> {
-                        translateController.setDialogTranslateTo(dialogId, code);
-                        popupWindow.dismiss();
-                        updateText();
-                    });
-                }
+                button.setOnClickListener(e -> {
+                    translateController.setDialogTranslateTo(dialogId, code);
+                    popupWindow.dismiss();
+                    updateText();
+                });
                 swipeBackScroll.addView(button);
             }
             swipeBackScroll.addView(new ActionBarPopupWindow.GapView(getContext(), resourcesProvider), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8));
@@ -255,20 +260,20 @@ public class TranslateButton extends FrameLayout implements Theme.Colorable {
 //            systemAllLanguages = TranslateLanguage.getAllLanguages();
 //        }
 
-            for (TranslateController.Language lng : allLanguages) {
-                final String code = lng.code;
-                if (TextUtils.equals(code, detectedLanguage)) {
+            for (TranslationLanguages.Language lng : allLanguages) {
+                final String code = lng.code();
+                if (TextUtils.equals(code, sourceLanguage)) {
                     continue;
                 }
-                final boolean checked = currentTranslateTo != null && currentTranslateTo.equals(code);
+                final boolean checked = TextUtils.equals(selectedLanguage, code);
 
-                if (!checked && systemAllLanguages != null && !systemAllLanguages.contains(lng.code)) {
+                if (!checked && systemAllLanguages != null && !systemAllLanguages.contains(code)) {
                     continue;
                 }
 
                 ActionBarMenuSubItem button = new ActionBarMenuSubItem(getContext(), 2, false, false, resourcesProvider);
                 button.setChecked(checked);
-                button.setText(lng.displayName);
+                button.setText(TranslateAlert2.capitalFirst(lng.name()));
                 if (!checked) {
                     button.setOnClickListener(e -> {
                         translateController.setDialogTranslateTo(dialogId, code);
@@ -297,7 +302,7 @@ public class TranslateButton extends FrameLayout implements Theme.Colorable {
             popupLayout.getSwipeBack().openForeground(swipeBackIndex);
         });
 
-        if (UserConfig.getInstance(currentAccount).isPremium() && detectedLanguageNameAccusative != null) {
+        if (translateController.isFeatureAvailable() && detectedLanguageNameAccusative != null) {
             final ActionBarMenuSubItem dontTranslateButton = new ActionBarMenuSubItem(getContext(), false, false, resourcesProvider);
             String text;
             if (accusative[0]) {
@@ -330,7 +335,8 @@ public class TranslateButton extends FrameLayout implements Theme.Colorable {
             popupLayout.addView(dontTranslateButton);
         }
 
-        final ActionBarMenuSubItem hideButton = new ActionBarMenuSubItem(getContext(), false, false, resourcesProvider);
+        final boolean showCocoon = TranslationOptions.defaultProvider() == TranslationOptions.TELEGRAM;
+        final ActionBarMenuSubItem hideButton = new ActionBarMenuSubItem(getContext(), false, !showCocoon, resourcesProvider);
         hideButton.setTextAndIcon(getString(R.string.Hide), R.drawable.msg_cancel);
         hideButton.setOnClickListener(e -> {
             translateController.setHideTranslateDialog(dialogId, true);
@@ -350,31 +356,33 @@ public class TranslateButton extends FrameLayout implements Theme.Colorable {
         });
         popupLayout.addView(hideButton);
 
-        popupLayout.addView(new ActionBarPopupWindow.GapView(getContext(), resourcesProvider), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8));
+        if (showCocoon) {
+            popupLayout.addView(new ActionBarPopupWindow.GapView(getContext(), resourcesProvider), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8));
 
-        final LinkSpanDrawable.LinksTextView cocoonButton = new LinkSpanDrawable.LinksTextView(getContext());
-        cocoonButton.setPadding(dp(13), dp(8.33f), dp(13), dp(8.33f));
-        cocoonButton.setDisablePaddingsOffsetY(true);
-        cocoonButton.setTextColor(Theme.getColor(Theme.key_dialogTextBlack, resourcesProvider));
-        cocoonButton.setLinkTextColor(Theme.getColor(Theme.key_chat_messageLinkIn, resourcesProvider));
-        cocoonButton.setEmojiColor(Theme.getColor(Theme.key_dialogTextBlack, resourcesProvider));
-        CharSequence cocoonText = TextUtils.concat(AndroidUtilities.replaceTags(getString(R.string.CocoonPoweredBy)), " ", AndroidUtilities.premiumText(getString(R.string.CocoonPoweredByLink), () -> {
-            popupWindow.dismiss();
-            showCocoonAlert(getContext(), resourcesProvider);
-        }));
-        SpannableStringBuilder egg = new SpannableStringBuilder("🥚");
-        egg.setSpan(new AnimatedEmojiSpan(5197252827247841976L, cocoonButton.getPaint().getFontMetricsInt()), 0, egg.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        SpannableStringBuilder eggSpaced = new SpannableStringBuilder(egg);
-        eggSpaced.append(" ");
-        cocoonText = AndroidUtilities.replaceCharSequence("🥚 ", cocoonText, eggSpaced);
-        cocoonText = AndroidUtilities.replaceCharSequence("🥚", cocoonText, egg);
-        cocoonButton.setText(HintView2.cutInFancyHalfText(cocoonText, cocoonButton.getPaint()));
-        cocoonButton.setBackground(Theme.createRadSelectorDrawable(Theme.getColor(Theme.key_listSelector, resourcesProvider), 0, 12));
-        cocoonButton.setOnClickListener(v -> {
-            popupWindow.dismiss();
-            showCocoonAlert(getContext(), resourcesProvider);
-        });
-        popupLayout.addView(cocoonButton);
+            final LinkSpanDrawable.LinksTextView cocoonButton = new LinkSpanDrawable.LinksTextView(getContext());
+            cocoonButton.setPadding(dp(13), dp(8.33f), dp(13), dp(8.33f));
+            cocoonButton.setDisablePaddingsOffsetY(true);
+            cocoonButton.setTextColor(Theme.getColor(Theme.key_dialogTextBlack, resourcesProvider));
+            cocoonButton.setLinkTextColor(Theme.getColor(Theme.key_chat_messageLinkIn, resourcesProvider));
+            cocoonButton.setEmojiColor(Theme.getColor(Theme.key_dialogTextBlack, resourcesProvider));
+            CharSequence cocoonText = TextUtils.concat(AndroidUtilities.replaceTags(getString(R.string.CocoonPoweredBy)), " ", AndroidUtilities.premiumText(getString(R.string.CocoonPoweredByLink), () -> {
+                popupWindow.dismiss();
+                showCocoonAlert(getContext(), resourcesProvider);
+            }));
+            SpannableStringBuilder egg = new SpannableStringBuilder("🥚");
+            egg.setSpan(new AnimatedEmojiSpan(5197252827247841976L, cocoonButton.getPaint().getFontMetricsInt()), 0, egg.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            SpannableStringBuilder eggSpaced = new SpannableStringBuilder(egg);
+            eggSpaced.append(" ");
+            cocoonText = AndroidUtilities.replaceCharSequence("🥚 ", cocoonText, eggSpaced);
+            cocoonText = AndroidUtilities.replaceCharSequence("🥚", cocoonText, egg);
+            cocoonButton.setText(HintView2.cutInFancyHalfText(cocoonText, cocoonButton.getPaint()));
+            cocoonButton.setBackground(Theme.createRadSelectorDrawable(Theme.getColor(Theme.key_listSelector, resourcesProvider), 0, 12));
+            cocoonButton.setOnClickListener(v -> {
+                popupWindow.dismiss();
+                showCocoonAlert(getContext(), resourcesProvider);
+            });
+            popupLayout.addView(cocoonButton);
+        }
 
         popupWindow.setPauseNotifications(true);
         popupWindow.setDismissAnimationDuration(220);
@@ -412,7 +420,7 @@ public class TranslateButton extends FrameLayout implements Theme.Colorable {
             }
             textView.setText(TextUtils.concat(translateIcon, " ", text));
         }
-        menuView.setImageResource(UserConfig.getInstance(currentAccount).isPremium() || chat != null && chat.autotranslation ? R.drawable.msg_mini_customize : R.drawable.msg_close);
+        menuView.setImageResource(translateController.isFeatureAvailable(dialogId) ? R.drawable.msg_mini_customize : R.drawable.msg_close);
     }
 
     public static void showCocoonAlert(Context context, Theme.ResourcesProvider resourcesProvider) {

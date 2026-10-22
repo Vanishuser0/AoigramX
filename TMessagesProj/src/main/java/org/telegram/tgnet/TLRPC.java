@@ -58705,6 +58705,7 @@ public class TLRPC {
 
     //Message start
     public static class Message extends TLObject {
+        public String aoiTranslationSignature;
         public int id;
         public Peer from_id;
         public int from_boosts_applied;

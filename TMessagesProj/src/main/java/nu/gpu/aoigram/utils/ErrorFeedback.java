@@ -2,6 +2,9 @@ package nu.gpu.aoigram.utils;
 
 import static org.telegram.messenger.LocaleController.getString;
 
+import android.view.View;
+
+import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BotWebViewVibrationEffect;
 import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.AlertDialog;
@@ -24,5 +27,10 @@ public final class ErrorFeedback {
         } else {
             bulletins.createSimpleBulletin(R.raw.chats_infotip, error).show();
         }
+    }
+
+    public static void vibrate(View view) {
+        AndroidUtilities.shakeViewSpring(view, -6);
+        BotWebViewVibrationEffect.APP_ERROR.vibrate();
     }
 }

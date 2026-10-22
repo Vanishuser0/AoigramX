@@ -190,7 +190,11 @@ import me.vkryl.android.animator.ListAnimator;
 import me.vkryl.android.animator.ReplaceAnimator;
 import me.vkryl.core.BitwiseUtils;
 
+import nu.gpu.aoigram.translate.InputTranslation;
+import nu.gpu.aoigram.translate.InputTranslationMenu;
+
 public class ChatAttachAlert extends BottomSheet implements NotificationCenter.NotificationCenterDelegate, BottomSheet.BottomSheetDelegateInterface, FactorAnimator.Target {
+    private final InputTranslation aoiInputTranslation = new InputTranslation();
 
     public static final int LAYOUT_TYPE_PHOTO = 1;
     public static final int LAYOUT_TYPE_MUSIC = 3;
@@ -638,6 +642,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
     }
 
     public void setDialogId(long dialogId) {
+        if (this.dialogId != dialogId) aoiInputTranslation.cancel();
         this.dialogId = dialogId;
     }
 
@@ -3954,7 +3959,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                 return false;
             }
 
-            ItemOptions options = ItemOptions.makeOptions(containerView, resourcesProvider, writeButton);
+            ItemOptions options = ItemOptions.makeOptions(containerView, resourcesProvider, writeButton, true, false, true);
             if (messageWithCaption != null && (currentAttachLayout == photoLayout || currentAttachLayout == photoPreviewLayout)) {
                 MessagePreviewView.ToggleButton button = new MessagePreviewView.ToggleButton(
                     context,
@@ -4063,6 +4068,19 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                     item.setSubtext(null);
                 }
                 messageSendPreview.setStars(amount);
+            }
+            if ((chatActivity != null || allowEnterCaption) && !getCommentView().getText().toString().isBlank()) {
+                final long translationDialog = dialogId;
+                final MessageObject translationReply = replyMessage;
+                InputTranslationMenu.add(options, writeButton, resourcesProvider, translation -> {
+                    messageSendPreview.dismiss(false);
+                    EditTextEmoji comment = getCommentView();
+                    aoiInputTranslation.translate(currentAccount, translationDialog, translationReply, translation,
+                            comment.getEditText(), text -> {
+                                comment.setText(text);
+                                applyCaption();
+                            }, BulletinFactory.of(sizeNotifierFrameLayout, resourcesProvider), resourcesProvider);
+                });
             }
             options.setupSelectors();
             messageSendPreview.setItemOptions(options);
@@ -4270,6 +4288,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
     }
 
     private void onWriteButtonPressed() {
+        aoiInputTranslation.cancel();
         if (editingMessageObject != null && editingMessageObject.needResendWhenEdit() && !ChatObject.canManageMonoForum(currentAccount, editingMessageObject.getDialogId())) {
             if (baseFragment instanceof ChatActivity) {
                 final ChatActivity chatActivity = (ChatActivity) baseFragment;
@@ -4438,6 +4457,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
     public static final int EDITMEDIA_TYPE_MUSIC = 2;
 
     public void setEditingMessageObject(int type, MessageObject messageObject) {
+        aoiInputTranslation.cancel();
         if (messageObject != null) {
             if (photoLayout != null) {
                 photoLayout.clearSelectedPhotos();
@@ -4479,6 +4499,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
     }
 
     private boolean sendPressed(boolean notify, int scheduleDate, int scheduleRepeatPeriod, long effectId, boolean invertMedia) {
+        aoiInputTranslation.cancel();
         if (buttonPressed) {
             return false;
         }
@@ -4607,6 +4628,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             currentAttachLayout.scrollToTop();
             return;
         }
+        aoiInputTranslation.cancel();
         if (layout == todoLayout && !UserConfig.getInstance(currentAccount).isPremium()) {
             new PremiumFeatureBottomSheet(baseFragment, PremiumPreviewFragment.PREMIUM_FEATURE_TODO, false).show();
             return;
@@ -6072,6 +6094,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
     }
 
     public void init() {
+        aoiInputTranslation.cancel();
         writeButton.setEffect(effectId = 0);
         botButtonWasVisible = false;
         botButtonProgressWasVisible = false;
@@ -6219,6 +6242,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
     }
 
     public void onDestroy() {
+        aoiInputTranslation.cancel();
         for (int a = 0; a < layouts.length; a++) {
             if (layouts[a] != null) {
                 layouts[a].onDestroy();
@@ -6886,6 +6910,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
 
     @Override
     public void dismissInternal() {
+        aoiInputTranslation.cancel();
         if (delegate != null) {
             delegate.doOnIdle(this::removeFromRoot);
         } else {
@@ -7158,6 +7183,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         setCaptionAbove(above, true);
     }
     public void setCaptionAbove(boolean above, boolean animated) {
+        if (captionAbove != above) aoiInputTranslation.cancel();
         animatorCaptionAbove.setValue(above, animated);
 
         final EditTextEmoji fromView = getCommentView();

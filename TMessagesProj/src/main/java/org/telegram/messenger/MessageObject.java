@@ -128,7 +128,23 @@ import java.util.regex.Pattern;
 
 import me.vkryl.core.BitwiseUtils;
 
+import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.translate.TranslationDisplay;
+import nu.gpu.aoigram.translate.TranslationSignature;
+
 public class MessageObject {
+
+    public boolean aoiManualTranslation;
+    public boolean aoiTranslationLoading;
+    public int aoiManualProvider;
+    public String aoiManualLanguage;
+    public String aoiManualSummaryLanguage;
+    private TLRPC.TL_textWithEntities aoiDisplaySummarySource;
+    public int aoiOriginalMode = -1;
+    public boolean aoiDisplayManual;
+    public TLRPC.TL_textWithEntities aoiDisplaySource;
+    public TLRPC.TL_textWithEntities aoiDisplayText;
+
     private static final int MESSAGE_ID_RESERVED_BITS_MASK = 0x70000000;
     private static final int MESSAGE_ID_EPHEMERAL_BITS_MASK = 0x60000000;
 
@@ -3674,6 +3690,7 @@ public class MessageObject {
     public boolean updateTranslation(boolean force) {
         boolean replyUpdated = replyMessageObject != null && replyMessageObject != this && replyMessageObject.updateTranslation(force);
         TranslateController translateController = MessagesController.getInstance(currentAccount).getTranslateController();
+        boolean displayChanged = messageOwner != null && TranslationDisplay.prepare(this);
         final TLRPC.TL_textWithEntities translatedText = messageOwner != null ? (messageOwner.voiceTranscriptionOpen ? messageOwner.translatedVoiceTranscription : messageOwner.translatedText) : null;
         final TLRPC.TL_textWithEntities summarizedText = messageOwner != null && messageOwner.summarizedOpen ? messageOwner.summaryText : null;
         final TLRPC.TL_textWithEntities summarizeTranslatedText = messageOwner != null && messageOwner.summarizedOpen ? messageOwner.translatedSummaryText : null;
@@ -3682,16 +3699,18 @@ public class MessageObject {
             messageOwner != null &&
             messageOwner.summarizedOpen &&
             TranslateController.isSummarizable(this) &&
-            TranslateController.isTranslatable(this) &&
+            (aoiManualSummaryLanguage != null || TranslateController.isTranslatable(this) &&
             translateController.isTranslatingDialog(getDialogId()) &&
-            !translateController.isTranslateDialogHidden(getDialogId()) &&
-            TextUtils.equals(translateController.getDialogTranslateTo(getDialogId()), messageOwner.translatedSummaryLanguage)
+            !translateController.isTranslateDialogHidden(getDialogId())) &&
+            TextUtils.equals(aoiManualSummaryLanguage != null ? aoiManualSummaryLanguage : translateController.getDialogTranslateTo(getDialogId()), messageOwner.translatedSummaryLanguage)
         ) {
-            if (summarized && translated) {
+            if (summarized && translated && aoiDisplaySummarySource == summarizeTranslatedText) {
                 return replyUpdated || false;
             }
+            aoiDisplaySummarySource = summarizeTranslatedText;
             summarized = true;
             translated = true;
+            caption = null;
             applyNewText(summarizeTranslatedText.text);
             generateCaption();
             return replyUpdated || true;
@@ -3711,13 +3730,13 @@ public class MessageObject {
             return replyUpdated || true;
         } else if (
             messageOwner != null &&
-            TranslateController.isTranslatable(this) &&
+            (aoiManualTranslation || TranslateController.isTranslatable(this) &&
             translateController.isTranslatingDialog(getDialogId()) &&
-            !translateController.isTranslateDialogHidden(getDialogId()) &&
+            !translateController.isTranslateDialogHidden(getDialogId())) &&
             (translatedText != null || messageOwner.translatedPoll != null || messageOwner.translatedRichMessage != null) &&
-            TextUtils.equals(translateController.getDialogTranslateTo(getDialogId()), messageOwner.translatedToLanguage)
+            TranslationSignature.valid(this)
         ) {
-            if (translated && !summarized) {
+            if (translated && !summarized && !force && !displayChanged) {
                 return replyUpdated || false;
             }
             translated = true;
@@ -3725,7 +3744,7 @@ public class MessageObject {
             if (type == TYPE_ARTICLE) {
                 generateLayout(null);
             } else if (translatedText != null) {
-                applyNewText(translatedText.text);
+                applyNewText(TranslationDisplay.text(this, translatedText.text));
                 generateCaption();
             }
             return replyUpdated || true;
@@ -7676,14 +7695,14 @@ public class MessageObject {
         } else if (messageOwner.translatedText != null && translated) {
             captionSummarized = false;
             captionTranslated = true;
-            text = messageOwner.translatedText.text;
-            entities = messageOwner.translatedText.entities;
+            text = TranslationDisplay.result(this).text;
+            entities = TranslationDisplay.result(this).entities;
         } else {
             captionSummarized = false;
             captionTranslated = false;
         }
         if (!isMediaEmpty() && !(getMedia(messageOwner) instanceof TLRPC.TL_messageMediaGame) && !TextUtils.isEmpty(text)) {
-            caption = Emoji.replaceEmoji(text, Theme.chat_msgTextPaint.getFontMetricsInt(), false);
+            caption = Emoji.replaceEmoji(translated && !summarized ? TranslationDisplay.text(this, text) : text, Theme.chat_msgTextPaint.getFontMetricsInt(), false);
             caption = replaceAnimatedEmoji(caption, entities, Theme.chat_msgTextPaint.getFontMetricsInt(), false);
 
             boolean hasEntities;
@@ -8025,7 +8044,7 @@ public class MessageObject {
             if (messageOwner.voiceTranscriptionOpen) {
                 return messageOwner.translatedVoiceTranscription != null ? messageOwner.translatedVoiceTranscription.entities : null;
             } else {
-                return messageOwner.translatedText != null ? messageOwner.translatedText.entities : null;
+                return messageOwner.translatedText != null ? TranslationDisplay.result(this).entities : null;
             }
         }
         return messageOwner.entities;

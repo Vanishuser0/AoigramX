@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.util.SparseIntArray;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -32,6 +33,30 @@ import org.telegram.ui.ActionBar.Theme;
 import java.util.ArrayList;
 
 public class PopupSwipeBackLayout extends FrameLayout {
+    private Drawable foregroundBackground;
+
+    public void setForegroundBackground(Drawable background) {
+        foregroundBackground = background;
+        invalidate();
+    }
+
+    private final SparseIntArray overrideWidthIndex = new SparseIntArray();
+    private int overrideForegroundWidth;
+    private int lastWidthReported = -1;
+    private IntCallback onWidthUpdateListener;
+
+    public void setOnWidthUpdateListener(IntCallback listener) {
+        onWidthUpdateListener = listener;
+    }
+
+    public void setNewForegroundWidth(int index, int width) {
+        overrideWidthIndex.put(index, width);
+        if (index == currentForegroundIndex) {
+            overrideForegroundWidth = width;
+            invalidateTransforms();
+        }
+    }
+
     private final static int DURATION = 300;
 
     SparseIntArray overrideHeightIndex = new SparseIntArray();
@@ -133,7 +158,13 @@ public class PopupSwipeBackLayout extends FrameLayout {
     protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
         int i = indexOfChild(child);
         int s = canvas.save();
-        if (i != 0) {
+        if (i != 0 && foregroundBackground != null) {
+            int backgroundSave = canvas.save();
+            canvas.clipRect(child.getX(), 0, child.getX() + child.getMeasuredWidth(), getMeasuredHeight());
+            foregroundBackground.setBounds(0, 0, getMeasuredWidth(), getMeasuredHeight());
+            foregroundBackground.draw(canvas);
+            canvas.restoreToCount(backgroundSave);
+        } else if (i != 0) {
             if (foregroundColor == 0) {
                 foregroundPaint.setColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuBackground, resourcesProvider));
             } else {
@@ -187,7 +218,7 @@ public class PopupSwipeBackLayout extends FrameLayout {
         float tW = 0;
         float tH = 0;
         if (foregroundView != null) {
-            tW = foregroundView.getMeasuredWidth();
+            tW = overrideForegroundWidth != 0 ? overrideForegroundWidth : foregroundView.getMeasuredWidth();
             tH = overrideForegroundHeight != 0 ? overrideForegroundHeight : foregroundView.getMeasuredHeight();
         }
         if (backgroundView.getMeasuredWidth() == 0 || backgroundView.getMeasuredHeight() == 0) {
@@ -344,6 +375,7 @@ public class PopupSwipeBackLayout extends FrameLayout {
             return;
         }
         currentForegroundIndex = viewIndex;
+        overrideForegroundWidth = overrideWidthIndex.get(viewIndex);
         overrideForegroundHeight = overrideHeightIndex.get(viewIndex);
         animateToState(1, 0);
     }
@@ -413,7 +445,7 @@ public class PopupSwipeBackLayout extends FrameLayout {
         } else {
             View foregroundView = getChildAt(currentForegroundIndex);
             float tY = foregroundView.getTop();
-            float tW = foregroundView.getMeasuredWidth();
+            float tW = overrideForegroundWidth != 0 ? overrideForegroundWidth : foregroundView.getMeasuredWidth();
             float tH = overrideForegroundHeight != 0 ? overrideForegroundHeight : foregroundView.getMeasuredHeight();
             if (backgroundView.getMeasuredWidth() == 0 || backgroundView.getMeasuredHeight() == 0 || foregroundView.getMeasuredWidth() == 0 || foregroundView.getMeasuredHeight() == 0) {
                 y = fY;
@@ -439,6 +471,9 @@ public class PopupSwipeBackLayout extends FrameLayout {
         super.dispatchDraw(canvas);
         canvas.restoreToCount(s);
 
+        if (onWidthUpdateListener != null && lastWidthReported != (int) mRect.width()) {
+            onWidthUpdateListener.run(lastWidthReported = (int) mRect.width());
+        }
         if (onHeightUpdateListener != null && lastHeightReported != mRect.height()) {
             onHeightUpdateListener.run(lastHeightReported = (int) mRect.height());
         }

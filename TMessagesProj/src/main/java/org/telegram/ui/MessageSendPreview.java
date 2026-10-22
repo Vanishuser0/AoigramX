@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 
@@ -54,6 +55,7 @@ import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.Utilities;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.ActionBarPopupWindow;
+import org.telegram.ui.ActionBar.ActionBarPopupWindow.ActionBarPopupWindowLayout;
 import org.telegram.ui.ActionBar.AdjustPanLayoutHelper;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
@@ -66,6 +68,7 @@ import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.EditTextCaption;
 import org.telegram.ui.Components.ItemOptions;
 import org.telegram.ui.Components.LayoutHelper;
+import org.telegram.ui.Components.PopupSwipeBackLayout;
 import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble;
 import org.telegram.ui.Components.ReactionsContainerLayout;
 import org.telegram.ui.Components.RecyclerListView;
@@ -84,6 +87,20 @@ import org.telegram.ui.Stories.recorder.KeyboardNotifier;
 import java.util.ArrayList;
 
 public class MessageSendPreview extends Dialog implements NotificationCenter.NotificationCenterDelegate {
+    private int aoiOptionsWidth = -1;
+    private int aoiOptionsHeight = -1;
+
+    private int aoiOptionsSize(boolean horizontal) {
+        if (optionsView == null) return 0;
+        if (optionsView instanceof ActionBarPopupWindowLayout popup && popup.getSwipeBack() != null) {
+            int size = horizontal ? aoiOptionsWidth : aoiOptionsHeight;
+            if (size >= 0) return size;
+            View main = popup.getSwipeBack().getChildAt(0);
+            return horizontal ? main.getMeasuredWidth() + popup.getPaddingLeft() + popup.getPaddingRight()
+                    : main.getMeasuredHeight() + popup.getPaddingTop() + popup.getPaddingBottom();
+        }
+        return horizontal ? optionsView.getMeasuredWidth() : optionsView.getMeasuredHeight();
+    }
 
     public final Context context;
     public final Theme.ResourcesProvider resourcesProvider;
@@ -441,7 +458,7 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
         chatListView = new RecyclerListView(context, resourcesProvider) {
             @Override
             protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-                final int heightdown = dp(messageObjects.isEmpty() ? -6 : 48) + (optionsView == null ? 0 : optionsView.getMeasuredHeight());
+                final int heightdown = dp(messageObjects.isEmpty() ? -6 : 48) + aoiOptionsSize(false);
                 heightMeasureSpec = MeasureSpec.makeMeasureSpec(
                     Math.max(0, AndroidUtilities.displaySize.y - heightdown - dp(8) - insets.top),
                     MeasureSpec.AT_MOST
@@ -1276,6 +1293,20 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
         options.setBlurBackground(iBlur3Factory, BlurredBackgroundProviderImpl.scrimMenuBackground(resourcesProvider), false);
 
         optionsView = options.getLayout();
+        if (options.swipeback) {
+            PopupSwipeBackLayout swipeBack = ((ActionBarPopupWindowLayout) optionsView).getSwipeBack();
+            swipeBack.setForegroundBackground(iBlur3Factory.create(swipeBack, false)
+                    .setColorProvider(BlurredBackgroundProviderImpl.scrimMenuBackground(resourcesProvider)));
+            swipeBack.setOnWidthUpdateListener(width -> {
+                aoiOptionsWidth = width + optionsView.getPaddingLeft() + optionsView.getPaddingRight();
+                layout();
+            });
+            swipeBack.setOnHeightUpdateListener(height -> {
+                aoiOptionsHeight = height + optionsView.getPaddingTop() + optionsView.getPaddingBottom();
+                chatListView.requestLayout();
+                layout();
+            });
+        }
         containerView.addView(optionsView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT));
     }
 
@@ -1494,7 +1525,7 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
         final int heightup = chatListView.getMeasuredHeight() - sendButton.getHeight() + (effectSelector != null ? dp(320) : 0);
         final int top = insets.top + dp(8);
 
-        final int heightdown = dp(messageObjects.isEmpty() ? -6 : 48) + (optionsView == null ? 0 : optionsView.getMeasuredHeight());
+        final int heightdown = dp(messageObjects.isEmpty() ? -6 : 48) + aoiOptionsSize(false);
         final int bottom = containerView.getMeasuredHeight() - dp(8) - insets.bottom;
         if (pos[1] + heightdown > bottom) {
             pos[1] = bottom - heightdown;
@@ -1521,7 +1552,7 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
         }
 
         if (optionsView != null) {
-            optionsView.setX(pos[0] + dp(7) - optionsView.getMeasuredWidth());
+            optionsView.setX(pos[0] + dp(7) - aoiOptionsSize(true));
             optionsView.setY(pos[1] + (messageObjects.isEmpty() ? -dp(6) : sendButton.getHeight()));
         }
 
@@ -1729,7 +1760,9 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
         }
 
         final boolean animateOptions = open && optionsView != null && optionsView instanceof ActionBarPopupWindow.ActionBarPopupWindowLayout;
-        if (animateOptions) {
+        if (animateOptions && ((ActionBarPopupWindowLayout) optionsView).getSwipeBack() != null) {
+            optionsView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.popup_context_in));
+        } else if (animateOptions) {
             ActionBarPopupWindow.startAnimation((ActionBarPopupWindow.ActionBarPopupWindowLayout) optionsView);
         }
         if (!open) {

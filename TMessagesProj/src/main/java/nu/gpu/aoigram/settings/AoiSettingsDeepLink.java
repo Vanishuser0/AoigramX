@@ -18,6 +18,9 @@ public final class AoiSettingsDeepLink {
     static final String GENERAL_PAGE = "general";
     static final String APPEARANCE_PAGE = "appearance";
     static final String TRANSLATOR_PAGE = "translator";
+    static final String LLM_PAGE = "translator-llm";
+    static final String PROMPTS_PAGE = "translator-prompts";
+    static final String USER_PROMPT_PAGE = "translator-user-prompt";
     static final String CHAT_PAGE = "chat";
     static final String OTHER_PAGE = "other";
     static final String ABOUT_PAGE = "about";
@@ -91,6 +94,12 @@ public final class AoiSettingsDeepLink {
             fragment = new AoiAppearanceSettingsActivity();
         } else if (TRANSLATOR_PAGE.equalsIgnoreCase(pageKey)) {
             fragment = new AoiTranslatorSettingsActivity();
+        } else if (LLM_PAGE.equalsIgnoreCase(pageKey)) {
+            fragment = new AoiLlmSettingsActivity();
+        } else if (PROMPTS_PAGE.equalsIgnoreCase(pageKey)) {
+            fragment = new AoiTranslationPromptsActivity(true);
+        } else if (USER_PROMPT_PAGE.equalsIgnoreCase(pageKey)) {
+            fragment = new AoiTranslationPromptsActivity(false);
         } else if (CHAT_PAGE.equalsIgnoreCase(pageKey)) {
             fragment = new AoiChatSettingsActivity();
         } else if (OTHER_PAGE.equalsIgnoreCase(pageKey)) {

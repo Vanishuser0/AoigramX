@@ -234,6 +234,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.telegram.ui.iv.Latex;
 
+import nu.gpu.aoigram.translate.ArticleTranslation;
+import nu.gpu.aoigram.utils.ErrorFeedback;
+
 public class ArticleViewer extends IArticleViewer implements NotificationCenter.NotificationCenterDelegate {
 
     public static HashSet<ArticleViewer> activeSheets = new HashSet<>();
@@ -1092,6 +1095,7 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
         protected void onDetachedFromWindow() {
             super.onDetachedFromWindow();
             attachedToWindow = false;
+            for (PageLayout page : pages) if (page != null && page.aoiTranslation != null) page.aoiTranslation.cancel();
             if (videoPlayer != null) {
                 videoPlayer.release(null);
                 videoPlayer = null;
@@ -4908,6 +4912,8 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
                 if (pages[0].isWeb() && pages[0].getWebView() != null) {
                     pages[0].getWebView().reload();
                 }
+            } else if (id == ArticleTranslation.MENU_ID) {
+                pages[0].toggleAoiTranslation();
             } else if (id == WebActionBar.instant_item) {
                 WebInstantView.Loader loader = pages[0].currentInstantLoader;
                 if (loader != null && loader.getWebPage() != null) {
@@ -14701,7 +14707,9 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
 
         actionBar.setColors(ColorUtils.blendARGB(pages[0].getActionBarColor(), pages[1].getActionBarColor(), page1Alpha), false);
 
-        actionBar.setMenuType((page0Alpha > .5f ? pages[0] : pages[1]).type);
+        PageLayout visiblePage = page0Alpha > .5f ? pages[0] : pages[1];
+        actionBar.aoiArticleTranslated = visiblePage.aoiTranslation != null && visiblePage.aoiTranslation.isTranslated();
+        actionBar.setMenuType(visiblePage.type);
 
         if (sheet != null) {
             sheet.windowView.invalidate();
@@ -14729,6 +14737,57 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
     }
 
     public class PageLayout extends FrameLayout {
+        private ArticleTranslation aoiTranslation;
+
+        private void toggleAoiTranslation() {
+            if (isWeb() || adapter.currentPage == null) return;
+            if (aoiTranslation == null) aoiTranslation = new ArticleTranslation(adapter.currentPage.cached_page.blocks);
+            textSelectionHelper.clear(true);
+            ArticleTranslation translation = aoiTranslation;
+            if (translation.isTranslated()) {
+                translation.showOriginal(this::displayAoiBlocks);
+                return;
+            }
+            AlertDialog progressDialog = new AlertDialog(getContext(), AlertDialog.ALERT_TYPE_LOADING, getResourcesProvider());
+            progressDialog.setMessage(getString(R.string.TranslatingArticle));
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.setOnCancelListener(dialog -> translation.cancel());
+            progressDialog.show();
+            translation.translate(this::displayAoiBlocks, progress -> progressDialog.setProgress(Math.round(progress * 100)), error -> {
+                progressDialog.dismiss();
+                if (error == null) return;
+                String message = translation.isTranslated()
+                    ? getString(R.string.TranslateArticlePartialFailure) + "\n\n" + error : error;
+                ErrorFeedback.show(message, BulletinFactory.of(this, getResourcesProvider()), ArticleViewer.this::showDialog, true);
+            }).onCancel(progressDialog::dismiss);
+        }
+
+        private void displayAoiBlocks(List<TL_iv.PageBlock> blocks) {
+            int position = layoutManager.findFirstVisibleItemPosition();
+            View first = layoutManager.findViewByPosition(position);
+            int offset = first == null ? 0 : first.getTop() - listView.getPaddingTop();
+            TLRPC.WebPage page = adapter.currentPage;
+            boolean hasCoverChannel = adapter.channelBlock != null;
+            adapter.cleanup();
+            adapter.currentPage = page;
+            adapter.isRtl = page.cached_page.rtl;
+            if (hasCoverChannel) adapter.channelBlock = (TL_iv.pageBlockChannel) blocks.get(1);
+            for (int i = 0; i < blocks.size(); i++) {
+                if (i == 1 && hasCoverChannel) continue;
+                TL_iv.PageBlock block = blocks.get(i);
+                block.cachedWidth = 0;
+                block.cachedHeight = 0;
+                block.first = i == 0;
+                adapter.addBlock(adapter, block, 0, 0, i == blocks.size() - 1 ? i : 0);
+            }
+            for (TL_iv.PageBlock block : adapter.blocks) {
+                block.cachedWidth = 0;
+                block.cachedHeight = 0;
+            }
+            adapter.notifyDataSetChanged();
+            if (position >= 0) layoutManager.scrollToPositionWithOffset(position, offset);
+            actionBar.aoiArticleTranslated = aoiTranslation.isTranslated();
+        }
 
         public static final int TYPE_ARTICLE = 0;
         public static final int TYPE_WEB = 1;
@@ -15346,6 +15405,10 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
         }
 
         public void cleanup() {
+            if (aoiTranslation != null) {
+                aoiTranslation.cancel();
+                aoiTranslation = null;
+            }
             backButton = false;
             forwardButton = false;
             setWeb(null);

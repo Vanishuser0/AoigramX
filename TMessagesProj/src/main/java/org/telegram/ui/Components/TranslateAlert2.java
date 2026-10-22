@@ -85,7 +85,38 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.translate.TranslationLanguages;
+import nu.gpu.aoigram.translate.TranslationOptions;
+import nu.gpu.aoigram.translate.TranslationService;
+import nu.gpu.aoigram.translate.TranslationTask;
+
 public class TranslateAlert2 extends BottomSheet implements NotificationCenter.NotificationCenterDelegate {
+    private TranslationTask aoiTranslation;
+
+    private void translateWithProvider() {
+        TranslationOptions options = TranslationOptions.defaults(toLanguage);
+        TLRPC.TL_textWithEntities source = new TLRPC.TL_textWithEntities();
+        source.text = reqText == null ? "" : reqText.toString();
+        aoiTranslation = new TranslationTask();
+        TranslationService.translate(aoiTranslation, currentAccount, source, options, null, (result, error) -> {
+            if (error == null) {
+                firstTranslation = false;
+                CharSequence translated = SpannableStringBuilder.valueOf(result.text);
+                MessageObject.addEntitiesToText(translated, result.entities, false, true, false, false);
+                textView.setText(preprocessText(translated));
+                adapter.updateMainView(textViewContainer);
+            } else if (firstTranslation) {
+                dismiss();
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_ERROR, error);
+            } else {
+                BulletinFactory.of((FrameLayout) containerView, resourcesProvider).createErrorBulletin(error).show();
+                headerView.toLanguageTextView.setText(languageName(toLanguage = prevToLanguage));
+                adapter.updateMainView(textViewContainer);
+            }
+        });
+    }
+
 
     private Integer reqId;
     private CharSequence reqText;
@@ -308,9 +339,18 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
     }
 
     public void translate() {
+        if (aoiTranslation != null) {
+            aoiTranslation.cancel();
+            aoiTranslation = null;
+        }
         if (reqId != null) {
             ConnectionsManager.getInstance(currentAccount).cancelRequest(reqId, true);
             reqId = null;
+        }
+
+        if (!reqSum && reqRichMessage == null) {
+            translateWithProvider();
+            return;
         }
 
         final String method = MessagesController.getInstance(currentAccount).translationsManualEnabled;
@@ -1015,6 +1055,7 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
 
     @Override
     public void dismissInternal() {
+        if (aoiTranslation != null) aoiTranslation.cancel();
         if (reqId != null) {
             ConnectionsManager.getInstance(currentAccount).cancelRequest(reqId, true);
             reqId = null;
@@ -1354,42 +1395,30 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
 //            if ("system".equals(MessagesController.getInstance(currentAccount).translationsManualEnabled)) {
 //                systemAllLanguages = TranslateLanguage.getAllLanguages();
 //            }
-            ArrayList<LocaleController.LocaleInfo> locales = TranslateController.getLocales();
+            ArrayList<TranslationLanguages.Language> locales = TranslationLanguages.list(TranslationOptions.defaultProvider());
             boolean first = true;
             for (int i = 0; i < locales.size(); ++i) {
-                LocaleController.LocaleInfo localeInfo = locales.get(i);
+                TranslationLanguages.Language localeInfo = locales.get(i);
 
-                if (
-                    localeInfo.pluralLangCode.equals(fromLanguage) ||
-                    !"remote".equals(localeInfo.pathToFile)
-                ) {
-                    continue;
-                }
-                if (
-                    !TextUtils.equals(toLanguage, localeInfo.pluralLangCode) &&
-                    systemAllLanguages != null && !systemAllLanguages.contains(localeInfo.pluralLangCode)
-                ) {
-                    continue;
-                }
+                if (localeInfo.code().equals(fromLanguage)) continue;
 
                 ActionBarMenuSubItem button = new ActionBarMenuSubItem(getContext(), 2, first, i == locales.size() - 1, resourcesProvider);
-                button.setText(capitalFirst(languageName(localeInfo.pluralLangCode)));
-                button.setChecked(TextUtils.equals(toLanguage, localeInfo.pluralLangCode));
+                button.setText(capitalFirst(languageName(localeInfo.code())));
+                button.setChecked(TextUtils.equals(toLanguage, localeInfo.code()));
                 button.setOnClickListener(e -> {
                     if (dismiss[0] != null) {
                         dismiss[0].run();
                     }
 
-                    if (TextUtils.equals(toLanguage, localeInfo.pluralLangCode)) {
+                    if (TextUtils.equals(toLanguage, localeInfo.code())) {
                         return;
                     }
 
                     if (adapter.mMainView == textViewContainer || adapter.mMainView == richPreviewView) {
                         prevToLanguage = toLanguage;
                     }
-                    toLanguageTextView.setText(capitalFirst(languageName(toLanguage = localeInfo.pluralLangCode)));
+                    toLanguageTextView.setText(capitalFirst(languageName(toLanguage = localeInfo.code())));
                     adapter.updateMainView(reqRichMessage != null ? richLoadingPreviewView : loadingTextView);
-                    setToLanguage(toLanguage);
                     translate();
                 });
                 layout.addView(button);
@@ -1625,7 +1654,7 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
         final LocaleController.LocaleInfo currentLanguageInfo = LocaleController.getInstance().getCurrentLocaleInfo();
         final LocaleController.LocaleInfo thisLanguageInfo = LocaleController.getInstance().getBuiltinLanguageByPlural(locale);
         if (thisLanguageInfo == null) {
-            return null;
+            return Locale.forLanguageTag(locale.replace('_', '-')).getDisplayName(Locale.getDefault());
         }
         boolean isCurrentLanguageEnglish = currentLanguageInfo != null && "en".equals(currentLanguageInfo.pluralLangCode);
         if (isCurrentLanguageEnglish) {
@@ -1822,7 +1851,7 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
         if (context == null) {
             return null;
         }
-        TranslateAlert2 alert = new TranslateAlert2(context, fromLanguage, toLanguage, text, entities, null) {
+        TranslateAlert2 alert = new TranslateAlert2(context, fromLanguage, toLanguage, text, entities, fragment == null ? null : fragment.getResourceProvider()) {
             @Override
             public void dismiss() {
                 super.dismiss();
@@ -1845,7 +1874,7 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
     }
 
     public static String getToLanguage() {
-        return MessagesController.getGlobalMainSettings().getString("translate_to_language", LocaleController.getInstance().getCurrentLocale().getLanguage());
+        return TranslationOptions.defaultLanguage();
     }
 
     public static void setToLanguage(String toLang) {

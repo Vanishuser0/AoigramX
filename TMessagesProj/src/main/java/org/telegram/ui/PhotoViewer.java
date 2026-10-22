@@ -347,11 +347,18 @@ import me.vkryl.android.animator.FactorAnimator;
 import me.vkryl.core.reference.ReferenceList;
 
 import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.translate.InputTranslation;
+import nu.gpu.aoigram.translate.InputTranslationMenu;
+import nu.gpu.aoigram.translate.TranslationOptions;
+import nu.gpu.aoigram.translate.TranslationSignature;
+import nu.gpu.aoigram.translate.TranslationTask;
 
 @SuppressLint("WrongConstant")
 @SuppressWarnings("unchecked")
 @OptIn(markerClass = UnstableApi.class)
 public class PhotoViewer implements NotificationCenter.NotificationCenterDelegate, GestureDetector2.OnGestureListener, GestureDetector2.OnDoubleTapListener, IPipSourceDelegate, FactorAnimator.Target {
+    private final InputTranslation aoiInputTranslation = new InputTranslation();
+    private TranslationTask aoiPhotoTranslation;
 
     private static final int ANIMATOR_ID_POLL_ATTACH_BUTTONS_VISIBLE = 0;
     private final BoolAnimator animatorPollAttachButtonsVisibility = new BoolAnimator(ANIMATOR_ID_POLL_ATTACH_BUTTONS_VISIBLE, this, CubicBezierInterpolator.EASE_OUT_QUINT, 380);
@@ -5739,8 +5746,17 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                         menuItem.showSubItem(gallery_menu_hide_translation);
                     }, 32);
                     updateCaptionTranslated();
-                    MessagesController.getInstance(currentAccount).getTranslateController().translatePhoto(messageObject, PhotoViewer.this::updateCaptionTranslated);
+                    if (aoiPhotoTranslation != null) aoiPhotoTranslation.cancel();
+                    aoiPhotoTranslation = MessagesController.getInstance(currentAccount).getTranslateController().translatePhoto(messageObject, () -> {
+                        captionTranslated = messageObject.messageOwner.translatedText != null && TranslationSignature.valid(messageObject, TranslationOptions.defaults(TranslateAlert2.getToLanguage()));
+                        if (!captionTranslated) {
+                            menuItem.showSubItem(gallery_menu_translate);
+                            menuItem.hideSubItem(gallery_menu_hide_translation);
+                        }
+                        updateCaptionTranslated();
+                    });
                 } else if (id == gallery_menu_hide_translation) {
+                    if (aoiPhotoTranslation != null) aoiPhotoTranslation.cancel();
                     captionTranslated = false;
                     AndroidUtilities.runOnUIThread(() -> {
                         menuItem.showSubItem(gallery_menu_translate);
@@ -7452,13 +7468,27 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             final boolean showWithoutSound = !(canEdit && canReplace) && !userIsSelf;
             final boolean multipleSelected = placeProvider != null && placeProvider.getSelectedCount() > 1;
 
-            final ItemOptions options = ItemOptions.makeOptions(containerView, new DarkThemeResourceProvider(), view)
+            Theme.ResourcesProvider translationResources = new DarkThemeResourceProvider();
+            final ItemOptions options = ItemOptions.makeOptions(containerView, translationResources, view, true, false, true)
                 .addIf(showSendAsFile, R.drawable.msg_sendfile, getString(multipleSelected ? R.string.SendAsFiles : R.string.SendAsFile), () -> sendPressed(true, 0, 0, false, true, false))
                 .addIf(canReplace, R.drawable.msg_send, getString(R.string.SendAsNewPhoto), () -> sendPressed(true, 0, 0))
                 .addIf(canReplace, R.drawable.msg_replace, getString(R.string.ReplacePhoto), this::replacePressed)
                 .addIf(showSchedule, R.drawable.msg_calendar2, getString(userIsSelf ? R.string.SetReminder : R.string.ScheduleMessage), this::showScheduleDatePickerDialog)
                 .addIf(showWithoutSound, R.drawable.input_notify_off, getString(R.string.SendWithoutSound), () -> sendPressed(false, 0, 0));
 
+            if (needCaptionLayout && !getCaptionView().getText().toString().isBlank()) {
+                InputTranslationMenu.add(options, view, translationResources, translation -> {
+                    options.dismiss();
+                    CaptionContainerView caption = getCaptionView();
+                    boolean chat = parentChatActivity != null && !isStoryViewer;
+                    aoiInputTranslation.translate(currentAccount, chat ? parentChatActivity.getDialogId() : parentAlert != null ? parentAlert.getDialogId() : placeProvider != null ? placeProvider.getDialogId() : 0,
+                            chat ? parentChatActivity.getReplyMessage() : null, translation,
+                            caption.editText.getEditText(), text -> {
+                                caption.setText(text);
+                                applyCaption();
+                            }, BulletinFactory.of(containerView, translationResources), translationResources);
+                });
+            }
             if (options.getItemsCount() == 0) return false;
 
             options.setGravity(Gravity.RIGHT).show();
@@ -7993,6 +8023,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     }
 
     private void sendPressed(boolean notify, int scheduleDate, int scheduleRepeatPeriod, boolean replace, boolean forceDocument, boolean confirmed) {
+        aoiInputTranslation.cancel();
         if (isCaptionOpen()) {
             return;
         }
@@ -14693,7 +14724,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 String restrictionReason = MessagesController.getInstance(newMessageObject.currentAccount).getRestrictionReason(newMessageObject.messageOwner.restriction_reason);
                 if (!TextUtils.isEmpty(restrictionReason)) {
                     caption = restrictionReason;
-                } else if (captionTranslated && newMessageObject.messageOwner != null && newMessageObject.messageOwner.translatedText != null && TextUtils.equals(newMessageObject.messageOwner.translatedToLanguage, TranslateAlert2.getToLanguage())) {
+                } else if (captionTranslated && newMessageObject.messageOwner != null && newMessageObject.messageOwner.translatedText != null && TranslationSignature.valid(newMessageObject, TranslationOptions.defaults(TranslateAlert2.getToLanguage()))) {
                     caption = postProcessTranslated(newMessageObject);
                 } else {
                     caption = newMessageObject.caption;
@@ -15301,7 +15332,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             if (messageObject == null) {
                 return;
             }
-            if (captionTranslated && messageObject.messageOwner != null && messageObject.messageOwner.translatedText != null && TextUtils.equals(messageObject.messageOwner.translatedToLanguage, TranslateAlert2.getToLanguage())) {
+            if (captionTranslated && messageObject.messageOwner != null && messageObject.messageOwner.translatedText != null && TranslationSignature.valid(messageObject, TranslationOptions.defaults(TranslateAlert2.getToLanguage()))) {
                 setCurrentCaption(messageObject, postProcessTranslated(messageObject), false, true);
             } else {
                 setCurrentCaption(messageObject, messageObject.caption, captionTranslated, true);
@@ -15660,6 +15691,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     }
 
     private void setImageIndex(int index, boolean init, boolean animateCaption, boolean force) {
+        if (index != currentIndex || force) aoiInputTranslation.cancel();
+        if (index != currentIndex && aoiPhotoTranslation != null) aoiPhotoTranslation.cancel();
         if (!force && currentIndex == index || placeProvider == null) {
             return;
         }
@@ -16363,7 +16396,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         if (!isCaptionEmpty) {
             Theme.createChatResources(null, true);
             CharSequence str;
-            if (messageObject != null && captionTranslated && messageObject.messageOwner != null && messageObject.messageOwner.translatedText != null && TextUtils.equals(messageObject.messageOwner.translatedToLanguage, TranslateAlert2.getToLanguage())) {
+            if (messageObject != null && captionTranslated && messageObject.messageOwner != null && messageObject.messageOwner.translatedText != null && TranslationSignature.valid(messageObject, TranslationOptions.defaults(TranslateAlert2.getToLanguage()))) {
                 str = caption;
             } else if (messageObject != null && !messageObject.messageOwner.entities.isEmpty()) {
                 Spannable spannableString = new SpannableString(caption);
@@ -18110,6 +18143,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     }
 
     public void closePhoto(boolean animated, boolean fromEditMode) {
+        aoiInputTranslation.cancel();
+        if (aoiPhotoTranslation != null) aoiPhotoTranslation.cancel();
         if (stickerMakerView != null) {
             stickerMakerView.isThanosInProgress = false;
             if (cutOutBtn.isCancelState()) {
@@ -18659,6 +18694,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     }
 
     public void destroyPhotoViewer() {
+        aoiInputTranslation.cancel();
+        if (aoiPhotoTranslation != null) aoiPhotoTranslation.cancel();
         if (parentActivity == null || windowView == null) {
             return;
         }
@@ -23291,6 +23328,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     private void toggleCaptionAbove() {
         if (placeProvider == null) return;
         if (!placeProvider.canMoveCaptionAbove()) return;
+        aoiInputTranslation.cancel();
 
         applyCaption();
 

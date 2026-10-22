@@ -369,6 +369,9 @@ import me.vkryl.core.BitwiseUtils;
 import me.vkryl.core.reference.ReferenceList;
 
 import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.translate.TranslationMenu;
+import nu.gpu.aoigram.translate.TranslationOptions;
+import nu.gpu.aoigram.translate.ChatManualTranslation;
 
 @SuppressWarnings("unchecked")
 public class ChatActivity extends BaseFragment implements
@@ -381,6 +384,8 @@ public class ChatActivity extends BaseFragment implements
         InstantCameraView.Delegate,
         FactorAnimator.Target
 {
+    private ChatManualTranslation aoiChatManualTranslation;
+
     private final static boolean PULL_DOWN_BACK_FRAGMENT = false;
     private final static boolean DISABLE_PROGRESS_VIEW = true;
     private final static int SKELETON_DISAPPEAR_MS = 200;
@@ -3052,6 +3057,10 @@ public class ChatActivity extends BaseFragment implements
         }
 
         super.onFragmentCreate();
+        aoiChatManualTranslation = new ChatManualTranslation(currentAccount);
+        if (!isInsideContainer) {
+            getMessagesController().getTranslateController().aoiTranslationContext.attach(this, dialog_id, () -> chatAdapter == null ? messages : chatAdapter.getMessages());
+        }
 
         if (chatMode == MODE_PINNED) {
             ArrayList<MessageObject> messageObjects = new ArrayList<>();
@@ -3405,6 +3414,11 @@ public class ChatActivity extends BaseFragment implements
 
     @Override
     public void onFragmentDestroy() {
+        if (aoiChatManualTranslation != null) aoiChatManualTranslation.clear(true);
+        getMessagesController().getTranslateController().aoiTranslationContext.detach(this);
+        if (!getMessagesController().getTranslateController().aoiTranslationContext.has(dialog_id)) {
+            getMessagesController().getTranslateController().cancelTranslations(dialog_id);
+        }
         super.onFragmentDestroy();
         if (messageMetricsView != null) {
             messageMetricsView.finish();
@@ -3501,12 +3515,18 @@ public class ChatActivity extends BaseFragment implements
     }
 
     private static class ChatActivityTextSelectionHelper extends TextSelectionHelper.ChatListTextSelectionHelper {
+        @Override
+        protected boolean canTranslate(String fromLanguage) {
+            return chatActivity.getMessagesController().getTranslateController().isContextTranslateEnabled();
+        }
+
         ChatActivity chatActivity;
         public void setChatActivity(ChatActivity chatActivity) {
             cancelAllAnimators();
             clear();
             textSelectionOverlay = null;
             this.chatActivity = chatActivity;
+            setOnTranslate((text, fromLang, toLang, onAlertDismiss) -> TranslateAlert2.showAlert(chatActivity.getContext(), chatActivity, chatActivity.getCurrentAccount(), fromLang, toLang, text, null, !canCopy(), null, onAlertDismiss));
         }
 
         @Override
@@ -9893,7 +9913,8 @@ public class ChatActivity extends BaseFragment implements
         translateButton = new TranslateButton(getContext(), this, themeDelegate) {
             @Override
             protected void onButtonClick() {
-                if (getUserConfig().isPremium() || currentChat != null && currentChat.autotranslation) {
+                if (getMessagesController().getTranslateController().isFeatureAvailable(getDialogId())) {
+                    if (getMessagesController().getTranslateController().isTranslatingDialog(getDialogId())) aoiChatManualTranslation.clear(false);
                     getMessagesController().getTranslateController().toggleTranslatingDialog(getDialogId());
                 } else {
                     MessagesController.getNotificationsSettings(currentAccount).edit().putInt("dialog_show_translate_count" + getDialogId(), 14).commit();
@@ -11347,7 +11368,8 @@ public class ChatActivity extends BaseFragment implements
         if (translateItem == null) {
             return;
         }
-        translateItem.setVisibility(getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId()) && getMessagesController().getTranslateController().isDialogTranslatable(getDialogId()) ? View.VISIBLE : View.GONE);
+        boolean translateBarShown = translateButton != null && translateButton.getVisibility() == View.VISIBLE;
+        translateItem.setVisibility(!translateBarShown && getMessagesController().getTranslateController().isFeatureAvailable(getDialogId()) && !DialogObject.isEncryptedDialog(getDialogId()) && getUserConfig().getClientUserId() != getDialogId() ? View.VISIBLE : View.GONE);
     }
 
     private Animator infoTopViewAnimator;
@@ -23374,6 +23396,7 @@ public class ChatActivity extends BaseFragment implements
                         showBulletinAbountCloseResults = true;
                     }
                 }
+                checkTranslation(false);
                 createUndoView();
                 if (showBulletinAbountCloseResults) {
                     BulletinFactory.of(this)
@@ -25004,9 +25027,11 @@ public class ChatActivity extends BaseFragment implements
         if (messageObject == null || messageObject.messageOwner == null) {
             return false;
         }
+        messageObject.updateTranslation(false);
         boolean updated = false;
         for (MessageObject pinnedMessageObject : pinnedMessageObjects.values()) {
             if (pinnedMessageObject != null && pinnedMessageObject.getId() == messageObject.getId()) {
+                aoiChatManualTranslation.copyState(messageObject, pinnedMessageObject);
                 pinnedMessageObject.messageOwner.translatedText = messageObject.messageOwner.translatedText;
                 pinnedMessageObject.messageOwner.translatedToLanguage = messageObject.messageOwner.translatedToLanguage;
                 if (pinnedMessageObject.updateTranslation(true)) {
@@ -25029,12 +25054,13 @@ public class ChatActivity extends BaseFragment implements
                 }
                 boolean update = false;
                 if (cellMessageObject.getId() == messageObject.getId()) {
+                    aoiChatManualTranslation.copyState(messageObject, cellMessageObject);
                     cellMessageObject.messageOwner.translatedText = messageObject.messageOwner.translatedText;
                     cellMessageObject.messageOwner.translatedToLanguage = messageObject.messageOwner.translatedToLanguage;
                     cellMessageObject.messageOwner.summaryText = messageObject.messageOwner.summaryText;
                     cellMessageObject.messageOwner.translatedSummaryText = messageObject.messageOwner.translatedSummaryText;
                     cellMessageObject.messageOwner.translatedSummaryLanguage = messageObject.messageOwner.translatedSummaryLanguage;
-                    if (cellMessageObject.updateTranslation(false)) {
+                    if (cellMessageObject.updateTranslation(false) || cellMessageObject == messageObject) {
                         update = true;
                         ArrayList<Integer> dependentMessages = replyMessageOwners.get(cellMessageObject.getId());
                         if (dependentMessages != null) {
@@ -25053,17 +25079,20 @@ public class ChatActivity extends BaseFragment implements
                     groupChecked.add(group.groupId);
                 }
                 if (cellMessageObject.replyMessageObject != null && cellMessageObject.replyMessageObject.getId() == messageObject.getId() && cellMessageObject.replyMessageObject.getDialogId() == messageObject.getDialogId()) {
+                    aoiChatManualTranslation.copyState(messageObject, cellMessageObject.replyMessageObject);
                     cellMessageObject.replyMessageObject.messageOwner.translatedText = messageObject.messageOwner.translatedText;
                     cellMessageObject.replyMessageObject.messageOwner.translatedToLanguage = messageObject.messageOwner.translatedToLanguage;
                     cellMessageObject.replyMessageObject.messageOwner.translatedSummaryText = messageObject.messageOwner.translatedSummaryText;
                     cellMessageObject.replyMessageObject.messageOwner.translatedSummaryLanguage = messageObject.messageOwner.translatedSummaryLanguage;
-                    if (cellMessageObject.replyMessageObject.updateTranslation(false)) {
+                    if (cellMessageObject.replyMessageObject.updateTranslation(false) || cellMessageObject.replyMessageObject == messageObject) {
                         update = true;
                     }
                 }
                 if (update) {
                     if (scroll) {
                         chatLayoutManager.scrollToPositionWithOffset(chatListView.getChildAdapterPosition(child), cell.getTop() - (int) chatListViewPaddingTop, false);
+                    } else if (cellMessageObject.aoiDisplayText != null) {
+                        saveScrollPosition();
                     } else {
                         saveGeneralScroll();
                     }
@@ -25097,6 +25126,7 @@ public class ChatActivity extends BaseFragment implements
                 MessageObject cellMessageObject = cell.getMessageObject();
                 boolean update = false;
                 if (cellMessageObject != null && messageIds.contains(cellMessageObject.getId()) && cellMessageObject.replyMessageObject != null && cellMessageObject.replyMessageObject.getId() == translatedReplyMessageObject.getId()) {
+                    aoiChatManualTranslation.copyState(translatedReplyMessageObject, cellMessageObject.replyMessageObject);
                     cellMessageObject.replyMessageObject.messageOwner.translatedText = translatedReplyMessageObject.messageOwner.translatedText;
                     cellMessageObject.replyMessageObject.messageOwner.translatedToLanguage = translatedReplyMessageObject.messageOwner.translatedToLanguage;
                     if (cellMessageObject.replyMessageObject.updateTranslation(false)) {
@@ -25155,6 +25185,7 @@ public class ChatActivity extends BaseFragment implements
                                 MessageObject messageObject1 = group.messages.get(j);
                                 if (messageObject1 != null) {
                                     final int mid = messageObject1.getId();
+                                    aoiChatManualTranslation.check(this, messageObject1, mid >= minId - 7 && mid <= maxId + 7);
                                     getMessagesController().getTranslateController().checkTranslation(
                                         messageObject1, mid >= minId - 7 && mid <= maxId + 7
                                     );
@@ -25164,6 +25195,7 @@ public class ChatActivity extends BaseFragment implements
                         }
                     } else {
                         final int mid = messageObject.getId();
+                        aoiChatManualTranslation.check(this, messageObject, mid >= minId - 7 && mid <= maxId + 7);
                         getMessagesController().getTranslateController().checkTranslation(
                             messageObject, mid >= minId - 7 && mid <= maxId + 7
                         );
@@ -25173,6 +25205,7 @@ public class ChatActivity extends BaseFragment implements
         }
 
         if (currentPinnedMessageId > 0 && pinnedMessageObjects != null) {
+            aoiChatManualTranslation.check(this, pinnedMessageObjects.get(currentPinnedMessageId), true);
             getMessagesController().getTranslateController().checkTranslation(pinnedMessageObjects.get(currentPinnedMessageId), true);
         }
 
@@ -29425,8 +29458,8 @@ public class ChatActivity extends BaseFragment implements
 
         boolean showRestartTopic = !isInPreviewMode() && forumTopic != null && forumTopic.closed && !forumTopic.hidden && ChatObject.canManageTopic(currentAccount, currentChat, forumTopic);
         boolean showTranslate = (
-            getUserConfig().isPremium() || currentChat != null && currentChat.autotranslation ?
-                getMessagesController().getTranslateController().isDialogTranslatable(getDialogId()) && !getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId()) :
+            TranslationOptions.defaultProvider() != TranslationOptions.TELEGRAM || getUserConfig().isPremium() || currentChat != null && currentChat.autotranslation ?
+                getMessagesController().getTranslateController().isTranslatingDialog(getDialogId()) || getMessagesController().getTranslateController().isDialogTranslatable(getDialogId()) && !getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId()) :
                 !getMessagesController().premiumFeaturesBlocked() && preferences.getInt("dialog_show_translate_count" + did, 5) <= 0
         ) || DEBUG_TOP_PANELS;
         boolean showAddProfilePicture = UserObject.isBot(currentUser) && currentUser.bot_can_edit && currentUser.photo == null;
@@ -30066,6 +30099,7 @@ public class ChatActivity extends BaseFragment implements
     @Override
     public void onResume() {
         super.onResume();
+        checkTranslation(true);
         checkShowBlur(false);
         activityResumeTime = System.currentTimeMillis();
         if (openImport && getSendMessagesHelper().getImportingHistory(dialog_id) != null) {
@@ -31307,8 +31341,8 @@ public class ChatActivity extends BaseFragment implements
                 return false;
             }
 
-            final AtomicBoolean waitForLangDetection = new AtomicBoolean(false);
-            final AtomicReference<Runnable> onLangDetectionDone = new AtomicReference(null);
+            /*final AtomicBoolean waitForLangDetection = new AtomicBoolean(false);
+            final AtomicReference<Runnable> onLangDetectionDone = new AtomicReference(null);*/
 
             Rect rect = new Rect();
 
@@ -31358,7 +31392,7 @@ public class ChatActivity extends BaseFragment implements
             final boolean isReactionsAvailableFinal = !suggestEdit && isReactionsAvailable;
 
             int flags = 0;
-            if (isReactionsViewAvailable || showMessageSeen || showSponsorInfo) {
+            if (isReactionsViewAvailable || showMessageSeen || showSponsorInfo || options.contains(OPTION_TRANSLATE)) {
                 flags |= ActionBarPopupWindow.ActionBarPopupWindowLayout.FLAG_USE_SWIPEBACK;
             }
 
@@ -32168,7 +32202,8 @@ public class ChatActivity extends BaseFragment implements
                         processSelectedOption(options.get(i));
                     });
                     if (option == OPTION_TRANSLATE) {
-                        final boolean translateEnabled = getMessagesController().getTranslateController().isContextTranslateEnabled();
+                        TranslationMenu.bind(aoiChatManualTranslation, this, popupLayout, cell, message, groupedMessages, scrimBlur3Factory, () -> closeMenu(true));
+                        /*final boolean translateEnabled = getMessagesController().getTranslateController().isContextTranslateEnabled();
                         String toLangDefault = LocaleController.getInstance().getCurrentLocale().getLanguage();
                         String toLang = TranslateAlert2.getToLanguage();
                         int[] messageIdToTranslate = new int[] { message.getId() };
@@ -32218,7 +32253,7 @@ public class ChatActivity extends BaseFragment implements
                                 TranslateAlert2 alert = TranslateAlert2.showAlert(getParentActivity(), this, currentAccount, inputPeer, messageIdToTranslate[0], selectedObject.summarized, fromLang, toLangValue, finalMessageText, entities, noforwardsOrPaidMedia, onLinkPress, () -> dimBehindView(false));
                                 alert.setDimBehind(false);
                                 closeMenu(false);
-                                
+
 //                                final TranslateAlert3 alert =
 //                                    new TranslateAlert3(getContext(), resourceProvider)
 //                                        .setText(fromLang, finalMessageText)
@@ -32330,7 +32365,8 @@ public class ChatActivity extends BaseFragment implements
                             });
                         } else {
                             cell.setVisibility(View.GONE);
-                        }
+                        }*/
+
                     }
                 }
                 if (selectedObject != null && selectedObject.messageOwner != null && selectedObject.messageOwner.video_processing_pending) {
@@ -32730,11 +32766,12 @@ public class ChatActivity extends BaseFragment implements
                     }
                 }, 420);
             };
-            if (waitForLangDetection.get()) {
+            /*if (waitForLangDetection.get()) {
                 onLangDetectionDone.set(showMenu);
             } else {
                 showMenu.run();
-            }
+            }*/
+            showMenu.run();
             chatListView.stopScroll();
             chatLayoutManager.setCanScrollVertically(false);
             dimBehindView(v, true);
@@ -37756,12 +37793,14 @@ public class ChatActivity extends BaseFragment implements
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             if (position == botInfoRow || position == botInfoEmptyRow) {
                 BotHelpCell helpView = (BotHelpCell) holder.itemView;
+                String description = null;
                 if (UserObject.isReplyUser(currentUser)) {
                     helpView.setText(false, LocaleController.getString(R.string.RepliesChatInfo));
                 } else if (currentUser != null && currentUser.id == UserObject.VERIFY) {
                     helpView.setText(false, LocaleController.getString(R.string.VerifyChatInfo));
                 } else {
                     TL_bots.BotInfo mBotInfo = botInfo.size() != 0 ? botInfo.get(currentUser.id) : null;
+                    description = mBotInfo != null ? mBotInfo.description : null;
                     final boolean setup = (mBotInfo == null || TextUtils.isEmpty(mBotInfo.description) && mBotInfo.description_photo == null && mBotInfo.description_document == null) && UserObject.isBot(currentUser) && userInfo != null && userInfo.bot_manager_id != 0 && currentUser.bot_can_edit;
                     helpView.setText(
                         true,
@@ -37772,7 +37811,7 @@ public class ChatActivity extends BaseFragment implements
                         setup ? DialogObject.getName(currentAccount, userInfo.bot_manager_id) : null
                     );
                 }
-                updateBotHelpCellClick(helpView);
+                updateBotHelpCellClick(helpView, description);
             } else if (position == botForumStartThreadRow) {
                 BotAskCell cell = (BotAskCell) holder.itemView;
                 cell.setDialogId(getDialogId());
@@ -44531,13 +44570,14 @@ public class ChatActivity extends BaseFragment implements
         }
     }
 
-    private void updateBotHelpCellClick(BotHelpCell cell) {
+    private void updateBotHelpCellClick(BotHelpCell cell, String text) {
         final boolean translateButtonEnabled = MessagesController.getInstance(currentAccount).getTranslateController().isContextTranslateEnabled();
-        if (translateButtonEnabled && LanguageDetector.hasSupport()) {
-            final CharSequence text = cell.getText();
+        if (!TextUtils.isEmpty(text)) {
+            /*
             LanguageDetector.detectLanguage(text == null ? "" : text.toString(), lang -> {
                 String toLang = LocaleController.getInstance().getCurrentLocale().getLanguage();
                 if (lang != null && (!lang.equals(toLang) || lang.equals("und")) && !RestrictedLanguagesSelectActivity.getRestrictedLanguages().contains(lang)) {
+            */
                     cell.setOnClickListener(e -> {
 
                         ActionBarPopupWindow.ActionBarPopupWindowLayout layout = new ActionBarPopupWindow.ActionBarPopupWindowLayout(getContext());
@@ -44546,15 +44586,25 @@ public class ChatActivity extends BaseFragment implements
                         layout.setBackground(shadowDrawable2);
 
                         final Runnable[] dismiss = new Runnable[1];
-                        ActionBarMenuSubItem translateButton = new ActionBarMenuSubItem(getContext(), true, true);
-                        translateButton.setTextAndIcon(LocaleController.getString(R.string.TranslateMessage), R.drawable.msg_translate);
-                        translateButton.setOnClickListener(e2 -> {
-                            TranslateAlert2.showAlert(getContext(), this, currentAccount, lang, toLang, text, null, false, null, null);
-                            if (dismiss[0] != null) {
-                                dismiss[0].run();
-                            }
+                        ActionBarMenuSubItem copyButton = new ActionBarMenuSubItem(getContext(), true, !translateButtonEnabled);
+                        copyButton.setTextAndIcon(getString(R.string.Copy), R.drawable.msg_copy);
+                        copyButton.setOnClickListener(e2 -> {
+                            AndroidUtilities.addToClipboard(text);
+                            BulletinFactory.of(this).createCopyBulletin(getString(R.string.TextCopied)).show();
+                            if (dismiss[0] != null) dismiss[0].run();
                         });
-                        layout.addView(translateButton);
+                        layout.addView(copyButton);
+                        if (translateButtonEnabled) {
+                            ActionBarMenuSubItem translateButton = new ActionBarMenuSubItem(getContext(), false, true);
+                            translateButton.setTextAndIcon(LocaleController.getString(R.string.TranslateMessage), R.drawable.msg_translate);
+                            translateButton.setOnClickListener(e2 -> {
+                                TranslateAlert2.showAlert(getContext(), this, currentAccount, null, TranslateAlert2.getToLanguage(), text, null, false, null, null);
+                                if (dismiss[0] != null) {
+                                    dismiss[0].run();
+                                }
+                            });
+                            layout.addView(translateButton);
+                        }
 
                         ActionBarPopupWindow window = new ActionBarPopupWindow(layout, LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT);
                         dismiss[0] = () -> window.dismiss();
@@ -44566,12 +44616,6 @@ public class ChatActivity extends BaseFragment implements
                         window.setFocusable(true);
                         window.showAsDropDown(cell, cell.getWidth() / 2 - AndroidUtilities.dp(90), AndroidUtilities.dp(-16), Gravity.BOTTOM | Gravity.LEFT);
                     });
-                } else {
-                    cell.setClickable(false);
-                }
-            }, err -> {
-                cell.setClickable(false);
-            });
         } else {
             cell.setClickable(false);
         }
@@ -46243,7 +46287,7 @@ public class ChatActivity extends BaseFragment implements
                     options.add(OPTION_PIN);
                     icons.add(R.drawable.msg_pin);
                 }
-                if (selectedObject != null && !selectedObject.isEphemeral() && selectedObject.contentType == 0 && ((!TextUtils.isEmpty(selectedObject.getMessageTextToTranslate(groupedMessages, null)) && !selectedObject.isAnimatedEmoji() && !selectedObject.isDice()) || (selectedObject.type == MessageObject.TYPE_ARTICLE && selectedObject.messageOwner != null && selectedObject.messageOwner.rich_message != null && !selectedObject.translated))) {
+                if (selectedObject != null && !selectedObject.isEphemeral() && selectedObject.contentType == 0 && (((selectedObject.aoiManualTranslation || selectedObject.summarized && selectedObject.aoiManualSummaryLanguage != null || !TextUtils.isEmpty(selectedObject.getMessageTextToTranslate(groupedMessages, null))) && !selectedObject.isAnimatedEmoji() && !selectedObject.isDice()) || (selectedObject.type == MessageObject.TYPE_ARTICLE && selectedObject.messageOwner != null && selectedObject.messageOwner.rich_message != null && (!selectedObject.translated || selectedObject.aoiManualTranslation)))) {
                     items.add(LocaleController.getString(R.string.TranslateMessage));
                     options.add(OPTION_TRANSLATE);
                     icons.add(R.drawable.msg_translate);
@@ -46590,7 +46634,7 @@ public class ChatActivity extends BaseFragment implements
                     options.add(OPTION_PIN);
                     icons.add(R.drawable.msg_pin);
                 }
-                if (selectedObject != null && !selectedObject.isEphemeral() && selectedObject.contentType == 0 && ((!TextUtils.isEmpty(selectedObject.getMessageTextToTranslate(selectedObjectGroup, null)) && !selectedObject.isAnimatedEmoji() && !selectedObject.isDice()) || (selectedObject.type == MessageObject.TYPE_ARTICLE && selectedObject.messageOwner != null && selectedObject.messageOwner.rich_message != null && !selectedObject.translated))) {
+                if (selectedObject != null && !selectedObject.isEphemeral() && selectedObject.contentType == 0 && (((selectedObject.aoiManualTranslation || selectedObject.summarized && selectedObject.aoiManualSummaryLanguage != null || !TextUtils.isEmpty(selectedObject.getMessageTextToTranslate(selectedObjectGroup, null))) && !selectedObject.isAnimatedEmoji() && !selectedObject.isDice()) || (selectedObject.type == MessageObject.TYPE_ARTICLE && selectedObject.messageOwner != null && selectedObject.messageOwner.rich_message != null && (!selectedObject.translated || selectedObject.aoiManualTranslation)))) {
                     items.add(LocaleController.getString(R.string.TranslateMessage));
                     options.add(OPTION_TRANSLATE);
                     icons.add(R.drawable.msg_translate);
@@ -46642,6 +46686,11 @@ public class ChatActivity extends BaseFragment implements
                     items.add(LocaleController.getString(R.string.Copy));
                     options.add(OPTION_COPY);
                     icons.add(R.drawable.msg_copy);
+                }
+                if (selectedObject.contentType == 0 && (selectedObject.aoiManualTranslation || !TextUtils.isEmpty(selectedObject.getMessageTextToTranslate(selectedObjectGroup, null))) && !selectedObject.isAnimatedEmoji() && !selectedObject.isDice()) {
+                    items.add(getString(R.string.TranslateMessage));
+                    options.add(OPTION_TRANSLATE);
+                    icons.add(R.drawable.msg_translate);
                 }
                 if (!isThreadChat() && chatMode != MODE_SCHEDULED && currentChat != null && primaryMessage != null && (currentChat.has_link || primaryMessage.hasReplies()) && currentChat.megagroup && primaryMessage.canViewThread()) {
                     if (primaryMessage.hasReplies()) {

@@ -51,7 +51,7 @@ public class TextViewWithLoading extends TextView {
             if (loading <= 0) {
                 canvas.save();
             } else {
-                canvas.saveLayerAlpha(0, 0, getWidth(), getHeight(), (int) (0xFF * (1.0f - loading)), Canvas.ALL_SAVE_FLAG);
+                canvas.saveLayerAlpha(getScrollX(), 0, getScrollX() + getWidth(), getHeight(), (int) (0xFF * (1.0f - loading)), Canvas.ALL_SAVE_FLAG);
             }
             canvas.translate(0, dp(6) * loading);
             super.onDraw(canvas);
@@ -59,7 +59,7 @@ public class TextViewWithLoading extends TextView {
         }
 
         if (loading > 0) {
-            int cx = getWidth() / 2, cy = getHeight() / 2;
+            int cx = getScrollX() + getWidth() / 2, cy = getHeight() / 2;
             cx -= (int) (dp(6) * (1.0f - loading));
             spinner.setAlpha((int) (0xFF * loading));
             spinner.setBounds(

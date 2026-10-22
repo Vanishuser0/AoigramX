@@ -37,6 +37,11 @@
 # https://developers.google.com/ml-kit/known-issues#android_issues
 -keep class com.google.mlkit.nl.languageid.internal.LanguageIdentificationJni { *; }
 
+# ml-kit
+-keep class * implements com.google.firebase.components.ComponentRegistrar {
+    public <init>();
+}
+
 # Huawei Services
 -keep class com.huawei.hianalytics.**{ *; }
 -keep class com.huawei.updatesdk.**{ *; }

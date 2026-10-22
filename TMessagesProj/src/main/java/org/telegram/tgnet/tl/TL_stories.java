@@ -1510,6 +1510,7 @@ public class TL_stories {
     }
 
     public static abstract class StoryItem extends TLObject {
+        public String aoiTranslationSignature;
 
         public int flags;
         public boolean pinned;

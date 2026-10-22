@@ -1374,6 +1374,9 @@ public class LocaleController {
                 localizationExternalSize = calculateTranslatedCount(localeValues);
             }
             currentLocale = newLocale;
+            if (!init && currentLocaleInfo != null && !TextUtils.equals(currentLocaleInfo.pluralLangCode, localeInfo.pluralLangCode)) {
+                RestrictedLanguagesSelectActivity.aoiSwitchLanguage(currentLocaleInfo.pluralLangCode, localeInfo.pluralLangCode);
+            }
             currentLocaleInfo = localeInfo;
             // checkLocalizationInternal();
             FileLog.d("applyLanguage: currentLocaleInfo is set");

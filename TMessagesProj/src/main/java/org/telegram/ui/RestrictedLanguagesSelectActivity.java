@@ -57,6 +57,17 @@ import java.util.Set;
 
 public class RestrictedLanguagesSelectActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
+    public static void aoiSwitchLanguage(String from, String to) {
+        HashSet<String> languages = new HashSet<>(getRestrictedLanguages());
+        if (languages.contains(from) && !languages.contains(to)) {
+            languages.remove(from);
+        }
+        if (to != null && !"null".equals(to)) {
+            languages.add(to);
+        }
+        updateRestrictedLanguages(languages, false);
+    }
+
     private ListAdapter listAdapter;
     private RecyclerListView listView;
     private ListAdapter searchListViewAdapter;
@@ -158,11 +169,14 @@ public class RestrictedLanguagesSelectActivity extends BaseFragment implements N
         } else {
             selectedLanguages.add(language);
         }
+        /*
         if (selectedLanguages.size() == 1 && selectedLanguages.contains(currentLocaleInfo.pluralLangCode)) {
             updateRestrictedLanguages(null, false);
         } else {
             updateRestrictedLanguages(selectedLanguages, false);
         }
+        */
+        updateRestrictedLanguages(selectedLanguages, false);
         TranslateController.invalidateSuggestedLanguageCodes();
         return true;
     }
@@ -268,11 +282,14 @@ public class RestrictedLanguagesSelectActivity extends BaseFragment implements N
                 } else {
                     selectedLanguages.add(langCode);
                 }
+                /*
                 if (selectedLanguages.size() == 1 && selectedLanguages.contains(currentLocaleInfo.pluralLangCode)) {
                     updateRestrictedLanguages(null, null);
                 } else {
                     updateRestrictedLanguages(selectedLanguages, true);
                 }
+                */
+                updateRestrictedLanguages(selectedLanguages, false);
 
                 if (search) {
                     for (int i = 0, p = 0; i < searchResult.size(); ++i, ++p) {
@@ -526,8 +543,10 @@ public class RestrictedLanguagesSelectActivity extends BaseFragment implements N
     public static void cleanup() {
         invalidateRestrictedLanguages();
         MessagesController.getGlobalMainSettings().edit()
+            /*
             .remove("translate_button_restricted_languages_changed")
             .remove("translate_button_restricted_languages_version")
+            */
             .remove("translate_button_restricted_languages")
             .apply();
         checkRestrictedLanguages(false);
@@ -535,7 +554,7 @@ public class RestrictedLanguagesSelectActivity extends BaseFragment implements N
 
     public static final int LAST_DO_NOT_TRANSLATE_VERSION = 2;
     public static void checkRestrictedLanguages(boolean accountsChanged) {
-        boolean manualChanged = MessagesController.getGlobalMainSettings().getBoolean("translate_button_restricted_languages_changed", false);
+        /*boolean manualChanged = MessagesController.getGlobalMainSettings().getBoolean("translate_button_restricted_languages_changed", false);
         int version = MessagesController.getGlobalMainSettings().getInt("translate_button_restricted_languages_version", 0);
 
         if (version != LAST_DO_NOT_TRANSLATE_VERSION || accountsChanged && !manualChanged) {
@@ -559,7 +578,7 @@ public class RestrictedLanguagesSelectActivity extends BaseFragment implements N
                     } catch (Exception ignore) {}
                 }
             });
-        }
+        }*/
     }
 
     public static void getExtendedDoNotTranslate(Utilities.Callback<HashSet<String>> onDone) {

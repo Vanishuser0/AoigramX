@@ -261,6 +261,8 @@ import me.vkryl.android.animator.BoolAnimator;
 import me.vkryl.android.animator.FactorAnimator;
 import me.vkryl.core.BitwiseUtils;
 
+import nu.gpu.aoigram.translate.TranslationDisplay;
+
 public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate, ImageReceiver.ImageReceiverDelegate,
         DownloadController.FileDownloadProgressListener, TextSelectionHelper.SelectableView,
         NotificationCenter.NotificationCenterDelegate, FactorAnimator.Target, IMessageCell {
@@ -16819,11 +16821,12 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         }
 
         final TranslateController translateController = MessagesController.getInstance(currentAccount).getTranslateController();
-        final boolean translating = translateController.isTranslating(currentMessageObject);
-        final boolean shouldTranslate = currentMessageObject != null && TranslateController.isTranslatable(currentMessageObject) && translateController.isTranslatingDialog(currentMessageObject.getDialogId());
-        final boolean shouldSummarize = currentMessageObject != null && currentMessageObject.messageOwner.summarizedOpen;
-        final boolean isFinal = shouldTranslate == (currentMessageObject != null && currentMessageObject.translated) && shouldSummarize == (currentMessageObject != null && currentMessageObject.summarized);
-        if (origin == !isFinal) {
+        MessageObject translationMessage = caption && currentMessagesGroup != null ? currentMessagesGroup.findCaptionMessageObject() : currentMessageObject;
+        final boolean translating = translateController.isTranslating(translationMessage);
+        final boolean shouldTranslate = translationMessage != null && (translationMessage.aoiManualTranslation || translateController.isTranslatingDialog(translationMessage.getDialogId()) && TranslateController.isTranslatable(translationMessage));
+        final boolean shouldSummarize = translationMessage != null && translationMessage.messageOwner.summarizedOpen;
+        final boolean isFinal = shouldTranslate == (translationMessage != null && translationMessage.translated) && shouldSummarize == (translationMessage != null && translationMessage.summarized);
+        if (translating ? origin : origin == !isFinal) {
             if (translationLoadingFloat == null) {
                 translationLoadingFloat = new AnimatedFloat(this, 350, CubicBezierInterpolator.EASE_OUT_QUINT);
             }
@@ -16962,6 +16965,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 int saveCount = canvas.getSaveCount();
                 canvas.save();
                 final float blockRtl = (block.isRtl() ? rtlOffset - (block.quote ? dp(10) : 0) : 0);
+                if (translationMessage != null && translationMessage.aoiDisplayText != null && block.textLayout != null) {
+                    TranslationDisplay.setSeparatorBounds(block.textLayout.getText(), blockRtl, blockRtl + maxWidth);
+                }
                 canvas.translate(textX - blockRtl, textY + block.textYOffset(textLayoutBlocks, transitionParams) + transitionYOffsetForDrawables + block.padTop);
                 if (a == linkBlockNum && !explanation || a == linkExplanationBlockNum && explanation) {
                     if (!drawOnlyText && links.draw(canvas)) {

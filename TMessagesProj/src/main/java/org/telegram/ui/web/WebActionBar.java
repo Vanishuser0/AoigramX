@@ -60,7 +60,11 @@ import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.LineProgressView;
 import org.telegram.ui.GradientClip;
 
+import nu.gpu.aoigram.translate.ArticleTranslation;
+
 public class WebActionBar extends FrameLayout {
+    public boolean aoiArticleTranslated;
+
     private final Theme.ResourcesProvider resourcesProvider;
 
     public final RectF rect = new RectF();
@@ -214,6 +218,7 @@ public class WebActionBar extends FrameLayout {
             if (menuType == ArticleViewer.PageLayout.TYPE_ARTICLE) {
                 o.add(R.drawable.msg_openin, getString(R.string.OpenInExternalApp), click.run(open_item));
                 o.add(R.drawable.msg_search, getString(R.string.Search), click.run(search_item));
+                o.add(R.drawable.msg_translate, getString(aoiArticleTranslated ? R.string.TranslationShowOriginal : R.string.TranslateArticle), click.run(ArticleTranslation.MENU_ID));
                 o.addIf(!isLocal, R.drawable.msg_share, getString(R.string.ShareFile), click.run(share_item));
                 o.add(R.drawable.msg_settings_old, getString(R.string.Settings), click.run(settings_item));
             } else if (menuType == ArticleViewer.PageLayout.TYPE_WEB) {

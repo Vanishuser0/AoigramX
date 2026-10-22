@@ -11,10 +11,11 @@ import org.telegram.tgnet.tl.TL_stories;
 public class StoryCustomParamsHelper {
 
     public static boolean isEmpty(TL_stories.StoryItem storyItem) {
-        return storyItem.detectedLng == null && storyItem.translatedLng == null && !storyItem.translated && storyItem.translatedText == null;
+        return storyItem.aoiTranslationSignature == null && storyItem.detectedLng == null && storyItem.translatedLng == null && !storyItem.translated && storyItem.translatedText == null;
     }
 
     public static void copyParams(TL_stories.StoryItem fromStory, TL_stories.StoryItem toStory) {
+        toStory.aoiTranslationSignature = fromStory.aoiTranslationSignature;
         toStory.translated = fromStory.translated;
         toStory.detectedLng = fromStory.detectedLng;
         toStory.translatedText = fromStory.translatedText;
@@ -64,6 +65,7 @@ public class StoryCustomParamsHelper {
             flags += storyItem.detectedLng != null ? 2 : 0;
             flags += storyItem.translatedText != null ? 4 : 0;
             flags += storyItem.translatedLng != null ? 8 : 0;
+            flags = setFlag(flags, FLAG_30, storyItem.aoiTranslationSignature != null);
         }
 
         @Override
@@ -79,6 +81,7 @@ public class StoryCustomParamsHelper {
             if ((flags & 8) != 0) {
                 stream.writeString(storyItem.translatedLng);
             }
+            if (hasFlag(flags, FLAG_30)) stream.writeString(storyItem.aoiTranslationSignature);
         }
 
         @Override
@@ -94,6 +97,7 @@ public class StoryCustomParamsHelper {
             if ((flags & 8) != 0) {
                 storyItem.translatedLng = stream.readString(exception);
             }
+            if (hasFlag(flags, FLAG_30)) storyItem.aoiTranslationSignature = stream.readString(exception);
         }
     }
 }

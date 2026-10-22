@@ -219,7 +219,31 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 
+import nu.gpu.aoigram.translate.TranslationSignature;
+import nu.gpu.aoigram.translate.TranslationTask;
+
 public class PeerStoriesView extends SizeNotifierFrameLayout implements NotificationCenter.NotificationCenterDelegate {
+    private TranslationTask aoiStoryTranslation;
+    private TL_stories.StoryItem aoiStorySource;
+
+    private void translateAoiStory(boolean expand) {
+        if (aoiStoryTranslation != null) aoiStoryTranslation.cancel();
+        TL_stories.StoryItem source = currentStory.storyItem;
+        aoiStorySource = source;
+        if (delegate != null) delegate.setTranslating(true);
+        long start = System.currentTimeMillis();
+        aoiStoryTranslation = MessagesController.getInstance(currentAccount).getTranslateController().translateStory(source, () -> {
+            if (currentStory.storyItem != source) return;
+            aoiStoryTranslation.post(() -> {
+                aoiStoryTranslation = null;
+                if (delegate != null) delegate.setTranslating(false);
+                updatePosition();
+                checkBlackoutMode = true;
+                if (expand) storyCaptionView.expand(true);
+            }, Math.max(0, 500L - (System.currentTimeMillis() - start)));
+        });
+    }
+
 
     public static boolean DISABLE_STORY_REPOSTING = false;
     public static final float SHARE_BUTTON_OFFSET = 46;
@@ -2127,8 +2151,12 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
                         }
 
                         if (currentStory.storyItem != null) {
-                            if (currentStory.storyItem.translated && TextUtils.equals(currentStory.storyItem.translatedLng, TranslateAlert2.getToLanguage())) {
+                            if (currentStory.storyItem.translated && TranslationSignature.valid(currentStory.storyItem)) {
                                 ActionBarMenuItem.addItem(popupLayout, R.drawable.msg_translate, getString(R.string.HideTranslation), false, resourcesProvider).setOnClickListener(v -> {
+                                    if (aoiStoryTranslation != null) {
+                                        aoiStoryTranslation.cancel();
+                                        aoiStoryTranslation = null;
+                                    }
                                     currentStory.storyItem.translated = false;
                                     MessagesController.getInstance(currentAccount).getStoriesController().getStoriesStorage().updateStoryItem(currentStory.storyItem.dialogId, currentStory.storyItem);
                                     cancelTextSelection();
@@ -2145,16 +2173,7 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
                                         delegate.setTranslating(true);
                                     }
                                     MessagesController.getInstance(currentAccount).getStoriesController().getStoriesStorage().updateStoryItem(currentStory.storyItem.dialogId, currentStory.storyItem);
-                                    final long start = System.currentTimeMillis();
-                                    final Runnable finishTranslate = () -> {
-                                        if (delegate != null) {
-                                            delegate.setTranslating(false);
-                                        }
-                                        PeerStoriesView.this.updatePosition();
-                                        checkBlackoutMode = true;
-                                        storyCaptionView.expand(true);
-                                    };
-                                    MessagesController.getInstance(currentAccount).getTranslateController().translateStory(currentStory.storyItem, () -> AndroidUtilities.runOnUIThread(finishTranslate, Math.max(0, 500L - (System.currentTimeMillis() - start))));
+                                    translateAoiStory(true);
                                     updatePosition();
                                     checkBlackoutMode = true;
                                     storyCaptionView.expand(true);
@@ -3371,6 +3390,7 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
                 return disabledPaidFeatures(true);
             }
         };
+        chatActivityEnterView.aoiStoryMenuContainer = storyViewer.containerView;
         chatActivityEnterView.getEditField().useAnimatedTextDrawable();
         chatActivityEnterView.getEditField().setScaleX(0);
         chatActivityEnterView.setOverrideKeyboardAnimation(true);
@@ -4764,6 +4784,10 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
 
     @Override
     protected void onDetachedFromWindow() {
+        if (aoiStoryTranslation != null) {
+            aoiStoryTranslation.cancel();
+            aoiStoryTranslation = null;
+        }
         super.onDetachedFromWindow();
         attachedToWindow = false;
         imageReceiver.onDetachedFromWindow();
@@ -5349,10 +5373,18 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
                 soundTooltip.hide(false);
             }
         }
+        if (aoiStorySource != currentStory.storyItem && aoiStoryTranslation != null) {
+            aoiStoryTranslation.cancel();
+            aoiStoryTranslation = null;
+        }
+        if (currentStory.storyItem != null && currentStory.storyItem.translated &&
+            !TranslationSignature.valid(currentStory.storyItem) && aoiStoryTranslation == null) {
+            translateAoiStory(false);
+        }
         if (
             oldStoryItem != currentStory.storyItem ||
             oldUploadingStory != currentStory.uploadingStory ||
-            currentStory.captionTranslated != (currentStory.storyItem != null && currentStory.storyItem.translated && currentStory.storyItem.translatedText != null && TextUtils.equals(currentStory.storyItem.translatedLng, TranslateAlert2.getToLanguage()))
+            currentStory.captionTranslated != (currentStory.storyItem != null && currentStory.storyItem.translated && currentStory.storyItem.translatedText != null && TranslationSignature.valid(currentStory.storyItem))
         ) {
             currentStory.updateCaption();
         }
@@ -6928,7 +6960,7 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
                     MessageObject.addLinks(true, spannableStringBuilder);
                 }
             } else if (currentStory.storyItem != null) {
-                if (currentStory.storyItem.translated && currentStory.storyItem.translatedText != null && TextUtils.equals(currentStory.storyItem.translatedLng, TranslateAlert2.getToLanguage())) {
+                if (currentStory.storyItem.translated && currentStory.storyItem.translatedText != null && TranslationSignature.valid(currentStory.storyItem)) {
                     captionTranslated = true;
                     TLRPC.TL_textWithEntities text = currentStory.storyItem.translatedText;
                     caption = text.text;

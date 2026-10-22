@@ -29,6 +29,7 @@ public class LanguageDetector {
                     }
                 })
                 .addOnFailureListener(e -> {
+                    FileLog.e("mlkit: language detection failed", e);
                     if (onFail != null) {
                         onFail.run(e);
                     }

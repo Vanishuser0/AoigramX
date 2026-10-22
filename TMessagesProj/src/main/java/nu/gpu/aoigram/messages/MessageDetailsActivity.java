@@ -1,17 +1,25 @@
 package nu.gpu.aoigram.messages;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
 import static org.telegram.messenger.LocaleController.getString;
 
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.media.AudioFormat;
 import android.media.MediaFormat;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.text.Layout;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 import androidx.exifinterface.media.ExifInterface;
 
@@ -34,13 +42,16 @@ import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.TextDetailCell;
 import org.telegram.ui.Components.BulletinFactory;
+import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.TranslateAlert2;
 import org.telegram.ui.Components.UItem;
 import org.telegram.ui.Components.UniversalAdapter;
 import org.telegram.ui.Components.UniversalRecyclerView;
 import org.telegram.ui.Components.VideoPlayer;
+import org.telegram.ui.GradientClip;
 import org.telegram.ui.ProfileActivity;
+import org.telegram.ui.recyclerview.ChatListItemAnimator;
 
 import java.io.File;
 import java.text.NumberFormat;
@@ -584,9 +595,9 @@ public final class MessageDetailsActivity extends BaseAoiSettingsActivity implem
     protected void onItemClick(UItem item, View view, int position, float x, float y) {
         if (item.id == R.string.ViewAsJson) {
             MessageJsonActivity.open(this, message.messageOwner, protectedContent);
-        } else if (item.id == R.string.MessageDetailsText) {
-            textExpanded = !textExpanded;
-            listView.adapter.update(true);
+        } else if (item.id == R.string.MessageDetailsText && ((DetailCell) view).arrowView.getVisibility() == View.VISIBLE) {
+            item.checked = textExpanded = !textExpanded;
+            ((DetailCell) view).setExpanded(textExpanded, true);
         } else if (item.dialogId != 0) {
             presentFragment(ProfileActivity.of(item.dialogId));
         } else if (item.id == R.string.MessageDetailsPath && !localFile.getName().endsWith(".enc")) {
@@ -628,6 +639,73 @@ public final class MessageDetailsActivity extends BaseAoiSettingsActivity implem
         listView.adapter.notifyDataSetChanged();
     }
 
+    private static final class DetailCell extends TextDetailCell {
+        private final Theme.ResourcesProvider resourcesProvider;
+        private final ImageView arrowView;
+        private final GradientClip clip = new GradientClip();
+        private ValueAnimator expandAnimator;
+        private float expandProgress;
+        private boolean text;
+
+        DetailCell(Context context, Theme.ResourcesProvider resourcesProvider) {
+            super(context, 21, resourcesProvider, false, true);
+            this.resourcesProvider = resourcesProvider;
+            arrowView = new ImageView(context);
+            arrowView.setImageResource(R.drawable.arrow_more);
+            addView(arrowView, LayoutHelper.createFrame(16, 16, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 21, 10));
+        }
+
+        void setExpanded(boolean expanded, boolean animated) {
+            setStateDescription(getString(expanded ? R.string.AccDescrExpanded : R.string.AccDescrCollapsed));
+            if (expandAnimator != null) {
+                expandAnimator.cancel();
+            }
+            if (!animated) {
+                setExpandProgress(expanded ? 1 : 0);
+                return;
+            }
+            expandAnimator = ValueAnimator.ofFloat(expandProgress, expanded ? 1 : 0);
+            expandAnimator.addUpdateListener(animation -> setExpandProgress((float) animation.getAnimatedValue()));
+            expandAnimator.setDuration(ChatListItemAnimator.DEFAULT_DURATION);
+            expandAnimator.setInterpolator(ChatListItemAnimator.DEFAULT_INTERPOLATOR);
+            expandAnimator.start();
+        }
+
+        private void setExpandProgress(float progress) {
+            expandProgress = progress;
+            arrowView.setRotation(180 * progress);
+            requestLayout();
+        }
+
+        @Override
+        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            Layout layout = valueTextView.getLayout();
+            boolean collapsible = text && layout.getLineCount() > 6;
+            arrowView.setVisibility(collapsible ? VISIBLE : INVISIBLE);
+            if (collapsible) {
+                int hiddenHeight = layout.getHeight() - layout.getLineTop(6);
+                setMeasuredDimension(getMeasuredWidth(), getMeasuredHeight() - (int) (hiddenHeight * (1 - expandProgress)));
+            } else {
+                setStateDescription(null);
+            }
+        }
+
+        @Override
+        protected boolean drawChild(@NonNull Canvas canvas, View child, long drawingTime) {
+            if (child != valueTextView || arrowView.getVisibility() != VISIBLE || expandProgress == 1) {
+                return super.drawChild(canvas, child, drawingTime);
+            }
+            int bottom = getHeight() - dp(10);
+            canvas.saveLayerAlpha(0, 0, getWidth(), bottom, 0xFF);
+            boolean result = super.drawChild(canvas, child, drawingTime);
+            AndroidUtilities.rectTmp.set(0, bottom - dp(24), getWidth(), bottom);
+            clip.draw(canvas, AndroidUtilities.rectTmp, GradientClip.BOTTOM, 1 - expandProgress);
+            canvas.restore();
+            return result;
+        }
+    }
+
     public static final class DetailFactory extends UItem.UItemFactory<TextDetailCell> {
         static { setup(new DetailFactory()); }
 
@@ -641,16 +719,18 @@ public final class MessageDetailsActivity extends BaseAoiSettingsActivity implem
 
         @Override
         public TextDetailCell createView(Context context, RecyclerListView listView, int currentAccount, int classGuid, Theme.ResourcesProvider resourcesProvider) {
-            return new TextDetailCell(context, 21, resourcesProvider, false, true);
+            return new DetailCell(context, resourcesProvider);
         }
 
         @Override
         public void bindView(View view, UItem item, boolean divider, UniversalAdapter adapter, UniversalRecyclerView listView) {
-            TextDetailCell cell = (TextDetailCell) view;
-            cell.valueTextView.setMaxLines(item.id == R.string.MessageDetailsText && !item.checked ? 6 : Integer.MAX_VALUE);
-            cell.setStateDescription(item.id == R.string.MessageDetailsText ? getString(item.checked ? R.string.AccDescrExpanded : R.string.AccDescrCollapsed) : null);
+            DetailCell cell = (DetailCell) view;
+            boolean text = cell.text = item.id == R.string.MessageDetailsText;
+            ((ViewGroup.MarginLayoutParams) cell.valueTextView.getLayoutParams()).rightMargin = dp(text ? 41 : 21);
+            cell.setExpanded(item.checked, false);
             cell.setTextAndValue(item.text, item.subtext, divider);
             cell.updateColors();
+            cell.arrowView.setColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText, cell.resourcesProvider));
         }
 
         @Override

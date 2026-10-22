@@ -60,6 +60,36 @@
 -keep class ru.noties.jlatexmath.** { *; }
 -dontwarn org.scilab.forge.jlatexmath.**
 
+-keepclassmembernames class org.telegram.ui.Cells.**,
+    org.telegram.ui.Business.ChatAttachAlertQuickRepliesLayout$UserCell,
+    org.telegram.ui.CallLogActivity$CallCell,
+    org.telegram.ui.CallLogActivity$EmptyTextProgressView,
+    org.telegram.ui.Charts.view_data.ChartHeaderView,
+    org.telegram.ui.ChatLinkActivity$HintInnerCell,
+    org.telegram.ui.Components.ChatActivityEnterView,
+    org.telegram.ui.Components.ChatAttachAlertContactsLayout$UserCell,
+    org.telegram.ui.Components.FilterTabsView,
+    org.telegram.ui.Components.FragmentContextView,
+    org.telegram.ui.Components.HintView,
+    org.telegram.ui.Components.PollVotesAlert$SectionCell,
+    org.telegram.ui.Components.PollVotesAlert$UserCell,
+    org.telegram.ui.Components.ScrollSlidingTextTabStrip,
+    org.telegram.ui.Components.SeekBarView,
+    org.telegram.ui.Components.SharedMediaLayout$EmptyStubView,
+    org.telegram.ui.Components.StickerEmptyView,
+    org.telegram.ui.Components.StorageUsageView,
+    org.telegram.ui.Components.UndoView,
+    org.telegram.ui.FiltersSetupActivity$FilterCell,
+    org.telegram.ui.FiltersSetupActivity$TextCell,
+    org.telegram.ui.ManageLinksActivity$HintInnerCell,
+    org.telegram.ui.ManageLinksActivity$LinkCell,
+    org.telegram.ui.PassportActivity$SecureDocumentCell,
+    org.telegram.ui.PassportActivity$TextDetailSecureCell,
+    org.telegram.ui.ProxyListActivity$TextDetailProxyCell,
+    org.telegram.ui.ThemeActivity$BubbleRadiusCell,
+    org.telegram.ui.ThemeActivity$TextSizeCell,
+    org.telegram.ui.bots.BotCommandsMenuView$BotCommandView { <fields>; }
+
 # Use -keep to explicitly keep any other classes shrinking would remove
 #-dontoptimize
 #-dontobfuscate

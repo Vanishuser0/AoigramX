@@ -2329,9 +2329,17 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
                             }
 
                             if (currentTheme.currentAccentId != accent.id) {
-                                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needSetDayNightTheme, currentTheme, currentType == THEME_TYPE_NIGHT, null, accent.id);
+                                if (currentType != THEME_TYPE_NIGHT || currentTheme == Theme.getActiveTheme()) {
+                                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needSetDayNightTheme, currentTheme, currentType == THEME_TYPE_NIGHT, null, accent.id);
+                                } else {
+                                    currentTheme.setCurrentAccentId(accent.id);
+                                    Theme.saveThemeAccents(currentTheme, true, false, true, false);
+                                    themesHorizontalListCell.invalidateViews();
+                                }
                                 EmojiThemes.saveCustomTheme(currentTheme, accent.id);
-                                Theme.turnOffAutoNight(ThemeActivity.this);
+                                if (currentType != THEME_TYPE_NIGHT) {
+                                    Theme.turnOffAutoNight(ThemeActivity.this);
+                                }
                             } else {
                                 presentFragment(new ThemePreviewActivity(currentTheme, false, ThemePreviewActivity.SCREEN_TYPE_ACCENT_COLOR, accent.id >= 100, currentType == THEME_TYPE_NIGHT));
                             }

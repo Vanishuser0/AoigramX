@@ -6497,7 +6497,9 @@ public class Theme {
         boolean apply = currentTheme == currentNightTheme;
         currentNightTheme = theme;
         if (apply) {
-            applyDayNightThemeMaybe(true);
+            switchingNightTheme = true;
+            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needSetDayNightTheme, theme, true, null, -1);
+            switchingNightTheme = false;
         }
     }
 

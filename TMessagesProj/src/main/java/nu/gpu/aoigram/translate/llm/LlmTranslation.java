@@ -61,44 +61,16 @@ public final class LlmTranslation {
             String apiKey = key == null ? nextKey(settings) : key;
             String parameterKey = settings.url + "\n" + settings.model;
             boolean googleAgentPlatform = settings.preset == LlmSettings.GOOGLE_AGENT_PLATFORM;
-            JSONObject body;
-            String endpoint;
-
-            if (googleAgentPlatform) {
-                body = createGoogleAgentPlatformBody(settings, messages);
-                LlmParameters.apply(body, settings);
-
-                String model = settings.model;
-                if (model.startsWith("models/")) {
-                    model = model.substring(7);
-                }
-                if (model.startsWith("google/")) {
-                    model = model.substring(7);
-                }
-                if (!model.startsWith("publishers/")) {
-                    model = "publishers/google/models/" + model;
-                }
-                endpoint = settings.url + "/" + model + ":generateContent";
+            JSONObject extra;
+            if (settings.body != null) {
+                extra = new JSONObject(settings.body);
+            } else if (parameters && !OPTIONAL_PARAMETERS_DISABLED.contains(parameterKey)) {
+                extra = defaultParameters(settings);
             } else {
-                body = new JSONObject()
-                        .put("model", settings.model)
-                        .put("messages", messages);
-                if (parameters && !OPTIONAL_PARAMETERS_DISABLED.contains(parameterKey)) {
-                    LlmParameters.apply(body, settings);
-                }
-                endpoint = settings.url + "/chat/completions";
+                extra = new JSONObject();
             }
-
-            Request.Builder requestBuilder = new Request.Builder()
-                    .url(endpoint)
-                    .post(RequestBody.create(body.toString(), JSON));
-            if (googleAgentPlatform) {
-                requestBuilder.header("x-goog-api-key", apiKey);
-            } else {
-                requestBuilder.header("Authorization", "Bearer " + apiKey);
-            }
-            Request request = requestBuilder.build();
-            boolean withOptionalParameters = !googleAgentPlatform && body.length() > 2;
+            boolean withOptionalParameters = settings.body == null && !googleAgentPlatform && extra.length() > 0;
+            Request request = createRequest(settings, apiKey, createBody(settings, messages, extra));
 
             TranslationHttp.send(task, request, true,
                     (response, metadata) -> parseLlmResponse(response, googleAgentPlatform),
@@ -126,6 +98,43 @@ public final class LlmTranslation {
         } catch (Exception exception) {
             task.post(() -> callback.done(null, getString(R.string.LlmConfigurationRequired)));
         }
+    }
+
+    public static Request createRequest(LlmSettings settings, String apiKey, JSONObject body) {
+        Request.Builder requestBuilder = new Request.Builder().post(RequestBody.create(body.toString(), JSON));
+        if (settings.preset != LlmSettings.GOOGLE_AGENT_PLATFORM) {
+            return requestBuilder.url(settings.url + "/chat/completions").header("Authorization", "Bearer " + apiKey).build();
+        }
+
+        String model = settings.model;
+        if (model.startsWith("models/")) {
+            model = model.substring(7);
+        }
+        if (model.startsWith("google/")) {
+            model = model.substring(7);
+        }
+        if (!model.startsWith("publishers/")) {
+            model = "publishers/google/models/" + model;
+        }
+        return requestBuilder.url(settings.url + "/" + model + ":generateContent").header("x-goog-api-key", apiKey).build();
+    }
+
+    public static Request testRequest(LlmSettings settings, String text, String language, JSONObject extra) throws JSONException {
+        return createRequest(settings, settings.keys().get(0), createBody(settings, createLlmMessages(settings, text, language, null), extra));
+    }
+
+    public static JSONObject previewBody(LlmSettings settings) throws JSONException {
+        JSONArray messages = createLlmMessages(settings, "", "en", "…");
+        for (int i = 0; i < messages.length(); i++) {
+            messages.getJSONObject(i).put("content", "…");
+        }
+        return createBody(settings, messages, new JSONObject());
+    }
+
+    public static JSONObject defaultParameters(LlmSettings settings) throws JSONException {
+        JSONObject parameters = new JSONObject();
+        LlmParameters.apply(parameters, settings);
+        return parameters;
     }
 
     private static JSONArray createLlmMessages(LlmSettings settings, String text, String language, String context) throws JSONException {
@@ -156,8 +165,12 @@ public final class LlmTranslation {
         return messages;
     }
 
-    private static JSONObject createGoogleAgentPlatformBody(LlmSettings settings, JSONArray messages) throws JSONException {
-        JSONObject systemText = new JSONObject().put("text", settings.systemPrompt);
+    private static JSONObject createBody(LlmSettings settings, JSONArray messages, JSONObject body) throws JSONException {
+        if (settings.preset != LlmSettings.GOOGLE_AGENT_PLATFORM) {
+            return body.put("model", settings.model).put("messages", messages);
+        }
+
+        JSONObject systemText = new JSONObject().put("text", messages.getJSONObject(0).getString("content"));
         JSONArray systemParts = new JSONArray().put(systemText);
         JSONObject systemInstruction = new JSONObject().put("parts", systemParts);
 
@@ -171,7 +184,7 @@ public final class LlmTranslation {
                 .put("parts", parts);
         JSONArray contents = new JSONArray().put(userContent);
 
-        return new JSONObject()
+        return body
                 .put("systemInstruction", systemInstruction)
                 .put("contents", contents);
     }

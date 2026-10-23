@@ -70,7 +70,7 @@ public final class TranslationHttp {
                 .build();
     }
 
-    private static String format(String body) {
+    public static String format(String body) {
         try {
             JsonElement json = JsonParser.parseString(body);
             if (json.isJsonObject() || json.isJsonArray()) {

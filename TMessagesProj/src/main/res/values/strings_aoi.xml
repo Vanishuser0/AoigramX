@@ -242,6 +242,12 @@
     <string name="LlmContextInfo">Use the reply chain and earlier loaded messages as context for manual and automatic translation.</string>
     <string name="LlmModelHint">Enter or search for a model</string>
     <string name="LlmCustom">Custom</string>
+    <string name="LlmAdvanced">Advanced</string>
+    <string name="LlmRequestBody">Request body</string>
+    <string name="LlmRequestBodyInfo">Applies only to **%1$s** with the current service. Gray fields are filled automatically.</string>
+    <string name="LlmRequestBodyReserved">\"%1$s\" is filled automatically and cannot be set here.</string>
+    <string name="LlmResponse">Response</string>
+    <string name="LlmRequestBodyUnsaved">Save your changes to the request body before leaving?</string>
     <string name="TranslateWithAI">Translate with AI</string>
     <string name="TranslateArticle">Translate</string>
     <string name="TranslatingArticle">Translating…</string>

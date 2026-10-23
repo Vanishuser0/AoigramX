@@ -93,6 +93,7 @@ public final class AoiConfig {
     public static final StringConfig llmUserPrompt = register(new StringConfig("llmUserPrompt", ""));
     public static final BoolConfig llmContext = register(new BoolConfig("llmContext", false));
     public static final IntConfig llmContextCount = register(new IntConfig("llmContextCount", 5));
+    public static final StringConfig llmRequestBodies = register(new StringConfig("llmRequestBodies", "{}"));
 
     public static final IntConfig stickerSize = register(new IntConfig("stickerSize", 80));
     public static final BoolConfig showOnlineStatus = register(new BoolConfig("showOnlineStatus", false));

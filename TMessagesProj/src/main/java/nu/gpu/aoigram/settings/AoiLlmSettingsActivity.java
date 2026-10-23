@@ -72,6 +72,7 @@ public final class AoiLlmSettingsActivity extends BaseAoiSettingsActivity {
             case 3 -> "llmKey";
             case 4 -> "llmModel";
             case 5 -> "systemPrompt";
+            case 6 -> "requestBody";
             case 8 -> "userPrompt";
             default -> super.getItemKey(item);
         };
@@ -84,7 +85,7 @@ public final class AoiLlmSettingsActivity extends BaseAoiSettingsActivity {
         items.add(UItem.asButton(1, getString(R.string.LlmProvider), preset == LlmSettings.CUSTOM ? getString(R.string.LlmCustom) : preset.name()));
         if (preset == LlmSettings.CUSTOM) items.add(UItem.asButton(2, getString(R.string.LlmUrl), AoiConfig.llmUrl.get()));
         List<String> keys = LlmSettings.parseKeys(preset.key().get());
-        items.add(UItem.asButton(3, getString(R.string.LlmKey), keys.isEmpty() ? getString(R.string.None) : keys.stream().map(this::mask).collect(Collectors.joining(", "))));
+        items.add(UItem.asButton(3, getString(R.string.LlmKey), keys.isEmpty() ? getString(R.string.None) : keys.stream().map(AoiLlmSettingsActivity::mask).collect(Collectors.joining(", "))));
         items.add(UItem.asButton(4, getString(R.string.LlmModel), preset.effectiveModel()));
         items.add(UItem.asShadow(null));
         items.add(UItem.asHeader(getString(R.string.LlmPrompts)));
@@ -97,6 +98,9 @@ public final class AoiLlmSettingsActivity extends BaseAoiSettingsActivity {
             items.add(UItem.asIntSlideView(0, 3, AoiConfig.llmContextCount.get(), 20, count -> Integer.toString(count), AoiConfig.llmContextCount::set));
         }
         items.add(UItem.asShadow(getString(R.string.LlmContextInfo)));
+        items.add(UItem.asHeader(getString(R.string.LlmAdvanced)));
+        items.add(UItem.asButton(6, getString(R.string.LlmRequestBody), getString(new LlmSettings().body == null ? R.string.Default : R.string.LlmCustom)));
+        items.add(UItem.asShadow(null));
     }
 
     @Override
@@ -118,7 +122,10 @@ public final class AoiLlmSettingsActivity extends BaseAoiSettingsActivity {
             modelDialog = new ModelDialog(selected);
             modelDialog.show();
         } else if (item.id == 5 || item.id == 8) presentFragment(new AoiTranslationPromptsActivity(item.id == 5));
-        else super.onItemClick(item, view, position, x, y);
+        else if (item.id == 6) {
+            if (new LlmSettings().isConfigured()) presentFragment(new AoiLlmRequestBodyActivity());
+            else ErrorFeedback.show(getString(R.string.LlmConfigurationRequired), BulletinFactory.of(this), this::showDialog, true);
+        } else super.onItemClick(item, view, position, x, y);
     }
 
     private void editUrl() {
@@ -145,7 +152,7 @@ public final class AoiLlmSettingsActivity extends BaseAoiSettingsActivity {
             AndroidUtilities.REPLACING_TAG_TYPE_LINKBOLD, () -> Browser.openUrl(getParentActivity(), url), getResourceProvider());
     }
 
-    private String mask(String key) {
+    static String mask(String key) {
         return "••••" + key.substring(Math.max(0, key.length() - 4));
     }
 

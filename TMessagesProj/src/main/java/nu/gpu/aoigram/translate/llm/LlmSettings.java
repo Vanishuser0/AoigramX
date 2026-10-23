@@ -1,5 +1,9 @@
 package nu.gpu.aoigram.translate.llm;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -47,6 +51,7 @@ public final class LlmSettings {
     public final boolean wrapText;
     public final boolean context;
     public final int contextCount;
+    public final String body;
     private final String apiKeys;
     private List<String> keys;
 
@@ -68,6 +73,8 @@ public final class LlmSettings {
         wrapText = AoiConfig.llmSystemPrompt.get().isEmpty() && !userPrompt.contains("<TEXT>");
         context = AoiConfig.llmContext.get();
         contextCount = AoiConfig.llmContextCount.get();
+        JsonElement saved = bodies().get(url + "\n" + model);
+        body = saved == null ? null : saved.toString();
     }
 
     public static Preset selectedPreset() {
@@ -75,6 +82,20 @@ public final class LlmSettings {
             if (preset.id.equals(AoiConfig.llmProvider.get())) return preset;
         }
         return CUSTOM;
+    }
+
+    private static JsonObject bodies() {
+        return JsonParser.parseString(AoiConfig.llmRequestBodies.get()).getAsJsonObject();
+    }
+
+    public void saveBody(JsonObject body) {
+        JsonObject bodies = bodies();
+        if (body == null) {
+            bodies.remove(url + "\n" + model);
+        } else {
+            bodies.add(url + "\n" + model, body);
+        }
+        AoiConfig.llmRequestBodies.set(bodies.toString());
     }
 
     public static List<String> parseKeys(String apiKeys) {
@@ -94,6 +115,6 @@ public final class LlmSettings {
     }
 
     public String signature() {
-        return preset.id + "\n" + url + "\n" + model + "\n" + systemPrompt + "\n" + userPrompt + "\n" + wrapText + "\n" + context + "\n" + contextCount;
+        return preset.id + "\n" + url + "\n" + model + "\n" + systemPrompt + "\n" + userPrompt + "\n" + wrapText + "\n" + context + "\n" + contextCount + "\n" + body;
     }
 }

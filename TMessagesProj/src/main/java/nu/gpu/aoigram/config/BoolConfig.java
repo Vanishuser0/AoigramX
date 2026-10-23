@@ -2,6 +2,9 @@ package nu.gpu.aoigram.config;
 
 import android.content.SharedPreferences;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public final class BoolConfig extends ConfigItem<Boolean> {
 
     BoolConfig(String key, boolean defaultValue) {
@@ -15,6 +18,11 @@ public final class BoolConfig extends ConfigItem<Boolean> {
     @Override
     Boolean read(SharedPreferences preferences) {
         return preferences.getBoolean(getKey(), getDefaultValue());
+    }
+
+    @Override
+    Boolean read(JSONObject json) throws JSONException {
+        return json.getBoolean(getKey());
     }
 
     @Override

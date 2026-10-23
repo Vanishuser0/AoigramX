@@ -2,6 +2,9 @@ package nu.gpu.aoigram.config;
 
 import android.content.SharedPreferences;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public final class IntConfig extends ConfigItem<Integer> {
 
     IntConfig(String key, int defaultValue) {
@@ -11,6 +14,11 @@ public final class IntConfig extends ConfigItem<Integer> {
     @Override
     Integer read(SharedPreferences preferences) {
         return preferences.getInt(getKey(), getDefaultValue());
+    }
+
+    @Override
+    Integer read(JSONObject json) throws JSONException {
+        return json.getInt(getKey());
     }
 
     @Override

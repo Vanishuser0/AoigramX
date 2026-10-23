@@ -1,11 +1,16 @@
 package nu.gpu.aoigram.config;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.ConnectionsManager;
+
+import java.util.ArrayList;
 
 import nu.gpu.aoigram.chat.VideoMessageCamera;
 import nu.gpu.aoigram.dialogs.FolderIcons;
@@ -16,11 +21,13 @@ import nu.gpu.aoigram.profile.PeerIdDc;
 import nu.gpu.aoigram.remote.AppUpdates;
 import nu.gpu.aoigram.tabs.MainTabs;
 
+@SuppressLint("ApplySharedPref")
 public final class AoiConfig {
 
     private static final String PREFERENCES_NAME = "aoi_config";
 
     static final SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+    private static final ArrayList<ConfigItem<?>> items = new ArrayList<>();
 
     public static final BoolConfig disableAds = register(new BoolConfig("disableAds", true));
     public static final BoolConfig dontSendTyping = register(new BoolConfig("dontSendTyping", false));
@@ -60,27 +67,27 @@ public final class AoiConfig {
     public static final StringConfig inputTranslationLanguage = register(new StringConfig("inputTranslationLanguage", "en"));
     public static final StringConfig llmProvider = register(new StringConfig("llmProvider", "custom"));
     public static final StringConfig llmUrl = register(new StringConfig("llmUrl", ""));
-    public static final StringConfig llmCustomKey = register(new StringConfig("llmCustomKey", ""));
+    public static final StringConfig llmCustomKey = register(new StringConfig("llmCustomKey", "", true));
     public static final StringConfig llmCustomModel = register(new StringConfig("llmCustomModel", ""));
-    public static final StringConfig llmCerebrasKey = register(new StringConfig("llmCerebrasKey", ""));
+    public static final StringConfig llmCerebrasKey = register(new StringConfig("llmCerebrasKey", "", true));
     public static final StringConfig llmCerebrasModel = register(new StringConfig("llmCerebrasModel", ""));
-    public static final StringConfig llmDeepSeekKey = register(new StringConfig("llmDeepSeekKey", ""));
+    public static final StringConfig llmDeepSeekKey = register(new StringConfig("llmDeepSeekKey", "", true));
     public static final StringConfig llmDeepSeekModel = register(new StringConfig("llmDeepSeekModel", ""));
-    public static final StringConfig llmGoogleAgentPlatformKey = register(new StringConfig("llmGoogleAgentPlatformKey", ""));
+    public static final StringConfig llmGoogleAgentPlatformKey = register(new StringConfig("llmGoogleAgentPlatformKey", "", true));
     public static final StringConfig llmGoogleAgentPlatformModel = register(new StringConfig("llmGoogleAgentPlatformModel", ""));
-    public static final StringConfig llmGoogleAIStudioKey = register(new StringConfig("llmGoogleAIStudioKey", ""));
+    public static final StringConfig llmGoogleAIStudioKey = register(new StringConfig("llmGoogleAIStudioKey", "", true));
     public static final StringConfig llmGoogleAIStudioModel = register(new StringConfig("llmGoogleAIStudioModel", ""));
-    public static final StringConfig llmGroqKey = register(new StringConfig("llmGroqKey", ""));
+    public static final StringConfig llmGroqKey = register(new StringConfig("llmGroqKey", "", true));
     public static final StringConfig llmGroqModel = register(new StringConfig("llmGroqModel", ""));
-    public static final StringConfig llmOllamaKey = register(new StringConfig("llmOllamaKey", ""));
+    public static final StringConfig llmOllamaKey = register(new StringConfig("llmOllamaKey", "", true));
     public static final StringConfig llmOllamaModel = register(new StringConfig("llmOllamaModel", ""));
-    public static final StringConfig llmOpenAIKey = register(new StringConfig("llmOpenAIKey", ""));
+    public static final StringConfig llmOpenAIKey = register(new StringConfig("llmOpenAIKey", "", true));
     public static final StringConfig llmOpenAIModel = register(new StringConfig("llmOpenAIModel", ""));
-    public static final StringConfig llmOpenRouterKey = register(new StringConfig("llmOpenRouterKey", ""));
+    public static final StringConfig llmOpenRouterKey = register(new StringConfig("llmOpenRouterKey", "", true));
     public static final StringConfig llmOpenRouterModel = register(new StringConfig("llmOpenRouterModel", ""));
-    public static final StringConfig llmXAIKey = register(new StringConfig("llmXAIKey", ""));
+    public static final StringConfig llmXAIKey = register(new StringConfig("llmXAIKey", "", true));
     public static final StringConfig llmXAIModel = register(new StringConfig("llmXAIModel", ""));
-    public static final StringConfig llmVercelKey = register(new StringConfig("llmVercelKey", ""));
+    public static final StringConfig llmVercelKey = register(new StringConfig("llmVercelKey", "", true));
     public static final StringConfig llmVercelModel = register(new StringConfig("llmVercelModel", ""));
     public static final StringConfig llmSystemPrompt = register(new StringConfig("llmSystemPrompt", ""));
     public static final StringConfig llmUserPrompt = register(new StringConfig("llmUserPrompt", ""));
@@ -127,8 +134,37 @@ public final class AoiConfig {
         return ApplicationLoader.applicationContext.getSharedPreferences("aoi_account_data_" + accountKey, Context.MODE_PRIVATE);
     }
 
+    public static JSONObject exportJson() throws JSONException {
+        JSONObject json = new JSONObject();
+        for (ConfigItem<?> item : items) {
+            if (preferences.contains(item.getKey())) {
+                json.put(item.getKey(), item.get());
+            }
+        }
+        return json;
+    }
+
+    public static boolean hasSecrets() {
+        return items.stream().anyMatch(item -> item instanceof StringConfig config && config.secret && !config.get().isEmpty());
+    }
+
+    public static void importJson(JSONObject json) throws JSONException {
+        SharedPreferences.Editor editor = preferences.edit().clear();
+        for (ConfigItem<?> item : items) {
+            if (json.has(item.getKey())) {
+                item.write(editor, json);
+            }
+        }
+        editor.commit();
+    }
+
+    public static void reset() {
+        preferences.edit().clear().commit();
+    }
+
     private static <C extends ConfigItem<?>> C register(C item) {
         item.load();
+        items.add(item);
         return item;
     }
 }

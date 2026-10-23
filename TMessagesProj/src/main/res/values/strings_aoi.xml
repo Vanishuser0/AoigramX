@@ -268,6 +268,14 @@
     <string name="UpdateChannelStable">Stable</string>
     <string name="RecentChats">Recent chats</string>
     <string name="RestartApp">Restart app</string>
+    <string name="ExportSettings">Export settings</string>
+    <string name="SettingsExported">Settings exported to **Saved Messages**.</string>
+    <string name="SettingsBackupSecrets">This backup contains API keys. Do not share it.</string>
+    <string name="ImportSettings">Import settings</string>
+    <string name="ImportSettingsAlert">Current settings will be replaced and the app will restart.</string>
+    <string name="ImportSettingsButton">Import</string>
+    <string name="ResetSettings">Reset settings</string>
+    <string name="ResetSettingsAlert">All settings will be reset to defaults and the app will restart.</string>
     <string name="ToBeginning">To Beginning</string>
     <string name="MyMessages">My Messages</string>
     <string name="DeleteMyMessages">Delete My Messages</string>

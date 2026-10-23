@@ -380,6 +380,7 @@ import nu.gpu.aoigram.messages.MessageDetailsActivity;
 import nu.gpu.aoigram.messages.MessageJsonActivity;
 import nu.gpu.aoigram.messages.QuickActions;
 import nu.gpu.aoigram.messages.Repeat;
+import nu.gpu.aoigram.settings.SettingsBackup;
 import nu.gpu.aoigram.translate.TranslationMenu;
 import nu.gpu.aoigram.translate.TranslationOptions;
 import nu.gpu.aoigram.translate.ChatManualTranslation;
@@ -42343,6 +42344,10 @@ public class ChatActivity extends BaseFragment implements
                     presentFragment(fragment);
                 }
             } else if (message.type == MessageObject.TYPE_FILE || message.type == MessageObject.TYPE_TEXT) {
+                if (SettingsBackup.isBackup(message)) {
+                    SettingsBackup.showImportAlert(ChatActivity.this, message);
+                    return;
+                }
                 if (message.getDocumentName().toLowerCase().endsWith("attheme")) {
                     File locFile = null;
                     if (message.messageOwner.attachPath != null && message.messageOwner.attachPath.length() != 0) {

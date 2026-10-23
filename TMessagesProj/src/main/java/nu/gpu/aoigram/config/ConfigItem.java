@@ -2,6 +2,9 @@ package nu.gpu.aoigram.config;
 
 import android.content.SharedPreferences;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public abstract class ConfigItem<T> {
 
     private final String key;
@@ -36,8 +39,14 @@ public abstract class ConfigItem<T> {
         value = read(AoiConfig.preferences);
     }
 
+    final void write(SharedPreferences.Editor editor, JSONObject json) throws JSONException {
+        write(editor, read(json));
+    }
+
     @SuppressWarnings("SameParameterValue")
     abstract T read(SharedPreferences preferences);
+
+    abstract T read(JSONObject json) throws JSONException;
 
     abstract void write(SharedPreferences.Editor editor, T value);
 }

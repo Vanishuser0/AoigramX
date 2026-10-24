@@ -6681,7 +6681,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                     } else if (position == contactButton) {
                         attachButton.setTextAndIcon(5, getString(R.string.AttachContact), GlassTabView.TabAnimation.CONTACTS);
                         attachButton.setTag(5);
-                        err = !checkContactsPermission(mContext);
+                        err = UserConfig.getInstance(currentAccount).syncContacts && !checkContactsPermission(mContext);
                     } else if (position == quickRepliesButton) {
                         attachButton.setTextAndIcon(11, getString(R.string.AttachQuickReplies), GlassTabView.TabAnimation.REPLIES);
                         attachButton.setTag(11);

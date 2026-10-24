@@ -79,6 +79,7 @@
     <string name="RepeatMessagesConfirmText">Repeat these messages?</string>
     <string name="BotCommandConfirm">Before sending bot commands</string>
     <string name="BotCommandConfirmText">Send this command?</string>
+    <string name="CopyCallbackData">Copy callback data</string>
     <string name="DisableInstantCamera">Disable instant camera</string>
     <string name="VideoMessageCamera">Video message camera</string>
     <string name="VideoMessageCameraAsk">Ask</string>

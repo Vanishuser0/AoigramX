@@ -369,6 +369,7 @@ import me.vkryl.android.animator.FactorAnimator;
 import me.vkryl.core.BitwiseUtils;
 import me.vkryl.core.reference.ReferenceList;
 
+import nu.gpu.aoigram.chat.BotButtonMenu;
 import nu.gpu.aoigram.chat.BotCommandConfirm;
 import nu.gpu.aoigram.chat.MyMessages;
 import nu.gpu.aoigram.config.AoiConfig;
@@ -40976,6 +40977,8 @@ public class ChatActivity extends BaseFragment implements
                 try {
                     cell.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
                 } catch (Exception ignore) {}
+            } else {
+                BotButtonMenu.show(ChatActivity.this, cell, button);
             }
         }
 

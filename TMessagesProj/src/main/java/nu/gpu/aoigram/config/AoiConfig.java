@@ -105,6 +105,17 @@ public final class AoiConfig {
     public static final BoolConfig usePinnedReactionsChannels = register(new BoolConfig("usePinnedReactionsChannels", false));
     public static final BoolConfig hideStarReactionChannels = register(new BoolConfig("hideStarReactionChannels", false));
     public static final StringConfig pinnedReactionsChannels = register(new StringConfig("pinnedReactionsChannels", ""));
+    public static final StringConfig transcriptionProvider = register(new StringConfig("transcriptionProvider", "telegram"));
+    public static final BoolConfig transcriptionPremium = register(new BoolConfig("transcriptionPremium", false));
+    public static final StringConfig transcriptionCloudflareAccount = register(new StringConfig("transcriptionCloudflareAccount", ""));
+    public static final StringConfig transcriptionCloudflareToken = register(new StringConfig("transcriptionCloudflareToken", "", true));
+    public static final StringConfig transcriptionGroqModel = register(new StringConfig("transcriptionGroqModel", ""));
+    public static final StringConfig transcriptionOpenAIModel = register(new StringConfig("transcriptionOpenAIModel", ""));
+    public static final StringConfig transcriptionGoogleAIStudioModel = register(new StringConfig("transcriptionGoogleAIStudioModel", ""));
+    public static final StringConfig transcriptionCustomUrl = register(new StringConfig("transcriptionCustomUrl", ""));
+    public static final StringConfig transcriptionCustomKey = register(new StringConfig("transcriptionCustomKey", "", true));
+    public static final StringConfig transcriptionCustomModel = register(new StringConfig("transcriptionCustomModel", ""));
+    public static final StringConfig transcriptionPrompt = register(new StringConfig("transcriptionPrompt", ""));
     public static final IntConfig doubleTapIncomingAction = register(new IntConfig("doubleTapIncomingAction", DoubleTap.REACTION));
     public static final IntConfig doubleTapOutgoingAction = register(new IntConfig("doubleTapOutgoingAction", DoubleTap.REACTION));
     public static final BoolConfig disableInstantCamera = register(new BoolConfig("disableInstantCamera", true));

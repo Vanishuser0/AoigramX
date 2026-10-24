@@ -32,6 +32,7 @@ import java.util.ArrayList;
 
 import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.config.StringConfig;
+import nu.gpu.aoigram.transcription.Transcription;
 import nu.gpu.aoigram.translate.llm.LlmSettings;
 import nu.gpu.aoigram.utils.ErrorFeedback;
 
@@ -61,6 +62,10 @@ public final class AoiPromptActivity extends BaseAoiSettingsActivity {
 
     static AoiPromptActivity userPrompt() {
         return new AoiPromptActivity(AoiConfig.llmUserPrompt, LlmSettings.USER_PROMPT, R.string.LlmUserPrompt, AoiSettingsDeepLink.USER_PROMPT_PAGE);
+    }
+
+    static AoiPromptActivity transcriptionPrompt() {
+        return new AoiPromptActivity(AoiConfig.transcriptionPrompt, Transcription.DEFAULT_PROMPT, R.string.TranscriptionPrompt, AoiSettingsDeepLink.TRANSCRIPTION_PROMPT_PAGE);
     }
 
     @Override

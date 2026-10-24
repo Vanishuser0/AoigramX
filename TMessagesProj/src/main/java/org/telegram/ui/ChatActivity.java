@@ -381,6 +381,7 @@ import nu.gpu.aoigram.messages.MessageJsonActivity;
 import nu.gpu.aoigram.messages.QuickActions;
 import nu.gpu.aoigram.messages.Repeat;
 import nu.gpu.aoigram.settings.SettingsBackup;
+import nu.gpu.aoigram.transcription.Transcription;
 import nu.gpu.aoigram.translate.TranslationMenu;
 import nu.gpu.aoigram.translate.TranslationOptions;
 import nu.gpu.aoigram.translate.ChatManualTranslation;
@@ -405,6 +406,7 @@ public class ChatActivity extends BaseFragment implements
     private static final int OPTION_CLEAR = 1006;
     public static final int OPTION_FORWARD_NO_QUOTE = 1007;
     public static final int OPTION_REPLY_PRIVATE = 1008;
+    private static final int OPTION_TRANSCRIBE_AGAIN = 1009;
     private static final int MENU_RECENT_ACTIONS = 90;
     private static final int MENU_TO_BEGINNING = 91;
     private static final int MENU_MY_MESSAGES = 92;
@@ -32126,7 +32128,7 @@ public class ChatActivity extends BaseFragment implements
                     popupLayout.addView(messagePrivateSeenView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 36));
                     addGap = true;
                 }
-                boolean showRateTranscription = selectedObject != null && selectedObject.isVoice() && selectedObject.messageOwner != null && getUserConfig().isPremium() && !TextUtils.isEmpty(selectedObject.messageOwner.voiceTranscription) && selectedObject.messageOwner != null && !selectedObject.messageOwner.voiceTranscriptionRated && selectedObject.messageOwner.voiceTranscriptionId != 0 && selectedObject.messageOwner.voiceTranscriptionOpen;
+                boolean showRateTranscription = false;
 
                 if (!showRateTranscription && message.probablyRingtone() && currentEncryptedChat == null) {
                     ActionBarMenuSubItem cell = new ActionBarMenuSubItem(getParentActivity(), !showPrivateMessageSeen && !showPrivateMessageEdit && !showPrivateMessageFwdOriginal, false, themeDelegate);
@@ -34117,6 +34119,10 @@ public class ChatActivity extends BaseFragment implements
             }
             case OPTION_COPY_PHOTO: {
                 PhotoClipboard.copy(PhotoClipboard.getFile(selectedObject), selectedObject.isSticker(), BulletinFactory.of(this));
+                break;
+            }
+            case OPTION_TRANSCRIBE_AGAIN: {
+                TranscribeButton.transcribeAgain(selectedObject);
                 break;
             }
             case OPTION_CLEAR: {
@@ -47231,6 +47237,12 @@ public class ChatActivity extends BaseFragment implements
             icons.add(sendMoneyIndex, R.drawable.ic_gram);
         }
 
+        if (Transcription.canTranscribeAgain(message)) {
+            int index = options.contains(OPTION_TRANSLATE) ? options.indexOf(OPTION_TRANSLATE) + 1 : options.size();
+            items.add(index, getString(R.string.TranscribeAgain));
+            options.add(index, OPTION_TRANSCRIBE_AGAIN);
+            icons.add(index, R.drawable.msg_retry);
+        }
         if (AoiConfig.showDetails.get() && !message.isSponsored()) {
             items.add(getString(R.string.MessageDetails));
             options.add(OPTION_MESSAGE_DETAILS);

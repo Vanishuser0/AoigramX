@@ -48,7 +48,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
+import nu.gpu.aoigram.transcription.Transcription;
+
 public class TranscribeButton {
+
+    public static void transcribeAgain(MessageObject messageObject) {
+        messageObject.messageOwner.voiceTranscriptionFinal = false;
+        transcribePressed(messageObject, true, null);
+        NotificationCenter.getInstance(messageObject.currentAccount).postNotificationName(NotificationCenter.voiceTranscriptionUpdate, messageObject);
+    }
 
     private final static int[] pressedState = new int[]{android.R.attr.state_enabled, android.R.attr.state_pressed};
 
@@ -205,6 +213,7 @@ public class TranscribeButton {
         if (parent == null) {
             return;
         }
+        premium = parent.getMessageObject() != null && (UserConfig.getInstance(parent.getMessageObject().currentAccount).isPremium() || Transcription.enabled(parent.getMessageObject().currentAccount));
         clickedToOpen = false;
         boolean processClick, toOpen = !shouldBeOpen;
         if (!shouldBeOpen) {
@@ -687,6 +696,29 @@ public class TranscribeButton {
                 if (BuildVars.LOGS_ENABLED) {
                     FileLog.d("sending Transcription request, msg_id=" + messageId + " dialog_id=" + dialogId);
                 }
+                if (Transcription.enabled(account)) {
+                    if (transcribeOperationsByDialogPosition == null) {
+                        transcribeOperationsByDialogPosition = new HashMap<>();
+                    }
+                    transcribeOperationsByDialogPosition.put(reqInfoHash(messageObject), messageObject);
+                    Transcription.transcribe(messageObject, text -> {
+                        if (text == null) {
+                            transcribeOperationsByDialogPosition.remove(reqInfoHash(messageObject));
+                            messageObject.messageOwner.voiceTranscriptionFinal = messageObject.messageOwner.voiceTranscription != null;
+                            NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.voiceTranscriptionUpdate, messageObject);
+                            NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.updateTranscriptionLock);
+                            return;
+                        }
+                        long id = Utilities.random.nextLong();
+                        messageObject.messageOwner.voiceTranscriptionId = id;
+                        TranscribeButton.openVideoTranscription(messageObject);
+                        messageObject.messageOwner.voiceTranscriptionOpen = true;
+                        messageObject.messageOwner.translatedVoiceTranscription = null;
+                        MessagesStorage.getInstance(account).updateMessageCustomParams(messageObject.getDialogId(), messageObject.messageOwner);
+                        finishTranscription(messageObject, id, text);
+                    });
+                    return;
+                }
                 TLRPC.TL_messages_transcribeAudio req = new TLRPC.TL_messages_transcribeAudio();
                 req.peer = peer;
                 req.msg_id = messageId;
@@ -865,7 +897,7 @@ public class TranscribeButton {
         }
         ConnectionsManager cc = ConnectionsManager.getInstance(messageObject.currentAccount);
         MessagesController mc = MessagesController.getInstance(messageObject.currentAccount);
-        if (UserConfig.getInstance(messageObject.currentAccount).isPremium()) {
+        if (UserConfig.getInstance(messageObject.currentAccount).isPremium() || Transcription.enabled(messageObject.currentAccount)) {
             return false;
         }
         return mc.transcribeAudioTrialCooldownUntil != 0 && cc.getCurrentTime() <= mc.transcribeAudioTrialCooldownUntil && mc.transcribeAudioTrialCurrentNumber <= 0;

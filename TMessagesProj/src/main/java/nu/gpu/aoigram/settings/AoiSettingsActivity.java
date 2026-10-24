@@ -163,6 +163,7 @@ public class AoiSettingsActivity extends BaseAoiSettingsActivity {
         addSearchItems(new AoiLlmSettingsActivity(), R.drawable.msg_ai_translate);
         addSearchItems(new AoiChatSettingsActivity(), R.drawable.msg_discussion);
         addSearchItems(new AoiPinnedReactionsActivity(), R.drawable.msg_pin);
+        addSearchItems(new AoiSpeechToTextActivity(), R.drawable.menu_feature_voice);
         addSearchItems(new AoiOtherSettingsActivity(), R.drawable.msg_fave);
         addSearchItems(new AoiAboutSettingsActivity(), R.drawable.msg_info);
         if (searchItem.isSearchFieldVisible2()) {

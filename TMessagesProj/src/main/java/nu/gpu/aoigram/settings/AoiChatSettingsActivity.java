@@ -20,6 +20,7 @@ import nu.gpu.aoigram.messages.DoubleTap;
 import nu.gpu.aoigram.messages.DoubleTapPreview;
 import nu.gpu.aoigram.messages.StickerSizePreview;
 import nu.gpu.aoigram.reactions.PinnedReactions;
+import nu.gpu.aoigram.transcription.Transcription;
 
 public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
 
@@ -27,6 +28,7 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
     private static final int MESSAGE_MENU = 2;
     private static final int CONFIRMATIONS = 3;
     private static final int GROUP_MESSAGE_MENU = 4;
+    private static final int SPEECH_TO_TEXT = 5;
 
     private static final Option[] MESSAGE_MENU_OPTIONS = {
             new Option(AoiConfig.showCopyPhoto, R.string.CopyPhoto),
@@ -80,6 +82,7 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
         items.add(asConfigCheck(AoiConfig.hideChannelBottomBar, R.string.HideChannelBottomBar));
         items.add(UItem.asShadow(null));
         items.add(UItem.asButton(PINNED_REACTIONS, R.drawable.msg_pin, getString(R.string.PinnedReactions), PinnedReactions.getLabel()));
+        items.add(UItem.asButton(SPEECH_TO_TEXT, R.drawable.menu_feature_voice, getString(R.string.SpeechToText), AoiSpeechToTextActivity.name(Transcription.provider())));
         items.add(UItem.asShadow(null));
         items.add(UItem.asHeader(getString(R.string.DoubleTapActions)));
         items.add(asDoubleTapAction(R.string.IncomingMessages, AoiConfig.doubleTapIncomingAction));
@@ -113,6 +116,8 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
     protected String getItemKey(UItem item) {
         if (item.id == PINNED_REACTIONS) {
             return AoiSettingsDeepLink.PINNED_REACTIONS_PAGE;
+        } else if (item.id == SPEECH_TO_TEXT) {
+            return AoiSettingsDeepLink.SPEECH_TO_TEXT_PAGE;
         } else if (item.id == GROUP_MESSAGE_MENU) {
             return AoiConfig.groupMessageMenu.getKey();
         }
@@ -130,6 +135,8 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
     protected void onItemClick(UItem item, View view, int position, float x, float y) {
         if (item.id == PINNED_REACTIONS) {
             presentFragment(new AoiPinnedReactionsActivity());
+        } else if (item.id == SPEECH_TO_TEXT) {
+            presentFragment(new AoiSpeechToTextActivity());
         } else if (item.object == AoiConfig.videoMessageCamera) {
             String[] labels = new String[VideoMessageCamera.REAR + 1];
             for (int type = VideoMessageCamera.DEFAULT; type <= VideoMessageCamera.REAR; type++) {

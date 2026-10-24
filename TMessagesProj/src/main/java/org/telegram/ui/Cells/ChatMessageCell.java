@@ -265,6 +265,7 @@ import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.messages.ChannelSenderIcon;
 import nu.gpu.aoigram.messages.EditedIcon;
 import nu.gpu.aoigram.messages.ForwardsCount;
+import nu.gpu.aoigram.transcription.Transcription;
 import nu.gpu.aoigram.translate.TranslationDisplay;
 
 public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate, ImageReceiver.ImageReceiverDelegate,
@@ -12732,7 +12733,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             !currentMessageObject.isRepostPreview &&
             (!currentMessageObject.isOutOwner() || currentMessageObject.isSent()) &&
             (
-                UserConfig.getInstance(currentAccount).isPremium()
+                UserConfig.getInstance(currentAccount).isPremium() || Transcription.enabled(currentAccount)
                 ||
                 TranscribeButton.isFreeTranscribeInChat(currentMessageObject)
                 ||

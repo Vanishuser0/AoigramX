@@ -20,6 +20,8 @@ public final class AoiSettingsDeepLink {
     static final String USER_PROMPT_PAGE = "translator-user-prompt";
     static final String CHAT_PAGE = "chat";
     static final String PINNED_REACTIONS_PAGE = "pinned-reactions";
+    static final String SPEECH_TO_TEXT_PAGE = "speech-to-text";
+    static final String TRANSCRIPTION_PROMPT_PAGE = "speech-to-text-prompt";
     static final String OTHER_PAGE = "other";
     static final String ABOUT_PAGE = "about";
 
@@ -102,6 +104,10 @@ public final class AoiSettingsDeepLink {
             fragment = new AoiChatSettingsActivity();
         } else if (PINNED_REACTIONS_PAGE.equalsIgnoreCase(pageKey)) {
             fragment = new AoiPinnedReactionsActivity();
+        } else if (SPEECH_TO_TEXT_PAGE.equalsIgnoreCase(pageKey)) {
+            fragment = new AoiSpeechToTextActivity();
+        } else if (TRANSCRIPTION_PROMPT_PAGE.equalsIgnoreCase(pageKey)) {
+            fragment = AoiPromptActivity.transcriptionPrompt();
         } else if (OTHER_PAGE.equalsIgnoreCase(pageKey)) {
             fragment = new AoiOtherSettingsActivity();
         } else if (ABOUT_PAGE.equalsIgnoreCase(pageKey)) {

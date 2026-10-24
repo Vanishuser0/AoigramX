@@ -95,9 +95,9 @@ public final class AoiSettingsDeepLink {
         } else if (LLM_PAGE.equalsIgnoreCase(pageKey)) {
             fragment = new AoiLlmSettingsActivity();
         } else if (PROMPTS_PAGE.equalsIgnoreCase(pageKey)) {
-            fragment = new AoiTranslationPromptsActivity(true);
+            fragment = AoiPromptActivity.systemPrompt();
         } else if (USER_PROMPT_PAGE.equalsIgnoreCase(pageKey)) {
-            fragment = new AoiTranslationPromptsActivity(false);
+            fragment = AoiPromptActivity.userPrompt();
         } else if (CHAT_PAGE.equalsIgnoreCase(pageKey)) {
             fragment = new AoiChatSettingsActivity();
         } else if (PINNED_REACTIONS_PAGE.equalsIgnoreCase(pageKey)) {

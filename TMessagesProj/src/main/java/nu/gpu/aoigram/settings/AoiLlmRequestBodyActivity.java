@@ -99,7 +99,7 @@ public final class AoiLlmRequestBodyActivity extends BaseAoiSettingsActivity {
             lines.append('\n')
                     .append(request.headers().name(i)).append(": ")
                     .append(value, 0, value.length() - key.length())
-                    .append(AoiLlmSettingsActivity.mask(key));
+                    .append(KeysDialog.mask(key));
         }
         lines.append("\nContent-Type: ").append(request.body().contentType());
         String json = GSON.toJson(base);

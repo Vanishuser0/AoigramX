@@ -221,7 +221,7 @@
     <string name="LlmProvider">Service</string>
     <string name="LlmKey">API key</string>
     <string name="LlmHowToObtain">How to obtain</string>
-    <string name="LlmCustomKeyHelp">Create an API key in your translation provider’s developer console.</string>
+    <string name="LlmCustomKeyHelp">Create an API key in your provider’s developer console.</string>
     <string name="LlmKeysUnsaved">Save your changes to the API keys?</string>
     <string name="LlmUrl">API URL</string>
     <string name="LlmModel">Model</string>

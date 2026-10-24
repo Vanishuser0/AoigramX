@@ -16,6 +16,7 @@ import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,12 +31,14 @@ import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.ui.ActionBar.ActionBar;
+import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ChatActivity;
 import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.ColoredImageSpan;
 import org.telegram.ui.Components.CubicBezierInterpolator;
+import org.telegram.ui.Components.EditTextBoldCursor;
 import org.telegram.ui.Components.ItemOptions;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
@@ -52,6 +55,7 @@ import java.util.ArrayList;
 
 import nu.gpu.aoigram.config.BoolConfig;
 import nu.gpu.aoigram.config.ConfigItem;
+import nu.gpu.aoigram.config.StringConfig;
 
 public abstract class BaseAoiSettingsActivity extends BaseFragment {
 
@@ -243,6 +247,38 @@ public abstract class BaseAoiSettingsActivity extends BaseFragment {
                 items.add(item);
             }
         }
+    }
+
+    protected EditTextBoldCursor input(Context context, String value, String hint) {
+        EditTextBoldCursor input = new EditTextBoldCursor(context);
+        input.setSingleLine(true);
+        input.setTextSize(16);
+        input.setTextColor(getThemedColor(Theme.key_dialogTextBlack));
+        input.setHintTextColor(getThemedColor(Theme.key_dialogTextHint));
+        input.setCursorColor(getThemedColor(Theme.key_dialogTextBlack));
+        input.setBackground(Theme.createEditTextDrawable(context, true));
+        input.setText(value);
+        input.setHint(hint);
+        input.setSelectAllOnFocus(true);
+        return input;
+    }
+
+    protected void editString(CharSequence title, StringConfig config, String hint) {
+        EditTextBoldCursor input = input(getContext(), config.get(), hint);
+        LinearLayout layout = new LinearLayout(getContext());
+        layout.addView(input, LayoutHelper.createLinear(-1, 48, 24, 0, 24, 0));
+        AlertDialog dialog = new AlertDialog.Builder(getContext(), getResourceProvider()).setTitle(title).setView(layout)
+                .setNegativeButton(getString(R.string.Cancel), null).setPositiveButton(getString(R.string.Save), (d, which) -> {
+                    config.set(input.getText().toString().trim());
+                    listView.adapter.update(true);
+                })
+                .create();
+        Runnable showKeyboard = () -> {
+            input.requestFocus();
+            AndroidUtilities.showKeyboard(input);
+        };
+        dialog.setOnShowListener(d -> AndroidUtilities.runOnUIThread(showKeyboard, 200));
+        showDialog(dialog, d -> AndroidUtilities.cancelRunOnUIThread(showKeyboard));
     }
 
     protected void onItemClick(UItem item, View view, int position, float x, float y) {

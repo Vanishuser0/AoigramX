@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AndroidUtilities;
@@ -34,11 +35,12 @@ import nu.gpu.aoigram.config.StringConfig;
 import nu.gpu.aoigram.translate.llm.LlmSettings;
 import nu.gpu.aoigram.utils.ErrorFeedback;
 
-public final class AoiTranslationPromptsActivity extends BaseAoiSettingsActivity {
+public final class AoiPromptActivity extends BaseAoiSettingsActivity {
 
-    private final boolean systemPrompt;
     private final StringConfig config;
     private final String defaultPrompt;
+    private final int titleResId;
+    private final String pageKey;
     private String initialText;
     private EditTextBoldCursor editor;
     private TextInfoPrivacyCell counter;
@@ -46,27 +48,36 @@ public final class AoiTranslationPromptsActivity extends BaseAoiSettingsActivity
     private int topInset;
     private int bottomInset;
 
-    public AoiTranslationPromptsActivity(boolean systemPrompt) {
-        this.systemPrompt = systemPrompt;
-        config = systemPrompt ? AoiConfig.llmSystemPrompt : AoiConfig.llmUserPrompt;
-        defaultPrompt = systemPrompt ? LlmSettings.SYSTEM_PROMPT : LlmSettings.USER_PROMPT;
+    private AoiPromptActivity(StringConfig config, String defaultPrompt, @StringRes int titleResId, String pageKey) {
+        this.config = config;
+        this.defaultPrompt = defaultPrompt;
+        this.titleResId = titleResId;
+        this.pageKey = pageKey;
+    }
+
+    static AoiPromptActivity systemPrompt() {
+        return new AoiPromptActivity(AoiConfig.llmSystemPrompt, LlmSettings.SYSTEM_PROMPT, R.string.LlmSystemPrompt, AoiSettingsDeepLink.PROMPTS_PAGE);
+    }
+
+    static AoiPromptActivity userPrompt() {
+        return new AoiPromptActivity(AoiConfig.llmUserPrompt, LlmSettings.USER_PROMPT, R.string.LlmUserPrompt, AoiSettingsDeepLink.USER_PROMPT_PAGE);
     }
 
     @Override
     protected CharSequence getActionBarTitle() {
-        return getString(systemPrompt ? R.string.LlmSystemPrompt : R.string.LlmUserPrompt);
+        return getString(titleResId);
     }
 
     @Override
     protected String getSettingsPageKey() {
-        return systemPrompt ? AoiSettingsDeepLink.PROMPTS_PAGE : AoiSettingsDeepLink.USER_PROMPT_PAGE;
+        return pageKey;
     }
 
     @Override
     public View createView(Context context) {
         View view = super.createView(context);
         topInset = listView.getPaddingTop();
-        if (!systemPrompt) {
+        if (config == AoiConfig.llmUserPrompt) {
             placeholders = new TextInfoPrivacyCell(context, getResourceProvider());
             placeholders.setText(AndroidUtilities.replaceMultipleTags(getString(R.string.LlmPlaceholdersInfo), () -> insertPlaceholder("@text"), () -> insertPlaceholder("@toLang")));
             placeholders.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray));

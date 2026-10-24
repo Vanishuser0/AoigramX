@@ -71,6 +71,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import nu.gpu.aoigram.settings.AoiSettingsDeepLink;
+
 public class LinkManager {
 
     private final LaunchActivity activity;
@@ -94,6 +96,17 @@ public class LinkManager {
         if (uri == null) return false;
 
         FileLog.d("link manager handle " + uri);
+
+        final AoiSettingsDeepLink.Route aoiSettingsRoute = AoiSettingsDeepLink.parse(uri);
+        if (aoiSettingsRoute != null) {
+            final BaseFragment fragment = aoiSettingsRoute.createFragment();
+            if (fragment == null) {
+                getBulletinFactory().createErrorBulletin(getString(R.string.UnknownSettingsLink)).show();
+            } else {
+                presentFragment(fragment);
+            }
+            return true;
+        }
 
         final String scheme = uri.getScheme();
 

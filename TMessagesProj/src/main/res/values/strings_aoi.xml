@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="AppNameAoi" translatable="false">Aoigram</string>
+    <string name="AoiSettings">Aoi Settings</string>
+    <string name="AoiGeneralSettings">General</string>
+    <string name="AoiAppearanceSettings">Appearance</string>
+    <string name="AoiTranslatorSettings">Translator</string>
+    <string name="AoiChatSettings">Chat</string>
+    <string name="AoiOtherSettings">Other</string>
+    <string name="AoiAbout">About</string>
+    <string name="UnknownSettingsLink">It seems that such a setting does not exist.</string>
 </resources>

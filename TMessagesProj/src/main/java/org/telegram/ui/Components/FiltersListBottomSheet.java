@@ -382,7 +382,8 @@ public class FiltersListBottomSheet extends BottomSheet implements NotificationC
         @Override
         public int getItemCount() {
             int count = dialogFilters.size();
-            if (count < 10) {
+            MessagesController controller = fragment.getMessagesController();
+            if (count < (fragment.getUserConfig().isPremium() ? controller.dialogFiltersLimitPremium : controller.dialogFiltersLimitDefault)) {
                 count++;
             }
             return count;

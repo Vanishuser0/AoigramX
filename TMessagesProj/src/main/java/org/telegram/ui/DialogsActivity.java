@@ -8588,7 +8588,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 title = Emoji.replaceEmoji(title, folderItem.getTextView().getPaint().getFontMetricsInt(), false);
                 title = MessageObject.replaceAnimatedEmoji(title, folder.entities, folderItem.getTextView().getPaint().getFontMetricsInt());
                 folderItem.setEmojiCacheType(folder.title_noanimate ? AnimatedEmojiDrawable.CACHE_TYPE_NOANIMATE_FOLDER : AnimatedEmojiDrawable.CACHE_TYPE_MESSAGES);
-                folderItem.setTextAndIcon(title, 0, new FolderDrawable(getContext(), R.drawable.msg_folders, folder.color));
+                folderItem.setTextAndIcon(title, 0, new FolderDrawable(getContext(), FolderIcons.getMenuIcon(folder), folder.color));
                 folderItem.getTextView().setEmojiColor(getThemedColor(Theme.key_featuredStickers_addButton));
                 folderItem.setMinimumWidth(160);
                 folderItem.setOnClickListener(e -> {

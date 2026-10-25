@@ -86,6 +86,7 @@ public class ReactionsLayoutInBubble {
         textPaint.setColor(Theme.getColor(Theme.key_featuredStickers_buttonText, resourcesProvider));
         textPaint.setTextSize(dp(12));
         textPaint.setTypeface(AndroidUtilities.bold());
+        textPaint.setFontFeatureSettings("tnum");
         cutTagPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
     }
     public boolean isSmall;
@@ -884,8 +885,11 @@ public class ReactionsLayoutInBubble {
                 scrimPreviewCounterDrawable.setTextSize(dp(12));
                 scrimPreviewCounterDrawable.setCallback(supercallback);
                 scrimPreviewCounterDrawable.setTypeface(AndroidUtilities.bold());
+                scrimPreviewCounterDrawable.getPaint().setFontFeatureSettings("tnum");
                 scrimPreviewCounterDrawable.setOverrideFullWidth(AndroidUtilities.displaySize.x);
                 scrimPreviewCounterDrawable.setScaleProperty(.35f);
+                scrimPreviewCounterDrawable.setIncludeFontPadding(false);
+                scrimPreviewCounterDrawable.centerY = false;
             }
             this.reactionCount = reactionCount;
             this.reaction = reactionCount.reaction;
@@ -1187,7 +1191,7 @@ public class ReactionsLayoutInBubble {
             }
             if (scrimProgress > 0.0f && !isTag && scrimPreviewCounterDrawable != null && avatarsDrawable == null) {
                 canvas.save();
-                canvas.translate(x + dp(hasName && !drawTagDot() ? 10 : (hasName ? 9 : 8)) + dp(20) + dp(animatedEmojiDrawable != null ? 5 : 2), y - dp(1));
+                canvas.translate(x + dp(hasName && !drawTagDot() ? 10 : (hasName ? 9 : 8)) + dp(20) + dp(animatedEmojiDrawable != null ? 5 : 2) + Math.max(0, dp(12) - scrimPreviewCounterDrawable.getCurrentWidth()) / 2f, y + (height - dp(23)) / 2f + dp(4));
                 scrimPreviewCounterDrawable.setBounds(0, 0, width, height);
                 scrimPreviewCounterDrawable.draw(canvas);
                 scrimPreviewCounterDrawable.setAlpha((int) (0xFF * alpha));

@@ -352,12 +352,15 @@ import me.vkryl.core.reference.ReferenceList;
 
 import nu.gpu.aoigram.chat.BotCommandConfirm;
 import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.dialogs.AddToFolder;
 import nu.gpu.aoigram.dialogs.RecentChats;
 import nu.gpu.aoigram.profile.PeerIdDc;
 import nu.gpu.aoigram.profile.RegistrationDate;
 import nu.gpu.aoigram.tabs.MainTabs;
 
 public class ProfileActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate, SharedMediaLayout.SharedMediaPreloaderDelegate, ImageUpdater.ImageUpdaterDelegate, SharedMediaLayout.Delegate, MainTabsActivity.TabFragmentDelegate {
+    private final static int add_to_folder = 100;
+
     private MainTabsActivityController mainTabsActivityController;
 
     public void setMainTabsActivityController(MainTabsActivityController controller) {
@@ -2762,6 +2765,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     presentFragment(fragment);
                 } else if (id == share) {
                     onShareClicked();
+                } else if (id == add_to_folder) {
+                    AddToFolder.show(ProfileActivity.this, getDialogId(), undoView);
                 } else if (id == add_shortcut) {
                     try {
                         long did;
@@ -12237,11 +12242,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                             otherItem.addSubItem(block_contact, R.drawable.msg_block, LocaleController.getString(R.string.Unblock));
                         }
                         otherItem.addSubItem(add_shortcut, R.drawable.msg_home, LocaleController.getString(R.string.AddShortcut));
+                        otherItem.addSubItem(add_to_folder, R.drawable.msg_folders, getString(R.string.FilterAddTo));
                     } else if (getDialogId() != UserObject.VERIFY) {
                         if (currentEncryptedChat == null) {
                             createAutoDeleteItem(context);
                         }
                         otherItem.addSubItem(add_shortcut, R.drawable.msg_home, LocaleController.getString(R.string.AddShortcut));
+                        otherItem.addSubItem(add_to_folder, R.drawable.msg_folders, getString(R.string.FilterAddTo));
                         if (isBot) {
                             otherItem.addSubItem(share, R.drawable.msg_share, LocaleController.getString(R.string.BotShare));
                             shareAction = true;
@@ -12302,6 +12309,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 }
                 if (!isBot && getContactsController().contactsDict.get(userId) != null) {
                     otherItem.addSubItem(add_shortcut, R.drawable.msg_home, LocaleController.getString(R.string.AddShortcut));
+                    otherItem.addSubItem(add_to_folder, R.drawable.msg_folders, getString(R.string.FilterAddTo));
                 }
             }
         } else if (chatId != 0) {
@@ -12358,6 +12366,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     }
                     if (topicId == 0) {
                         otherItem.addSubItem(add_shortcut, R.drawable.msg_home, LocaleController.getString(R.string.AddShortcut));
+                        otherItem.addSubItem(add_to_folder, R.drawable.msg_folders, getString(R.string.FilterAddTo));
                     }
                     if (chat.creator) {
                         otherItem.addColoredGap();
@@ -12387,6 +12396,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     }
                     if (topicId == 0) {
                         otherItem.addSubItem(add_shortcut, R.drawable.msg_home, LocaleController.getString(R.string.AddShortcut));
+                        otherItem.addSubItem(add_to_folder, R.drawable.msg_folders, getString(R.string.FilterAddTo));
                     }
                     if (currentChat.creator) {
                         otherItem.addColoredGap();
@@ -12423,6 +12433,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 }
                 if (topicId == 0) {
                     otherItem.addSubItem(add_shortcut, R.drawable.msg_home, LocaleController.getString(R.string.AddShortcut));
+                    otherItem.addSubItem(add_to_folder, R.drawable.msg_folders, getString(R.string.FilterAddTo));
                 }
                 otherItem.addSubItem(leave_group, R.drawable.msg_leave, LocaleController.getString(R.string.DeleteAndExit));
                 leaveAction = !ChatObject.hasAdminRights(chat);

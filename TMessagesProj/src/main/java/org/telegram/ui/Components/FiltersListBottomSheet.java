@@ -438,7 +438,7 @@ public class FiltersListBottomSheet extends BottomSheet implements NotificationC
                 boolean isChecked = true;
                 for (int i = 0; i < selectedDialogs.size(); ++i) {
                     long did = selectedDialogs.get(i);
-                    if (!filter.includesDialog(AccountInstance.getInstance(currentAccount), did)) {
+                    if (fragment.getMessagesController().dialogs_dict.get(did) == null ? !filter.alwaysShow.contains(did) : !filter.includesDialog(AccountInstance.getInstance(currentAccount), did)) {
                         isChecked = false;
                     }
                 }
@@ -452,6 +452,7 @@ public class FiltersListBottomSheet extends BottomSheet implements NotificationC
                 CombinedDrawable combinedDrawable = new CombinedDrawable(drawable1, drawable2);
                 cell.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText4));
                 cell.setTextAndIcon(LocaleController.getString(R.string.CreateNewFilter), combinedDrawable);
+                cell.setChecked(false);
             }
         }
     }

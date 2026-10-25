@@ -2766,7 +2766,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 } else if (id == share) {
                     onShareClicked();
                 } else if (id == add_to_folder) {
-                    AddToFolder.show(ProfileActivity.this, getDialogId(), undoView);
+                    AddToFolder.show(ProfileActivity.this, userId != 0 ? userId : -chatId, undoView);
                 } else if (id == add_shortcut) {
                     try {
                         long did;

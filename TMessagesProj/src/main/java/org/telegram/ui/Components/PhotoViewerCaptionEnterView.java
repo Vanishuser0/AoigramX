@@ -62,6 +62,8 @@ import org.telegram.ui.LaunchActivity;
 import org.telegram.ui.PhotoViewer;
 import org.telegram.ui.PremiumPreviewFragment;
 
+import nu.gpu.aoigram.typeface.AppleLogoSpan;
+
 public class PhotoViewerCaptionEnterView extends FrameLayout implements NotificationCenter.NotificationCenterDelegate, SizeNotifierFrameLayout.SizeNotifierFrameLayoutDelegate {
 
     private final ImageView doneButton;
@@ -291,7 +293,7 @@ public class PhotoViewerCaptionEnterView extends FrameLayout implements Notifica
                 if (delegate != null) {
                     delegate.onTextChanged(charSequence);
                 }
-                if (count - before > 1) {
+                if (count - before > 1 || AppleLogoSpan.contains(charSequence, start, start + count)) {
                     processChange = true;
                 }
             }

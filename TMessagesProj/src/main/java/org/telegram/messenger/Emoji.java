@@ -45,6 +45,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.typeface.AppleLogoSpan;
 import nu.gpu.aoigram.typeface.Typefaces;
 
 public class Emoji {
@@ -605,9 +606,10 @@ public class Emoji {
         } else {
             s = Spannable.Factory.getInstance().newSpannable(cs);
         }
+        boolean appleLogo = AppleLogoSpan.apply(s);
         ArrayList<EmojiSpanRange> emojis = parseEmojis(s, emojiOnly);
         if (emojis.isEmpty()) {
-            return cs;
+            return appleLogo ? s : cs;
         }
 
         AnimatedEmojiSpan[] animatedEmojiSpans = s.getSpans(0, s.length(), AnimatedEmojiSpan.class);

@@ -234,6 +234,7 @@ import nu.gpu.aoigram.chat.VideoMessageCamera;
 import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.translate.InputTranslation;
 import nu.gpu.aoigram.translate.InputTranslationMenu;
+import nu.gpu.aoigram.typeface.AppleLogoSpan;
 
 public class ChatActivityEnterView extends FrameLayout implements
     NotificationCenter.NotificationCenterDelegate,
@@ -6072,7 +6073,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                         delegate.onTextChanged(charSequence, before > count + 1 || (count - before) > 2, false);
                     }
                 }
-                if (innerTextChange != 2 && (count - before) > 1) {
+                if (innerTextChange != 2 && ((count - before) > 1 || AppleLogoSpan.contains(charSequence, start, start + count))) {
                     processChange = true;
                 }
                 if (editingMessageObject == null && !canWriteToChannel && message.length() != 0 && lastTypingTimeSend < System.currentTimeMillis() - 5000 && !ignoreTextChange) {

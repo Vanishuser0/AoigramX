@@ -536,7 +536,9 @@ public class TelegramMediaSession {
     }
 
     public void publishPlaybackState(PlaybackStateCompat state) {
-        session.setPlaybackState(state);
+        session.setPlaybackState(new PlaybackStateCompat.Builder(state)
+                .setActions(state.getActions() | getAvailableActions())
+                .build());
     }
 
     public long getAvailableActions() {
@@ -782,6 +784,7 @@ public class TelegramMediaSession {
                 MediaController.getInstance().setPlaybackOrderType(SharedConfig.shuffleMusic ? 0 : 2);
                 updateShuffleMode();
             }
+            notifyPlayStateForNotificationRefresh();
         }
     }
 }

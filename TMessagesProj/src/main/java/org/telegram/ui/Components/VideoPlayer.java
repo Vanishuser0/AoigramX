@@ -77,6 +77,8 @@ import androidx.media3.exoplayer.upstream.DefaultBandwidthMeter;
 import androidx.media3.common.VideoSize;
 import androidx.media3.exoplayer.video.SurfaceNotValidException;
 
+import nu.gpu.aoigram.config.AoiConfig;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.DispatchQueue;
@@ -426,7 +428,14 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
     public static Quality getSavedQuality(ArrayList<Quality> qualities, long did, int mid) {
         final SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("media_saved_pos", Activity.MODE_PRIVATE);
         final String setting = preferences.getString(did + "_" + mid + "q2", "");
-        if (TextUtils.isEmpty(setting)) return null;
+        if (TextUtils.isEmpty(setting)) {
+            if (AoiConfig.preferOriginalQuality.get()) {
+                for (Quality q : qualities) {
+                    if (q.original) return q;
+                }
+            }
+            return null;
+        }
         for (Quality q : qualities) {
             final String idx = q.width + "x" + q.height + (q.original ? "s" : "");
             if (TextUtils.equals(setting, idx)) return q;
@@ -936,7 +945,7 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
     public static VideoUri getQualityForPlayer(ArrayList<Quality> qualities) {
         for (final Quality q : qualities) {
             for (final VideoUri v : q.uris) {
-                if (v.original && v.isCached())
+                if (v.original && (v.isCached() || AoiConfig.preferOriginalQuality.get()))
                     return v;
             }
         }

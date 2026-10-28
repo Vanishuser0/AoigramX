@@ -51,6 +51,7 @@
     <string name="DownloadSpeedBoostExtreme">Extreme</string>
     <string name="UploadSpeedBoost">Upload speed boost</string>
     <string name="SpeedBoostInfo">Download boost only affects videos and audio. Extreme may be slower on unstable connections.</string>
+    <string name="PreferOriginalQuality">Prefer Original Quality</string>
     <string name="StickerSize">Sticker size</string>
     <string name="StickerSizeSmall">Small</string>
     <string name="StickerSizeLarge">Large</string>

@@ -45,6 +45,7 @@ public final class AoiConfig {
     public static final BoolConfig disableUnarchiveSwipe = register(new BoolConfig("disableUnarchiveSwipe", false));
     public static final IntConfig downloadSpeedBoost = register(new IntConfig("downloadSpeedBoost", DownloadSpeedBoost.OFF));
     public static final BoolConfig uploadSpeedBoost = register(new BoolConfig("uploadSpeedBoost", false));
+    public static final BoolConfig preferOriginalQuality = register(new BoolConfig("preferOriginalQuality", false));
 
     public static final BoolConfig systemFonts = register(new BoolConfig("systemFonts", true));
     public static final BoolConfig systemEmoji = register(new BoolConfig("systemEmoji", false));

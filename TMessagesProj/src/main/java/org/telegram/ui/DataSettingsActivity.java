@@ -185,13 +185,8 @@ public class DataSettingsActivity extends BaseFragment {
         streamSectionRow = rowCount++;
         enableStreamRow = rowCount++;
         preferOriginalQualityRow = rowCount++;
-        if (BuildVars.DEBUG_VERSION) {
-            enableMkvRow = rowCount++;
-            enableAllStreamRow = rowCount++;
-        } else {
-            enableAllStreamRow = -1;
-            enableMkvRow = -1;
-        }
+        enableMkvRow = rowCount++;
+        enableAllStreamRow = rowCount++;
         enableAllStreamInfoRow = rowCount++;
 
         enableCacheStreamRow = -1;//rowCount++;
@@ -761,13 +756,13 @@ public class DataSettingsActivity extends BaseFragment {
                     if (position == enableStreamRow) {
                         checkCell.setTextAndCheck(LocaleController.getString(R.string.EnableStreaming), SharedConfig.streamMedia, true);
                     } else if (position == preferOriginalQualityRow) {
-                        checkCell.setTextAndCheck(LocaleController.getString(R.string.PreferOriginalQuality), AoiConfig.preferOriginalQuality.get(), enableAllStreamRow != -1);
+                        checkCell.setTextAndCheck(LocaleController.getString(R.string.PreferOriginalQuality), AoiConfig.preferOriginalQuality.get(), true);
                     } else if (position == enableCacheStreamRow) {
                         //checkCell.setTextAndCheck(LocaleController.getString(R.string.CacheStreamFile), SharedConfig.saveStreamMedia, true);
                     } else if (position == enableMkvRow) {
-                        checkCell.setTextAndCheck("(beta only) Show MKV as Video", SharedConfig.streamMkv, true);
+                        checkCell.setTextAndCheck(LocaleController.getString(R.string.ShowMkvAsVideo), SharedConfig.streamMkv, true);
                     } else if (position == enableAllStreamRow) {
-                        checkCell.setTextAndCheck("(beta only) Stream All Videos", SharedConfig.streamAllVideo, false);
+                        checkCell.setTextAndCheck(LocaleController.getString(R.string.StreamAllVideos), SharedConfig.streamAllVideo, false);
                     } else if (position == autoplayGifsRow) {
                         checkCell.setTextAndCheck(LocaleController.getString(R.string.AutoplayGIF), SharedConfig.isAutoplayGifs(), true);
                     } else if (position == autoplayVideoRow) {

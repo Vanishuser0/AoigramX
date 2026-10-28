@@ -152,6 +152,11 @@ public class MediaActivity extends BaseFragment implements SharedMediaLayout.Sha
             applyBulletin = null;
             AndroidUtilities.runOnUIThread(runnable);
         }
+        if (sharedMediaLayout != null) {
+            sharedMediaLayout.onDestroy();
+        }
+        sharedMediaPreloader.onDestroy(this);
+        sharedMediaPreloader.removeDelegate(this);
     }
 
     @Override

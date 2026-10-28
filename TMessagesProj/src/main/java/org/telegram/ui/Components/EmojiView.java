@@ -6173,11 +6173,11 @@ public class EmojiView extends FrameLayout implements
             .createWeakObserversGroup(this)
             .addGlobal(NotificationCenter.emojiLoaded)
             .add(NotificationCenter.newEmojiSuggestionsAvailable)
-            .add(NotificationCenter.groupPackUpdated);
+            .add(NotificationCenter.groupPackUpdated)
+            .add(NotificationCenter.stickersDidLoad);
 
         if (stickersGridAdapter != null) {
             observersGroup
-                .add(NotificationCenter.stickersDidLoad)
                 .add(NotificationCenter.recentDocumentsDidLoad)
                 .add(NotificationCenter.featuredStickersDidLoad)
                 .add(NotificationCenter.groupStickersDidLoad)
@@ -6198,9 +6198,7 @@ public class EmojiView extends FrameLayout implements
             if (visibility != GONE) {
                 Emoji.sortEmoji();
                 emojiAdapter.notifyDataSetChanged();
-                NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.stickersDidLoad);
                 if (stickersGridAdapter != null) {
-                    NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.recentDocumentsDidLoad);
                     updateStickerTabs(false);
                     reloadStickersAdapter();
                 /*if (gifGridView != null && delegate != null) {

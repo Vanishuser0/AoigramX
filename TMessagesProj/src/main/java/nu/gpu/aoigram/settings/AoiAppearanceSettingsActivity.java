@@ -2,18 +2,15 @@ package nu.gpu.aoigram.settings;
 
 import static org.telegram.messenger.LocaleController.getString;
 
-import android.view.View;
-
 import org.telegram.messenger.R;
 import org.telegram.ui.Components.UItem;
 import org.telegram.ui.Components.UniversalAdapter;
 
 import java.util.ArrayList;
 
-public final class AoiAppearanceSettingsActivity extends BaseAoiSettingsActivity {
+import nu.gpu.aoigram.config.AoiConfig;
 
-    private static final String DUMMY_ITEM_KEY = "dummy";
-    private static final int DUMMY_ITEM_ROW = 1;
+public final class AoiAppearanceSettingsActivity extends BaseAoiSettingsActivity {
 
     @Override
     protected CharSequence getActionBarTitle() {
@@ -26,17 +23,8 @@ public final class AoiAppearanceSettingsActivity extends BaseAoiSettingsActivity
     }
 
     @Override
-    protected String getItemKey(UItem item) {
-        return item.id == DUMMY_ITEM_ROW ? DUMMY_ITEM_KEY : null;
-    }
-
-    @Override
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
-        items.add(UItem.asButton(DUMMY_ITEM_ROW, getString(R.string.AoiAppearanceSettings)));
+        items.add(asConfigCheck(AoiConfig.glareEffects, R.string.GlareEffects));
         items.add(UItem.asShadow(null));
-    }
-
-    @Override
-    protected void onItemClick(UItem item, View view, int position, float x, float y) {
     }
 }

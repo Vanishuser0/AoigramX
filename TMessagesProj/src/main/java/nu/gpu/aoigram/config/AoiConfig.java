@@ -29,6 +29,8 @@ public final class AoiConfig {
     public static final BoolConfig showFullAbout = register(new BoolConfig("showFullAbout", false));
     public static final BoolConfig skipGiftsTab = register(new BoolConfig("skipGiftsTab", false));
 
+    public static final BoolConfig glareEffects = register(new BoolConfig("glareEffects", false));
+
     public static final StringConfig translationProvider = register(new StringConfig("translationProvider", "google"));
     public static final StringConfig translationLanguage = register(new StringConfig("translationLanguage", ""));
     public static final IntConfig translationShowOriginal = register(new IntConfig("translationShowOriginal", 0));

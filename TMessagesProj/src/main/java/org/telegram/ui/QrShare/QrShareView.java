@@ -60,6 +60,8 @@ import org.telegram.ui.Stars.StarsController;
 import java.util.ArrayList;
 import java.util.Random;
 
+import nu.gpu.aoigram.config.AoiConfig;
+
 /**
  * The QR code of a user or a chat, after the iOS "share QR" screen with "Remove message fee":
  * - background scenes (profile colours, emoji, gifts) switch with a glowing ring wave from the tapped swatch;
@@ -4991,6 +4993,7 @@ public class QrShareView extends View {
      * inset < 0 grows the rim geometry. shape == null → a round rect (r, radius).
      */
     private void drawDarkOut(Canvas c, Path shape, RectF r, float radius, float alpha) {
+        if (!AoiConfig.glareEffects.get()) return;
         if (shape == null && QrGlass.drawRim(c, r, radius, rimGroup(), alpha)) return; // baked (see QrGlass)
         ensureRims();
         final int grp = rimGroup();

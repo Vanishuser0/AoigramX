@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+    <aapt:attr name="android:drawable">
+        <vector
+            android:width="288dp"
+            android:height="288dp"
+            android:viewportWidth="108"
+            android:viewportHeight="108">
+            <path
+                android:name="ring"
+                android:pathData="M50.9,41.4a13,13 0,1 0,0 26a13,13 0,1 0,0 -26"
+                android:strokeWidth="6.5"
+                android:strokeColor="@color/aoi_splash_sora"
+                android:strokeLineCap="round"
+                android:trimPathEnd="0" />
+            <path
+                android:name="stem"
+                android:pathData="M67.4,38.4V67.4"
+                android:strokeWidth="6.5"
+                android:strokeColor="@color/aoi_splash_sora"
+                android:strokeLineCap="round"
+                android:trimPathEnd="0" />
+        </vector>
+    </aapt:attr>
+    <target
+        android:name="ring"
+        android:animation="@animator/aoi_splash_ring" />
+    <target
+        android:name="stem"
+        android:animation="@animator/aoi_splash_stem" />
+</animated-vector>

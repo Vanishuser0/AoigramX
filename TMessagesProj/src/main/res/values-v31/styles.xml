@@ -33,6 +33,22 @@
         <item name="android:windowSplashScreenBackground">?android:windowBackground</item>
     </style>
 
+    <style name="Theme.TMessages.Start.Sora">
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/icon_aoi_splash_sora</item>
+    </style>
+
+    <style name="Theme.TMessages.Start.Umi">
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/icon_aoi_splash_umi</item>
+    </style>
+
+    <style name="Theme.TMessages.Start.Sakura">
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/icon_aoi_splash_sakura</item>
+    </style>
+
+    <style name="Theme.TMessages.Start.Yoru">
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/icon_aoi_splash_yoru</item>
+    </style>
+
     <style name="Theme.TMessages.Start.Official">
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/tg_splash_320</item>
     </style>

@@ -18,7 +18,15 @@ public class LauncherIconController {
     public static void setIconAndSplash(Activity activity, LauncherIcon icon) {
         setIcon(icon);
         if (Build.VERSION.SDK_INT >= 33) {
-            activity.getSplashScreen().setSplashScreenTheme(isOfficial(icon) ? R.style.Theme_TMessages_Start_Official : Resources.ID_NULL);
+            int theme = switch (icon) {
+                case DEFAULT, INVERTED -> Resources.ID_NULL;
+                case SORA -> R.style.Theme_TMessages_Start_Sora;
+                case UMI -> R.style.Theme_TMessages_Start_Umi;
+                case SAKURA -> R.style.Theme_TMessages_Start_Sakura;
+                case YORU -> R.style.Theme_TMessages_Start_Yoru;
+                default -> R.style.Theme_TMessages_Start_Official;
+            };
+            activity.getSplashScreen().setSplashScreenTheme(theme);
         }
     }
 

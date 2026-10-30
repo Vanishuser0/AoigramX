@@ -23,28 +23,10 @@
                 android:trimPathEnd="0" />
         </vector>
     </aapt:attr>
-    <target android:name="ring">
-        <aapt:attr name="android:animation">
-            <objectAnimator
-                android:propertyName="trimPathEnd"
-                android:startOffset="200"
-                android:duration="250"
-                android:valueFrom="0"
-                android:valueTo="1"
-                android:valueType="floatType"
-                android:interpolator="@android:interpolator/fast_out_extra_slow_in" />
-        </aapt:attr>
-    </target>
-    <target android:name="stem">
-        <aapt:attr name="android:animation">
-            <objectAnimator
-                android:propertyName="trimPathEnd"
-                android:startOffset="350"
-                android:duration="150"
-                android:valueFrom="0"
-                android:valueTo="1"
-                android:valueType="floatType"
-                android:interpolator="@android:interpolator/fast_out_extra_slow_in" />
-        </aapt:attr>
-    </target>
+    <target
+        android:name="ring"
+        android:animation="@animator/aoi_splash_ring" />
+    <target
+        android:name="stem"
+        android:animation="@animator/aoi_splash_stem" />
 </animated-vector>

@@ -24,6 +24,7 @@ public final class AoiSettingsDeepLink {
     static final String TRANSCRIPTION_PROMPT_PAGE = "speech-to-text-prompt";
     static final String OTHER_PAGE = "other";
     static final String ABOUT_PAGE = "about";
+    static final String DEVELOPER_PAGE = "dev";
 
     private AoiSettingsDeepLink() {
     }
@@ -112,6 +113,8 @@ public final class AoiSettingsDeepLink {
             fragment = new AoiOtherSettingsActivity();
         } else if (ABOUT_PAGE.equalsIgnoreCase(pageKey)) {
             fragment = new AoiAboutSettingsActivity();
+        } else if (DEVELOPER_PAGE.equalsIgnoreCase(pageKey)) {
+            fragment = new AoiDeveloperSettingsActivity();
         } else {
             return null;
         }

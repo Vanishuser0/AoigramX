@@ -21,6 +21,11 @@ public final class AoiDeveloperSettingsActivity extends BaseAoiSettingsActivity 
     }
 
     @Override
+    protected String getSettingsPageKey() {
+        return AoiSettingsDeepLink.DEVELOPER_PAGE;
+    }
+
+    @Override
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
         items.add(asConfigCheck(AoiConfig.disableAds, R.string.DisableAds));
         items.add(asConfigCheck(AoiConfig.dontSendTyping, R.string.DontSendTyping));

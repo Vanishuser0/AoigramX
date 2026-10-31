@@ -91,6 +91,8 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
 
+import nu.gpu.aoigram.utils.LocaleUtil;
+
 public class IntroActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
     private final static int ICON_WIDTH_DP = 200, ICON_HEIGHT_DP = 150;
 
@@ -496,9 +498,19 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
                 break;
             }
         }
-        if (englishInfo == null || systemInfo == null || englishInfo == systemInfo) {
+        if (englishInfo == null || englishInfo == systemInfo) {
             return;
         }
+        if (systemInfo != null) {
+            requestContinueText(systemInfo, englishInfo, currentLocaleInfo, systemLang);
+            return;
+        }
+        LocaleController.LocaleInfo finalEnglishInfo = englishInfo;
+        String finalSystemLang = systemLang;
+        LocaleUtil.resolveBetaLanguage(currentAccount, arg, betaInfo -> requestContinueText(betaInfo, finalEnglishInfo, currentLocaleInfo, finalSystemLang));
+    }
+
+    private void requestContinueText(LocaleController.LocaleInfo systemInfo, LocaleController.LocaleInfo englishInfo, LocaleController.LocaleInfo currentLocaleInfo, String systemLang) {
         TLRPC.TL_langpack_getStrings req = new TLRPC.TL_langpack_getStrings();
         if (systemInfo != currentLocaleInfo) {
             req.lang_code = systemInfo.getLangCode();
@@ -508,7 +520,6 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
             localeInfo = englishInfo;
         }
         req.keys.add("ContinueOnThisLanguage");
-        String finalSystemLang = systemLang;
         ConnectionsManager.getInstance(currentAccount).sendRequest(req, (response, error) -> {
             if (response instanceof Vector) {
                 Vector vector = (Vector) response;
@@ -521,7 +532,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
                         if (!destroyed) {
                             switchLanguageTextView.setText(string.value);
                             SharedPreferences preferences = MessagesController.getGlobalMainSettings();
-                            preferences.edit().putString("language_showed2", finalSystemLang.toLowerCase()).apply();
+                            preferences.edit().putString("language_showed2", systemLang.toLowerCase()).apply();
                         }
                     });
                 }

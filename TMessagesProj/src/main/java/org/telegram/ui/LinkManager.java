@@ -225,6 +225,11 @@ public class LinkManager {
         if ("settings".equalsIgnoreCase(first))
             return handleSettings(segments.subList(1, segments.size()));
 
+        if ("update".equalsIgnoreCase(first)) {
+            activity.checkAppUpdate(true, new Browser.Progress(this::init, this::done));
+            return true;
+        }
+
         if ("chats".equalsIgnoreCase(first)) {
             if ("search".equalsIgnoreCase(second)) {
                 // TODO

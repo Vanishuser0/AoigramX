@@ -25,6 +25,11 @@ import org.telegram.ui.LaunchActivity;
 
 public class BottomSheetTabDialog extends Dialog {
 
+    @Override
+    public void onBackPressed() {
+        ((BaseFragment.AttachedSheet) sheet).onAttachedBackPressed();
+    }
+
     public static BottomSheetTabsOverlay.Sheet checkSheet(BottomSheetTabsOverlay.Sheet sheet) {
         BaseFragment fragment = LaunchActivity.getSafeLastFragment();
         if (fragment == null) return sheet;

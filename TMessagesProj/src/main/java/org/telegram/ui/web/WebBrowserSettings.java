@@ -274,20 +274,21 @@ public class WebBrowserSettings extends UniversalFragment implements Notificatio
                 items.add(UItem.asButton(BUTTON_CLEAR_LIST, LocaleController.getString(R.string.BrowserSettingsNeverOpenInClearList2)).red());
                 items.add(UItem.asShadow(null));
             }
-        } else {
-            clearCookiesRow = items.size();
-            items.add(UItem.asButton(BUTTON_CLEAR_COOKIES, R.drawable.menu_clear_cookies, LocaleController.getString(R.string.BrowserSettingsCookiesClear), cookiesSize > 0 ? AndroidUtilities.formatFileSize(cookiesSize) : ""));
-            clearCacheRow = items.size();
-            items.add(UItem.asButton(BUTTON_CLEAR_CACHE, R.drawable.menu_clear_cache, LocaleController.getString(R.string.BrowserSettingsCacheClear), cacheSize > 0 ? AndroidUtilities.formatFileSize(cacheSize) : ""));
-            items.add(UItem.asShadow(getString(R.string.BrowserSettingsCookiesInfo)));
-            if (historySize > 0) {
-                historyRow = items.size();
-                items.add(UItem.asButton(BUTTON_OPEN_HISTORY, R.drawable.menu_clear_recent, getString(R.string.BrowserSettingsHistoryShow)));
-                clearHistoryRow = items.size();
-                items.add(UItem.asButton(BUTTON_CLEAR_HISTORY, R.drawable.menu_clear_cache, getString(R.string.BrowserSettingsHistoryClear), formatPluralStringComma("BrowserSettingsHistoryPages", (int) historySize, ',')));
-                items.add(UItem.asShadow(null));
-            }
+        }
+        clearCookiesRow = items.size();
+        items.add(UItem.asButton(BUTTON_CLEAR_COOKIES, R.drawable.menu_clear_cookies, LocaleController.getString(R.string.BrowserSettingsCookiesClear), cookiesSize > 0 ? AndroidUtilities.formatFileSize(cookiesSize) : ""));
+        clearCacheRow = items.size();
+        items.add(UItem.asButton(BUTTON_CLEAR_CACHE, R.drawable.menu_clear_cache, LocaleController.getString(R.string.BrowserSettingsCacheClear), cacheSize > 0 ? AndroidUtilities.formatFileSize(cacheSize) : ""));
+        items.add(UItem.asShadow(getString(R.string.BrowserSettingsCookiesInfo)));
+        if (historySize > 0) {
+            historyRow = items.size();
+            items.add(UItem.asButton(BUTTON_OPEN_HISTORY, R.drawable.menu_clear_recent, getString(R.string.BrowserSettingsHistoryShow)));
+            clearHistoryRow = items.size();
+            items.add(UItem.asButton(BUTTON_CLEAR_HISTORY, R.drawable.menu_clear_cache, getString(R.string.BrowserSettingsHistoryClear), formatPluralStringComma("BrowserSettingsHistoryPages", (int) historySize, ',')));
+            items.add(UItem.asShadow(null));
+        }
 
+        if (inAppBrowserEnabled) {
             items.add(UItem.asHeader(LocaleController.getString(R.string.BrowserSettingsNeverOpenInTitle2)));
             neverOpenRow = items.size();
             items.add(UItem.asButton(BUTTON_ADD_IN_APP_EXCEPTION, addIcon, LocaleController.getString(R.string.BrowserSettingsNeverOpenInAdd)).accent());
@@ -302,15 +303,15 @@ public class WebBrowserSettings extends UniversalFragment implements Notificatio
                 items.add(UItem.asButton(BUTTON_CLEAR_LIST, LocaleController.getString(R.string.BrowserSettingsNeverOpenInClearList2)).red());
                 items.add(UItem.asShadow(null));
             }
+        }
 
-            searchRow = items.size();
-            items.add(UItem.asButton(BUTTON_SEARCH_ENGINE, R.drawable.msg_search, LocaleController.getString(R.string.SearchEngine), SearchEngine.getCurrent().name));
-            items.add(UItem.asShadow(LocaleController.getString(R.string.BrowserSettingsSearchEngineInfo)));
+        searchRow = items.size();
+        items.add(UItem.asButton(BUTTON_SEARCH_ENGINE, R.drawable.msg_search, LocaleController.getString(R.string.SearchEngine), SearchEngine.getCurrent().name));
+        items.add(UItem.asShadow(LocaleController.getString(R.string.BrowserSettingsSearchEngineInfo)));
 
-            if (BuildVars.DEBUG_PRIVATE_VERSION) {
-                items.add(UItem.asCheck(12, "adaptable colors").setChecked(SharedConfig.adaptableColorInBrowser));
-                items.add(UItem.asCheck(13, "only local IV").setChecked(SharedConfig.onlyLocalInstantView));
-            }
+        if (BuildVars.DEBUG_PRIVATE_VERSION) {
+            items.add(UItem.asCheck(12, "adaptable colors").setChecked(SharedConfig.adaptableColorInBrowser));
+            items.add(UItem.asCheck(13, "only local IV").setChecked(SharedConfig.onlyLocalInstantView));
         }
     }
 
@@ -423,7 +424,7 @@ public class WebBrowserSettings extends UniversalFragment implements Notificatio
                     finishFragment();
                     whenHistoryClicked.run(e);
                 } else {
-                    Browser.openUrl(getContext(), e.url);
+                    Browser.openInTelegramBrowser(getContext(), e.url, null);
                 }
             });
             presentFragment(fragment[0]);

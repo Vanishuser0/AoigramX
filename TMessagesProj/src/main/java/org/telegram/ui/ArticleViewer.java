@@ -1161,6 +1161,10 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
 
         private void prepareForMoving(MotionEvent ev) {
             maybeStartTracking = false;
+            if (pagesStack.size() <= 1 && pages[0].isWeb()) {
+                cancelCheckLongPress();
+                return;
+            }
             startedTracking = true;
             startedTrackingX = (int) ev.getX();
             if (pagesStack.size() > 1 && (actionBar == null || !actionBar.isSearching() && !actionBar.isAddressing())) {
@@ -15902,7 +15906,7 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
                 actionBar.showAddress(false, true);
                 return true;
             }
-            if (isFirstArticle() && pages[0].hasBackButton()) {
+            if (pages[0].isWeb() && pages[0].getWebView() != null && pages[0].getWebView().canGoBack()) {
                 pages[0].back();
                 return true;
             }

@@ -99,6 +99,7 @@
     <string name="HideStories">Hide stories</string>
     <string name="HideSearchBar">Hide search bar</string>
     <string name="MoreMenu">More…</string>
+    <string name="Browser">Browser</string>
     <string name="SortByUnread">Unread First</string>
     <string name="ShowSenderAvatar">Sender avatar in preview</string>
     <string name="FolderTabStyle">Tab style</string>

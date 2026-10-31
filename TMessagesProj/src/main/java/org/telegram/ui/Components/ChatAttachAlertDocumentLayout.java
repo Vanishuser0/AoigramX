@@ -987,6 +987,12 @@ public class ChatAttachAlertDocumentLayout extends ChatAttachAlert.AttachAlertLa
                 ListItem item = new ListItem();
                 item.title = file.getName();
                 item.file = file;
+                if (file.isDirectory()) {
+                    item.icon = R.drawable.files_folder;
+                    item.subtitle = LocaleController.getString(R.string.Folder);
+                    listAdapter.recentItems.add(item);
+                    continue;
+                }
                 String fname = file.getName();
                 String[] sp = fname.split("\\.");
                 item.ext = sp.length > 1 ? sp[sp.length - 1] : "?";

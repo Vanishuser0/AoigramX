@@ -67,6 +67,7 @@ import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.settings.AoiDeveloperSettingsActivity;
 import nu.gpu.aoigram.settings.AoiSettingsActivity;
 import nu.gpu.aoigram.tabs.MainTabs;
+import nu.gpu.aoigram.utils.AppUtil;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AndroidUtilities;
@@ -1818,6 +1819,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                 SharedConfig.toggleDebugVideoQualities();
             } else if (which == 34) {
                 SharedConfig.toggleUseSystemBoldFont();
+                BulletinFactory.of(this).createSimpleBulletin(R.raw.chats_infotip, getString(R.string.RestartToApply), getString(R.string.RestartApp), () -> AppUtil.restart(getParentActivity())).show();
             } else if (which == 35) {
                 MessagesController.getInstance(currentAccount).loadAppConfig(true);
             } else if (which == 36) {

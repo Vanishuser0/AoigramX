@@ -6076,7 +6076,8 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
     }
 
     private boolean firstAppUpdateCheck = true;
-    public void checkAppUpdate(boolean force, Browser.Progress progress) {
+    public void checkAppUpdate(boolean force, Browser.Progress callerProgress) {
+        final Browser.Progress progress = force && callerProgress == null ? new Browser.Progress() : callerProgress;
         if (!ApplicationLoader.isStandaloneBuild() && !ApplicationLoader.isBetaBuild()) {
             return;
         }

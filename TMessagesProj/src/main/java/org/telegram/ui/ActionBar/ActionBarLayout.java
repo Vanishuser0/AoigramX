@@ -597,6 +597,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
                 protected void updateSheetsVisibility() {
                     super.updateSheetsVisibility();
                     invalidate();
+                    sheetContainer.invalidate();
                 }
             };
             sheetFragment.setParentLayout(this);

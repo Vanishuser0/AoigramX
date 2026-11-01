@@ -1,46 +1,55 @@
-## Telegram messenger for Android
+# Aoigram
 
-[Telegram](https://telegram.org) is a messaging app with a focus on speed and security. It’s superfast, simple and free.
-This repo contains the official source code for [Telegram App for Android](https://play.google.com/store/apps/details?id=org.telegram.messenger).
+An unofficial Telegram client for Android.
 
-## Creating your Telegram Application
+## Download
 
-We welcome all developers to use our API and source code to create applications on our platform.
-There are several things we require from **all developers** for the moment.
+Requires Android 12 or later.
 
-1. [**Obtain your own api_id**](https://core.telegram.org/api/obtaining_api_id) for your application.
-2. Please **do not** use the name Telegram for your app — or make sure your users understand that it is unofficial.
-3. Kindly **do not** use our standard logo (white paper plane in a blue circle) as your app's logo.
-3. Please study our [**security guidelines**](https://core.telegram.org/mtproto/security_guidelines) and take good care of your users' data and privacy.
-4. Please remember to publish **your** code too in order to comply with the licences.
+- [Telegram Channel](https://t.me/Aoigram)
+- [GitHub Releases](https://github.com/risin42/Aoigram/releases)
 
-### API, Protocol documentation
+## Compilation Guide
 
-Telegram API manuals: https://core.telegram.org/api
+### Prerequisites
 
-MTproto protocol manuals: https://core.telegram.org/mtproto
+Android Studio (or the Android SDK with licenses accepted). Gradle provisions JDK 21, and the required SDK platform, NDK and CMake are installed automatically on first sync.
 
-### Compilation Guide
+### Setup
 
-**Note**: In order to support [reproducible builds](https://core.telegram.org/reproducible-builds), this repo contains dummy release.keystore,  google-services.json and filled variables inside BuildVars.java. Before publishing your own APKs please make sure to replace all these files with your own.
-
-You will require Android Studio 2025.1.4, Android NDK 27.2.12479018 and Android SDK 36.
-
-1. Clone the Telegram source code with its submodules:
+1. Clone the repository along with its submodules:
    ```bash
-   git clone --recursive --shallow-submodules https://github.com/DrKLO/Telegram.git Telegram
+   git clone --recursive --shallow-submodules https://github.com/risin42/Aoigram.git
+   cd Aoigram
    ```
-   In case you forgot the `--recursive` flag, change to the `Telegram` directory and run:
-   ```bash
-   git submodule init && git submodule update --init --recursive --depth=1
+
+2. Go to the [Firebase Console](https://console.firebase.google.com/), create two Android apps with application IDs `nu.gpu.aoigram` and `nu.gpu.aoigram.debug`, enable Firebase Cloud Messaging, and download `google-services.json`.
+
+3. Generate a signing keystore named `release.keystore` following the [Android App Signing guide](https://developer.android.com/studio/publish/app-signing).
+
+4. Copy your `google-services.json` and `release.keystore` into `TMessagesProj_App/`.
+
+5. Add your [Telegram API credentials](https://core.telegram.org/api/obtaining_api_id) and signing configuration to `local.properties` (or pass them as environment variables):
+   ```properties
+   APP_ID=
+   APP_HASH=
+   RELEASE_KEY_ALIAS=
+   RELEASE_KEY_PASSWORD=
+   RELEASE_STORE_PASSWORD=
    ```
-2. Copy your release.keystore into TMessagesProj/config
-3. Fill out RELEASE_KEY_PASSWORD, RELEASE_KEY_ALIAS, RELEASE_STORE_PASSWORD in gradle.properties to access your  release.keystore
-4.  Go to https://console.firebase.google.com/, create two android apps with application IDs org.telegram.messenger and org.telegram.messenger.beta, turn on firebase messaging and download google-services.json, which should be copied to the same folder as TMessagesProj.
-5. Open the project in the Studio (note that it should be opened, NOT imported).
-6. Fill out values in TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java – there’s a link for each of the variables showing where and which data to obtain.
-7. You are ready to compile Telegram.
 
-### Localization
+6. *(Optional)* Replace the Google Maps API key in `TMessagesProj_App/src/main/AndroidManifest.xml`, and update the release channel constants (`CHANNEL_USERNAME`, `CHANNEL_ID`) in `TMessagesProj/src/main/java/nu/gpu/aoigram/remote/RemoteConfig.java`.
 
-We moved all translations to https://translations.telegram.org/en/android/. Please use it.
+### Build
+
+Run Gradle to assemble the release APK:
+
+```bash
+./gradlew :TMessagesProj_App:assembleRelease
+```
+
+By default, this builds for `arm64-v8a`. To target another architecture, set the `AOI_ABI` environment variable to `armeabi-v7a`, `x86`, `x86_64`, or `universal`.
+
+## Localization
+
+Translations are hosted on [Crowdin](https://crowdin.com/project/Aoigram). Contributions are welcome.

@@ -67,6 +67,20 @@ import nu.gpu.aoigram.config.AoiConfig;
 
 public class LocaleController {
 
+    private Locale aoiLocalizationLocale;
+
+    private static Locale aoiResolveLocale(Locale locale, LocaleInfo info) {
+        if ("zh".equals(locale.getLanguage()) && locale.getCountry().isEmpty() && info != null) {
+            String code = (info.shortName + "_" + info.baseLangCode).toLowerCase(Locale.ROOT);
+            boolean traditional = code.contains("hant") || code.contains("tw") || code.contains("hk") || code.contains("taiwan");
+            return new Locale("zh", traditional ? "TW" : "CN");
+        }
+        if ("pt".equals(locale.getLanguage()) && locale.getCountry().isEmpty()) {
+            return new Locale("pt", "BR");
+        }
+        return locale;
+    }
+
     static final int QUANTITY_OTHER = 0x0000;
     static final int QUANTITY_ZERO = 0x0001;
     static final int QUANTITY_ONE = 0x0002;
@@ -1351,6 +1365,7 @@ public class LocaleController {
             } else {
                 newLocale = new Locale(args[0], args[1]);
             }
+            newLocale = aoiResolveLocale(newLocale, localeInfo);
             if (override) {
                 languageOverride = localeInfo.shortName;
 
@@ -1374,6 +1389,7 @@ public class LocaleController {
                 localizationExternalSize = calculateTranslatedCount(localeValues);
             }
             currentLocale = newLocale;
+            aoiLocalizationLocale = newLocale;
             if (!init && currentLocaleInfo != null && !TextUtils.equals(currentLocaleInfo.pluralLangCode, localeInfo.pluralLangCode)) {
                 RestrictedLanguagesSelectActivity.aoiSwitchLanguage(currentLocaleInfo.pluralLangCode, localeInfo.pluralLangCode);
             }
@@ -3090,6 +3106,7 @@ public class LocaleController {
                         } else {
                             newLocale = new Locale(args[0], args[1]);
                         }
+                        newLocale = aoiResolveLocale(newLocale, localeInfo);
                         languageOverride = localeInfo.shortName;
 
                         SharedPreferences preferences = MessagesController.getGlobalMainSettings();
@@ -3103,6 +3120,7 @@ public class LocaleController {
                         localizationExternalSize = calculateTranslatedCount(valuesToSet);
 
                         currentLocale = newLocale;
+                        aoiLocalizationLocale = newLocale;
                         currentLocaleInfo = localeInfo;
                         // checkLocalizationInternal();
 
@@ -4498,13 +4516,13 @@ public class LocaleController {
     private int localizationExternalSize;
 
     private void checkLocalizationInternal() {
-        Locale currentLocale = this.currentLocale;
+        Locale currentLocale = aoiLocalizationLocale;
         boolean localeChanged = !Objects.equals(localizationInternalLastLocale, currentLocale);
 
         if (localeChanged || localizationInternal == null || localizationInternalPending) {
             localizationInternalPending = true;
             synchronized (this) {
-                currentLocale = this.currentLocale;
+                currentLocale = aoiLocalizationLocale;
                 localeChanged = !Objects.equals(localizationInternalLastLocale, currentLocale);
                 if (localeChanged || localizationInternal == null) {
                     if (localizationInternalDefault == null) {

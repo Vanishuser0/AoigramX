@@ -6650,8 +6650,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         if (currentNameEmojiStatusDrawable != null) {
             currentNameEmojiStatusDrawable.attach();
         }
-        if (mediaSpoilerEffect2 != null) {
-            if (mediaSpoilerEffect2.destroyed) {
+        if (mediaSpoilerEffect2 != null || currentMessageObject != null && currentMessageObject.hasMediaSpoilers() && SpoilerEffect2.supports()) {
+            if (mediaSpoilerEffect2 == null || mediaSpoilerEffect2.destroyed) {
                 mediaSpoilerEffect2 = makeSpoilerEffect();
                 if (mediaSpoilerEffect2Index != null) {
                     mediaSpoilerEffect2.reassignAttach(this, mediaSpoilerEffect2Index);

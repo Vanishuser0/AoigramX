@@ -70,6 +70,9 @@ public class SpoilerEffect2 {
                 return null;
             }
             instance.put(type, e = new SpoilerEffect2(type, makeTextureViewContainer(rootView), sz, sz));
+        } else if (rootView != null && e.textureViewContainer.getParent() != rootView) {
+            ((ViewGroup) e.textureViewContainer.getParent()).removeView(e.textureViewContainer);
+            rootView.addView(e.textureViewContainer);
         }
         e.attach(view);
         return e;

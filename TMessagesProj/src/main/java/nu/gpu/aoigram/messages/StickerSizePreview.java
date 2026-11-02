@@ -5,11 +5,14 @@ import static org.telegram.messenger.LocaleController.getString;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Canvas;
 import android.view.Gravity;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
+import org.telegram.messenger.ImageReceiver;
 import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.R;
 import org.telegram.messenger.UserConfig;
@@ -27,6 +30,7 @@ import org.telegram.ui.Components.SizeNotifierFrameLayout;
 public final class StickerSizePreview extends SizeNotifierFrameLayout {
 
     private final ChatMessageCell stickerCell;
+    private final ChatMessageCell replyCell;
 
     public StickerSizePreview(Context context, BaseFragment fragment) {
         super(context, fragment.getParentLayout());
@@ -61,11 +65,17 @@ public final class StickerSizePreview extends SizeNotifierFrameLayout {
         stickerObject.customReplyName = getString(R.string.StickerSizePreviewName);
         stickerObject.replyMessageObject = questionObject;
 
+        TLRPC.User sender = new TLRPC.TL_user();
+        sender.status = new TLRPC.TL_userStatusOnline();
+        sender.status.expires = Integer.MAX_VALUE;
+
         TLRPC.TL_message reply = createMessage(3, date, false, selfId);
         reply.message = getString(R.string.StickerSizePreviewReply);
         reply.reply_to = createReplyHeader(sticker.id);
         MessageObject replyObject = new MessageObject(account, reply, true, false);
         replyObject.replyMessageObject = stickerObject;
+        replyObject.customName = getString(R.string.StickerSizePreviewName);
+        replyObject.customAvatarDrawable = ContextCompat.getDrawable(context, R.drawable.preview_avatar);
 
         LinearLayout messagesLayout = new LinearLayout(context);
         messagesLayout.setOrientation(LinearLayout.VERTICAL);
@@ -76,7 +86,17 @@ public final class StickerSizePreview extends SizeNotifierFrameLayout {
             }
         }, fragment, stickerObject);
         messagesLayout.addView(stickerCell);
-        messagesLayout.addView(setupCell(new ChatMessageCell(context, account), fragment, replyObject));
+        replyCell = new ChatMessageCell(context, account) {
+            @Override
+            protected void dispatchDraw(@NonNull Canvas canvas) {
+                ImageReceiver avatarImage = getAvatarImage();
+                avatarImage.setImageCoords(avatarImage.getImageX(), getMeasuredHeight() - avatarImage.getImageHeight() - dp(4), avatarImage.getImageWidth(), avatarImage.getImageHeight());
+                onlineStatus.drawAvatar(canvas, avatarImage, sender, account, null, this);
+                super.dispatchDraw(canvas);
+            }
+        };
+        replyCell.isChat = true;
+        messagesLayout.addView(setupCell(replyCell, fragment, replyObject));
         addView(messagesLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP, 0, 11, 0, 11));
     }
 
@@ -128,6 +148,10 @@ public final class StickerSizePreview extends SizeNotifierFrameLayout {
     public void update() {
         stickerCell.forceResetMessageObject();
         stickerCell.requestLayout();
+    }
+
+    public void updateOnlineStatus() {
+        replyCell.invalidate();
     }
 
     @Override

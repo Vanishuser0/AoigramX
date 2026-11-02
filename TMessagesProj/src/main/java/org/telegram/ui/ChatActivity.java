@@ -6598,7 +6598,7 @@ public class ChatActivity extends BaseFragment implements
                             canvas.scale(1f - getSideMenuAlpha(), 1f - getSideMenuAlpha(), imageReceiver.getImageX2(), imageReceiver.getImageY2());
                             canvas.translate(dp(24) * getSideMenuAlpha(), 0f);
                         }
-                        imageReceiver.draw(canvas);
+                        cell.onlineStatus.drawAvatar(canvas, imageReceiver, cell.getCurrentUser(), currentAccount, themeDelegate, this);
                         canvas.restore();
 
                         if (!replaceAnimation && child.getTranslationY() != 0) {
@@ -22406,6 +22406,9 @@ public class ChatActivity extends BaseFragment implements
                     avatarContainer.updateOnlineCount();
                 }
                 updateSubtitle = true;
+            }
+            if ((updateMask & MessagesController.UPDATE_MASK_STATUS) != 0 && AoiConfig.showOnlineStatus.get() && chatListView != null) {
+                chatListView.invalidate();
             }
             if ((updateMask & MessagesController.UPDATE_MASK_AVATAR) != 0 || (updateMask & MessagesController.UPDATE_MASK_CHAT_AVATAR) != 0 || (updateMask & MessagesController.UPDATE_MASK_NAME) != 0) {
                 checkAndUpdateAvatar();

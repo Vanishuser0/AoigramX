@@ -260,6 +260,7 @@ import me.vkryl.android.animator.BoolAnimator;
 import me.vkryl.android.animator.FactorAnimator;
 import me.vkryl.core.BitwiseUtils;
 
+import nu.gpu.aoigram.chat.OnlineStatus;
 import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.messages.EditedIcon;
 import nu.gpu.aoigram.messages.ForwardsCount;
@@ -268,6 +269,7 @@ import nu.gpu.aoigram.translate.TranslationDisplay;
 public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate, ImageReceiver.ImageReceiverDelegate,
         DownloadController.FileDownloadProgressListener, TextSelectionHelper.SelectableView,
         NotificationCenter.NotificationCenterDelegate, FactorAnimator.Target, IMessageCell {
+    public final OnlineStatus onlineStatus = new OnlineStatus();
     private final ForwardsCount forwardsCount = new ForwardsCount();
     private final EditedIcon editedIcon = new EditedIcon();
     private int stickerTimeShift;

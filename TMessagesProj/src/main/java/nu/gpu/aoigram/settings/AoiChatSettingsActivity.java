@@ -13,6 +13,7 @@ import org.telegram.ui.Components.UniversalAdapter;
 import java.util.ArrayList;
 
 import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.config.BoolConfig;
 import nu.gpu.aoigram.config.IntConfig;
 import nu.gpu.aoigram.messages.DoubleTap;
 import nu.gpu.aoigram.messages.DoubleTapPreview;
@@ -69,6 +70,7 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
         items.add(stickerSizeItem);
         items.add(UItem.asCustom(stickerSizePreview));
         items.add(UItem.asShadow(null));
+        items.add(asConfigCheck(AoiConfig.showOnlineStatus, R.string.ShowOnlineStatus, R.string.ShowOnlineStatusInfo));
         items.add(asConfigCheck(AoiConfig.hideShareButton, R.string.HideShareButton));
         items.add(asConfigCheck(AoiConfig.hideKeyboardOnScroll, R.string.HideKeyboardOnScroll));
         items.add(asConfigCheck(AoiConfig.hideChannelBottomBar, R.string.HideChannelBottomBar));
@@ -100,6 +102,13 @@ public final class AoiChatSettingsActivity extends BaseAoiSettingsActivity {
     @Override
     protected String getItemKey(UItem item) {
         return item.id == PINNED_REACTIONS ? AoiSettingsDeepLink.PINNED_REACTIONS_PAGE : super.getItemKey(item);
+    }
+
+    @Override
+    protected void onConfigToggled(BoolConfig config) {
+        if (config == AoiConfig.showOnlineStatus) {
+            stickerSizePreview.updateOnlineStatus();
+        }
     }
 
     @Override

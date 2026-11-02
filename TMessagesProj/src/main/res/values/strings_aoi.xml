@@ -55,6 +55,8 @@
     <string name="StickerSizePreviewQuote">Show me!</string>
     <string name="StickerSizePreviewReply">So cute! 🥰</string>
     <string name="StickerSizePreviewMeow">Meow~</string>
+    <string name="ShowOnlineStatus">Show online status</string>
+    <string name="ShowOnlineStatusInfo">Yellow, orange and red mean last seen within 15, 30 and 60 minutes.</string>
     <string name="HideShareButton">Hide share button</string>
     <string name="HideKeyboardOnScroll">Hide keyboard on scroll</string>
     <string name="HideChannelBottomBar">Hide channel bottom bar</string>

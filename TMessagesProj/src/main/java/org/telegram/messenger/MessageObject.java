@@ -129,6 +129,7 @@ import java.util.regex.Pattern;
 import me.vkryl.core.BitwiseUtils;
 
 import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.messages.HexColorSpan;
 import nu.gpu.aoigram.translate.TranslationDisplay;
 import nu.gpu.aoigram.translate.TranslationSignature;
 
@@ -7854,6 +7855,9 @@ public class MessageObject {
                                 uri = uri.replaceAll("∕|⁄|%E2%81%84|%E2%88%95", "/");
                             }
                             url = new URLSpanNoUnderline(uri);
+                            if (charSequence.charAt(start) == '#') {
+                                HexColorSpan.apply(spannable, start, end);
+                            }
                         }
                     }
                 }
@@ -8347,6 +8351,9 @@ public class MessageObject {
                 if (linksCount >= MediaDataController.MAX_LINKS_COUNT) continue;
                 linksCount++;
                 spannable.setSpan(new URLSpanNoUnderline(url, run), run.start, run.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                if (run.urlEntity instanceof TLRPC.TL_messageEntityHashtag) {
+                    HexColorSpan.apply(spannable, run.start, run.end);
+                }
             } else if (run.urlEntity instanceof TLRPC.TL_messageEntityEmail) {
                 if (linksCount >= MediaDataController.MAX_LINKS_COUNT) continue;
                 linksCount++;

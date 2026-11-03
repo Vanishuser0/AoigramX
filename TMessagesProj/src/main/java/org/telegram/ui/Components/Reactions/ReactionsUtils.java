@@ -160,7 +160,7 @@ public class ReactionsUtils {
         AnimatedEmojiSpan span = createAnimatedEmojiSpan(null, customEmoji.document_id, fontMetricsInt);
         selectedEmojis.put(customEmoji.document_id, span);
         selectedEmojisIds.add(customEmoji.document_id);
-        editText.append(createSpannableText(span, "e"));
+        editText.append(createSpannableText(span, MessageObject.findAnimatedEmojiEmoticon(AnimatedEmojiDrawable.findDocument(UserConfig.selectedAccount, customEmoji.document_id))));
         if (selectAnimatedEmojiDialog != null) {
             selectAnimatedEmojiDialog.setMultiSelected(customEmoji.document_id, false);
         }

@@ -33,11 +33,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
-import androidx.core.math.MathUtils;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
+import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.MessagesStorage;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
@@ -516,11 +516,25 @@ public class ChatCustomReactionsEditActivity extends BaseFragment implements Not
                     }
                     try {
                         int selectionEnd = editText.getEditTextSelectionEnd();
-                        SpannableString spannable = new SpannableString("b");
+                        String emoticon = MessageObject.findAnimatedEmojiEmoticon(document);
+                        for (TLRPC.TL_availableReaction availableReaction : allAvailableReactions) {
+                            if (availableReaction.activate_animation.id == documentId) {
+                                emoticon = availableReaction.reaction;
+                                break;
+                            }
+                        }
+                        SpannableString spannable = new SpannableString(emoticon);
                         AnimatedEmojiSpan span = createAnimatedEmojiSpan(document, documentId, editText.getFontMetricsInt());
                         span.cacheType = AnimatedEmojiDrawable.getCacheTypeForEnterView();
                         span.setAdded();
-                        selectedEmojisIds.add(MathUtils.clamp(selectionEnd, 0, selectedEmojisIds.size()), documentId);
+                        Editable text = editText.getText();
+                        int index = 0;
+                        for (AnimatedEmojiSpan s : text.getSpans(0, text.length(), AnimatedEmojiSpan.class)) {
+                            if (text.getSpanStart(s) < selectionEnd && selectedEmojisMap.get(s.documentId) == s) {
+                                index++;
+                            }
+                        }
+                        selectedEmojisIds.add(index, documentId);
                         selectedEmojisMap.put(documentId, span);
                         spannable.setSpan(span, 0, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                         editText.getText().insert(selectionEnd, spannable);
@@ -934,7 +948,7 @@ public class ChatCustomReactionsEditActivity extends BaseFragment implements Not
         } else {
             paidCheckCell.setChecked(true);
             try {
-                SpannableString spannable = new SpannableString("b");
+                SpannableString spannable = new SpannableString("⭐");
                 AnimatedEmojiSpan span = new AnimatedEmojiSpan(-1, null) {
                     private final Bitmap bitmap = Bitmap.createBitmap(dp(24), dp(24), Bitmap.Config.ARGB_8888);
                     {

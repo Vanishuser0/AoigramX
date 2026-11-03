@@ -900,6 +900,11 @@ public class ChatCustomReactionsEditActivity extends BaseFragment implements Not
                 public void onAnimationEnd(Animator animation) {
                     NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.startAllHeavyOperations, 512);
                     bottomDialogLayout.setVisibility(View.INVISIBLE);
+                    if (selectedType != SELECT_TYPE_NONE || paid || checkChangesBeforeExit(false)) {
+                        actionButtonContainer.animate().setListener(null).cancel();
+                        actionButtonContainer.setVisibility(View.VISIBLE);
+                        actionButtonContainer.animate().alpha(1f).start();
+                    }
                     if (isClearFocusNotWorking()) {
                         switchLayout.setFocusableInTouchMode(false);
                     }

@@ -256,7 +256,7 @@ public class ChatCustomReactionsEditActivity extends BaseFragment implements Not
         contentLayout.addView(switchLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
         switchLayout.addView(headerCell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
-        editText = new CustomReactionEditText(context, getResourceProvider(), maxReactionsCount) {
+        editText = new CustomReactionEditText(context, getResourceProvider(), Integer.MAX_VALUE) {
             @Override
             protected void onLineCountChanged(int oldLineCount, int newLineCount) {
                 if (newLineCount > oldLineCount) {
@@ -556,7 +556,6 @@ public class ChatCustomReactionsEditActivity extends BaseFragment implements Not
                     selectAnimatedEmojiDialog.unselect(span.documentId);
                     if (span.documentId == -1 && paidCheckCell != null) {
                         paidCheckCell.setChecked(false);
-                        editText.setMaxLength(maxReactionsCount);
                     }
                     if (isFast) {
                         editText.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
@@ -931,12 +930,10 @@ public class ChatCustomReactionsEditActivity extends BaseFragment implements Not
             animateChangesInNextRows(removedSpan);
             selectAnimatedEmojiDialog.setMultiSelected(-1L, true);
             checkMaxCustomReactions(false);
-            editText.setMaxLength(maxReactionsCount);
             setCheckedEnableReactionCell(selectedType, paid, true);
         } else {
             paidCheckCell.setChecked(true);
             try {
-                editText.setMaxLength(maxReactionsCount + 1);
                 SpannableString spannable = new SpannableString("b");
                 AnimatedEmojiSpan span = new AnimatedEmojiSpan(-1, null) {
                     private final Bitmap bitmap = Bitmap.createBitmap(dp(24), dp(24), Bitmap.Config.ARGB_8888);

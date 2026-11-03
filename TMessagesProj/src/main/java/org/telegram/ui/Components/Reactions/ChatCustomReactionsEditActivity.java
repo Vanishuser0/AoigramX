@@ -70,6 +70,8 @@ import java.util.List;
 
 public class ChatCustomReactionsEditActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
+    private int initialSelectedType;
+
     public final static int SELECT_TYPE_NONE = 2,
             SELECT_TYPE_SOME = 1,
             SELECT_TYPE_ALL = 0;
@@ -349,7 +351,7 @@ public class ChatCustomReactionsEditActivity extends BaseFragment implements Not
                 return;
             }
 
-            if (boostsStatus != null && boostsStatus.level < selectedCustomReactions) {
+            if (selectedType != SELECT_TYPE_NONE && boostsStatus != null && boostsStatus.level < selectedCustomReactions) {
                 ReactionsUtils.showLimitReachedDialogForReactions(-chatId, selectedCustomReactions, boostsStatus);
                 return;
             }
@@ -460,6 +462,7 @@ public class ChatCustomReactionsEditActivity extends BaseFragment implements Not
         }
         initialSelectedEmojis.putAll(selectedEmojisMap);
         initialPaid = paid;
+        initialSelectedType = selectedType;
 
         fragmentView = rootLayout;
         return rootLayout;
@@ -540,6 +543,9 @@ public class ChatCustomReactionsEditActivity extends BaseFragment implements Not
                         editText.getText().insert(selectionEnd, spannable);
                         editText.setSelection(selectionEnd + spannable.length());
                         selectAnimatedEmojiDialog.setMultiSelected(documentId, true);
+                        if (selectedType == SELECT_TYPE_NONE) {
+                            setCheckedEnableReactionCell(SELECT_TYPE_SOME, paid, true);
+                        }
                         checkMaxCustomReactions(true);
                         animateChangesInNextRows(span);
                     } catch (Exception e) {
@@ -672,6 +678,13 @@ public class ChatCustomReactionsEditActivity extends BaseFragment implements Not
         }
 
         this.selectedType = selectType;
+        if (boostsStatus != null) {
+            if (selectType != SELECT_TYPE_NONE && boostsStatus.level < selectedCustomReactions) {
+                actionButton.setLvlRequiredState(selectedCustomReactions);
+            } else {
+                actionButton.removeLvlRequiredState();
+            }
+        }
 
         if (selectType == SELECT_TYPE_SOME || selectType == SELECT_TYPE_ALL || paid) {
             switchLayout.setVisibility(View.VISIBLE);
@@ -709,7 +722,8 @@ public class ChatCustomReactionsEditActivity extends BaseFragment implements Not
                 closeKeyboard();
                 actionButtonContainer.animate().setListener(null).cancel();
                 switchLayout.animate().setListener(null).cancel();
-                actionButtonContainer.animate().alpha(0f).setDuration(350).setInterpolator(CubicBezierInterpolator.DEFAULT).setListener(new AnimatorListenerAdapter() {
+                boolean hasChanges = checkChangesBeforeExit(false);
+                actionButtonContainer.animate().alpha(hasChanges ? 1f : 0f).setDuration(350).setInterpolator(CubicBezierInterpolator.DEFAULT).setListener(hasChanges ? null : new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         actionButtonContainer.setVisibility(View.INVISIBLE);
@@ -733,7 +747,7 @@ public class ChatCustomReactionsEditActivity extends BaseFragment implements Not
     public void onFragmentDestroy() {
         super.onFragmentDestroy();
         AndroidUtilities.cancelRunOnUIThread(checkAfterFastDeleteRunnable);
-        if (selectedType == SELECT_TYPE_NONE && reactionsCount != currentReactionsCount) {
+        if (selectedType == SELECT_TYPE_NONE && initialSelectedType == SELECT_TYPE_NONE && reactionsCount != currentReactionsCount) {
             getMessagesController().setCustomChatReactions(chatId, selectedType, grabReactions(false), reactionsCount, null, null, null);
         }
         getNotificationCenter().removeObserver(this, NotificationCenter.dialogDeleted);
@@ -773,11 +787,12 @@ public class ChatCustomReactionsEditActivity extends BaseFragment implements Not
     }
 
     private boolean checkChangesBeforeExit(boolean invoked) {
-        boolean hasChanges = !selectedEmojisMap.keySet().equals(initialSelectedEmojis.keySet());
+        boolean disabled = selectedType == SELECT_TYPE_NONE || grabReactions(false).isEmpty();
+        boolean hasChanges = !disabled && !selectedEmojisMap.keySet().equals(initialSelectedEmojis.keySet());
         if (boostsStatus != null && boostsStatus.level < selectedCustomReactions) {
             hasChanges = false;
         }
-        if (initialPaid != paid) {
+        if (initialPaid != (paidCheckCell != null && paidCheckCell.isChecked()) || disabled != (initialSelectedType == SELECT_TYPE_NONE)) {
             hasChanges = true;
         }
         if (invoked && hasChanges) {
@@ -802,7 +817,7 @@ public class ChatCustomReactionsEditActivity extends BaseFragment implements Not
             selectedType = SELECT_TYPE_SOME;
         }
         selectedCustomReactions = grabReactions(true).size();
-        if (boostsStatus.level < selectedCustomReactions) {
+        if (selectedType != SELECT_TYPE_NONE && boostsStatus.level < selectedCustomReactions) {
             if (withToast) {
                 CharSequence text = replaceTags(formatPluralString("ReactionReachLvlForReactionShort", selectedCustomReactions, selectedCustomReactions));
                 BulletinFactory.of(this)

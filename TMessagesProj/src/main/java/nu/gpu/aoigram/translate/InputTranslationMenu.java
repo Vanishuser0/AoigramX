@@ -81,7 +81,7 @@ public final class InputTranslationMenu {
         page.addGap();
         ItemOptions languages = ItemOptions.swipeback(popup, resourcesProvider).setDismissWithButtons(false);
         for (TranslationLanguages.Language target : TranslationLanguages.list(provider)) {
-            languages.addChecked(target.code().equalsIgnoreCase(TranslationLanguages.map(provider, language)), target.nativeName(), () -> {
+            languages.addChecked(target.code().equalsIgnoreCase(TranslationLanguages.map(provider, language)), TranslationLanguages.label(target.nativeName(), target.pinned()), () -> {
                 AoiConfig.inputTranslationLanguage.set(target.code());
                 translate.accept(new TranslationOptions(provider, target.code()));
             });

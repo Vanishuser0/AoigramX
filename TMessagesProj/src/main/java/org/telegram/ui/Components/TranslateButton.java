@@ -273,7 +273,7 @@ public class TranslateButton extends FrameLayout implements Theme.Colorable {
 
                 ActionBarMenuSubItem button = new ActionBarMenuSubItem(getContext(), 2, false, false, resourcesProvider);
                 button.setChecked(checked);
-                button.setText(TranslateAlert2.capitalFirst(lng.name()));
+                button.setText(TranslationLanguages.label(TranslateAlert2.capitalFirst(lng.name()), lng.pinned()));
                 if (!checked) {
                     button.setOnClickListener(e -> {
                         translateController.setDialogTranslateTo(dialogId, code);

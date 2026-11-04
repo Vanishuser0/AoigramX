@@ -229,6 +229,8 @@
     <string name="TranslationProvider">Translation service</string>
     <string name="TranslationLanguage">Translate to</string>
     <string name="TranslationFollowApp">Follow app</string>
+    <string name="PinnedLanguages">Pinned languages</string>
+    <string name="PinnedLanguagesInfo">Long press a language to pin it to the top of all language lists.</string>
     <string name="TranslationUnsupportedLanguage">The selected language is not supported by this translation service.</string>
     <string name="TranslationShowOriginal">Show original</string>
     <string name="TranslationShowOriginalOff">Off</string>
@@ -271,7 +273,7 @@
     <string name="TranslateArticle">Translate</string>
     <string name="TranslatingArticle">Translating…</string>
     <string name="TranslateArticlePartialFailure">Some parts could not be translated.</string>
-    <string name="TranslationDefault">Default language</string>
+    <string name="TranslationDefault">Default (%1$s)</string>
     <string name="InputTranslate">Translate (%1$s)</string>
     <string name="InputTranslateWithAI">Translate with AI (%1$s)</string>
     <string name="InputTranslationDone">Text translated</string>

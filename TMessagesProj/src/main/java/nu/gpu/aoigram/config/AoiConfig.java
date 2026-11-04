@@ -64,6 +64,7 @@ public final class AoiConfig {
 
     public static final StringConfig translationProvider = register(new StringConfig("translationProvider", "google"));
     public static final StringConfig translationLanguage = register(new StringConfig("translationLanguage", ""));
+    public static final StringConfig pinnedTranslationLanguages = register(new StringConfig("pinnedTranslationLanguages", ""));
     public static final IntConfig translationShowOriginal = register(new IntConfig("translationShowOriginal", 0));
     public static final StringConfig inputTranslationLanguage = register(new StringConfig("inputTranslationLanguage", "en"));
     public static final StringConfig llmProvider = register(new StringConfig("llmProvider", "custom"));

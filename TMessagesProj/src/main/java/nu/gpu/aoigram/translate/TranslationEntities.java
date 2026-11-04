@@ -82,7 +82,7 @@ public final class TranslationEntities {
     private static String encode(TLRPC.TL_textWithEntities source, Format format, ArrayList<TLRPC.MessageEntity> opened) {
         ArrayList<TLRPC.MessageEntity> entities = new ArrayList<>(source.entities);
         entities.removeIf(entity -> entity instanceof TLRPC.TL_messageEntityCustomEmoji);
-        if (entities.isEmpty() && format != Format.HTML) return source.text;
+        if (entities.isEmpty()) return source.text;
         TreeSet<Integer> boundaries = new TreeSet<>();
         boundaries.add(0);
         boundaries.add(source.text.length());
@@ -97,8 +97,12 @@ public final class TranslationEntities {
         int previous = 0;
         for (int boundary : boundaries) {
             String text = TextUtils.htmlEncode(source.text.substring(previous, boundary));
-            boolean raw = format == Format.BARE || format == Format.HTML && active.stream().anyMatch(e -> e instanceof TLRPC.TL_messageEntityPre);
-            html.append(raw ? text : text.replace("\n", "<br>"));
+            boolean code = active.stream().anyMatch(e -> e instanceof TLRPC.TL_messageEntityPre);
+            if (format != Format.BARE) {
+                html.append(format == Format.HTML && code ? text : text.replace("\n", "<br>"));
+            } else if (!code) {
+                html.append(text);
+            }
             ArrayList<TLRPC.MessageEntity> next = new ArrayList<>();
             for (TLRPC.MessageEntity entity : ordered) {
                 if (entity.offset <= boundary && boundary < entity.offset + entity.length) {
@@ -143,9 +147,13 @@ public final class TranslationEntities {
         return e instanceof TLRPC.TL_messageEntityCode || e instanceof TLRPC.TL_messageEntityPre || tag(e).equals("a") && !(e instanceof TLRPC.TL_messageEntityTextUrl);
     }
 
+    private static int count(String text, String tag) {
+        return (text.length() - text.replace(tag, "").length()) / tag.length();
+    }
+
     public static TLRPC.TL_textWithEntities decode(TLRPC.TL_textWithEntities source, String translated, Format format) {
         TLRPC.TL_textWithEntities result = new TLRPC.TL_textWithEntities();
-        if (format != Format.HTML && source.entities.stream().allMatch(entity -> entity instanceof TLRPC.TL_messageEntityCustomEmoji)) {
+        if (source.entities.stream().allMatch(entity -> entity instanceof TLRPC.TL_messageEntityCustomEmoji)) {
             result.text = translated;
             return TranslateAlert2.preprocess(source, result);
         }
@@ -156,9 +164,10 @@ public final class TranslationEntities {
             for (TLRPC.MessageEntity entity : entities) {
                 opened.computeIfAbsent(tag(entity), key -> new ArrayDeque<>()).add(entity);
             }
+            ArrayDeque<TLRPC.MessageEntity> pres = opened.get("pre");
+            if (pres != null && (count(translated, "<pre>") != pres.size() || count(translated, "</pre>") != pres.size())) return null;
             ArrayDeque<TLRPC.MessageEntity> links = opened.get("a");
-            int translatedLinks = (translated.length() - translated.replace("<a>", "").length()) / "<a>".length();
-            if (links != null && links.size() != translatedLinks) {
+            if (links != null && links.size() != count(translated, "<a>")) {
                 opened.remove("a");
             }
         }
@@ -211,6 +220,9 @@ public final class TranslationEntities {
                         }
                     }
                     stack.add(new Open(local, entity, text.length()));
+                    if (format == Format.BARE && original instanceof TLRPC.TL_messageEntityPre) {
+                        text.append(source.text, original.offset, original.offset + original.length);
+                    }
                 }
 
                 @Override

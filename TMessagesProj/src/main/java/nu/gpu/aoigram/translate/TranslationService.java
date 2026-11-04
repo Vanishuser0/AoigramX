@@ -37,36 +37,43 @@ public final class TranslationService {
             return;
         }
 
-        TranslationEntities.Format format = format(options, source);
+        TranslationEntities.Format format = options.provider() == TranslationOptions.GOOGLE ? TranslationEntities.Format.BARE : TranslationEntities.Format.ID;
         List<TLRPC.TL_textWithEntities> parts = options.provider() == TranslationOptions.BING ? TranslationEntities.split(source, 3000) : List.of(source);
         TLRPC.TL_textWithEntities[] results = new TLRPC.TL_textWithEntities[parts.size()];
         int[] remaining = {parts.size()};
         for (int i = 0; i < parts.size(); i++) {
             int index = i;
-            TLRPC.TL_textWithEntities part = parts.get(i);
-            request(task, TranslationEntities.encode(part, format), options, context, format == TranslationEntities.Format.HTML, (text, error) -> {
+            translatePart(task, parts.get(i), format, options, context, (result, error) -> {
                 if (remaining[0] < 0) return;
-                if (error == null) {
-                    try {
-                        results[index] = TranslationEntities.decode(part, text, format);
-                    } catch (RuntimeException exception) {
-                        error = failureText();
-                    }
-                }
                 if (error != null) {
                     remaining[0] = -1;
                     callback.done(null, error);
-                } else if (--remaining[0] == 0) {
-                    callback.done(TranslationEntities.join(results), null);
+                } else {
+                    results[index] = result;
+                    if (--remaining[0] == 0) {
+                        callback.done(TranslationEntities.join(results), null);
+                    }
                 }
             });
         }
     }
 
-    private static TranslationEntities.Format format(TranslationOptions options, TLRPC.TL_textWithEntities source) {
-        if (options.provider() != TranslationOptions.GOOGLE) return TranslationEntities.Format.ID;
-        if (source.entities.stream().anyMatch(entity -> entity instanceof TLRPC.TL_messageEntityPre)) return TranslationEntities.Format.HTML;
-        return TranslationEntities.Format.BARE;
+    private static void translatePart(TranslationTask task, TLRPC.TL_textWithEntities source, TranslationEntities.Format format, TranslationOptions options, String context, ResultCallback<TLRPC.TL_textWithEntities> callback) {
+        request(task, TranslationEntities.encode(source, format), options, context, format == TranslationEntities.Format.HTML, (text, error) -> {
+            TLRPC.TL_textWithEntities result = null;
+            if (error == null) {
+                try {
+                    result = TranslationEntities.decode(source, text, format);
+                } catch (RuntimeException exception) {
+                    error = failureText();
+                }
+            }
+            if (error == null && result == null) {
+                translatePart(task, source, TranslationEntities.Format.HTML, options, context, callback);
+            } else {
+                callback.done(result, error);
+            }
+        });
     }
 
     public static void translatePoll(TranslationTask task, int account, PollText source, PollText translated, TranslationOptions options, String context, ResultCallback<PollText> callback) {

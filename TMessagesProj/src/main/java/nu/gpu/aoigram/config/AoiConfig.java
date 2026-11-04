@@ -148,10 +148,10 @@ public final class AoiConfig {
         return ApplicationLoader.applicationContext.getSharedPreferences("aoi_account_data_" + accountKey, Context.MODE_PRIVATE);
     }
 
-    public static JSONObject exportJson() throws JSONException {
+    public static JSONObject exportJson(boolean strings) throws JSONException {
         JSONObject json = new JSONObject();
         for (ConfigItem<?> item : items) {
-            if (preferences.contains(item.getKey())) {
+            if (preferences.contains(item.getKey()) && (strings || !(item instanceof StringConfig))) {
                 json.put(item.getKey(), item.get());
             }
         }

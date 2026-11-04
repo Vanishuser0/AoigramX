@@ -100,8 +100,10 @@ import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.dialogs.DialogsMoreMenu;
 import nu.gpu.aoigram.dialogs.FolderIcons;
 import nu.gpu.aoigram.dialogs.FolderUnreadCounter;
+import nu.gpu.aoigram.settings.AoiCrashLogsActivity;
 import nu.gpu.aoigram.tabs.MainTabs;
 import nu.gpu.aoigram.typeface.Typefaces;
+import nu.gpu.aoigram.utils.CrashLogs;
 
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
@@ -6028,6 +6030,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 false,
                 true
             );
+        } else if (folderId == 0 && communityId == 0 && CrashLogs.hasPending()) {
+            dialogsHintCellVisible = true;
+            dialogsHintCell.setOnClickListener(v -> presentFragment(new AoiCrashLogsActivity()));
+            dialogsHintCell.setText(getString(R.string.AppCrashed), getString(R.string.AppCrashedHint));
+            dialogsHintCell.setOnCloseListener(v -> {
+                CrashLogs.clearPending();
+                updateDialogsHint();
+            });
         } else if (folderId == 0 && communityId == 0 && getMessagesController().pendingSuggestions.contains("SETUP_PASSKEY") && BuildVars.SUPPORTS_PASSKEYS) {
             dialogsHintCellVisible = true;
             dialogsHintCell.setOnClickListener(v -> {

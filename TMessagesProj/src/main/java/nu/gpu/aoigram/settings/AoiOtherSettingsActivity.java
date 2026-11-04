@@ -18,10 +18,12 @@ public final class AoiOtherSettingsActivity extends BaseAoiSettingsActivity {
 
     private static final String EXPORT_ITEM_KEY = "export";
     private static final String RESET_ITEM_KEY = "reset";
+    private static final String CRASH_LOGS_ITEM_KEY = "crashLogs";
     private static final String RESTART_ITEM_KEY = "restart";
     private static final int EXPORT_ITEM_ROW = 1;
     private static final int RESET_ITEM_ROW = 2;
     private static final int RESTART_ITEM_ROW = 3;
+    private static final int CRASH_LOGS_ITEM_ROW = 4;
 
     @Override
     protected CharSequence getActionBarTitle() {
@@ -38,6 +40,7 @@ public final class AoiOtherSettingsActivity extends BaseAoiSettingsActivity {
         return switch (item.id) {
             case EXPORT_ITEM_ROW -> EXPORT_ITEM_KEY;
             case RESET_ITEM_ROW -> RESET_ITEM_KEY;
+            case CRASH_LOGS_ITEM_ROW -> CRASH_LOGS_ITEM_KEY;
             case RESTART_ITEM_ROW -> RESTART_ITEM_KEY;
             default -> null;
         };
@@ -47,6 +50,8 @@ public final class AoiOtherSettingsActivity extends BaseAoiSettingsActivity {
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
         items.add(UItem.asButton(EXPORT_ITEM_ROW, R.drawable.msg_saved, getString(R.string.ExportSettings)));
         items.add(UItem.asButton(RESET_ITEM_ROW, R.drawable.msg_reset, getString(R.string.ResetSettings)));
+        items.add(UItem.asShadow(null));
+        items.add(UItem.asButton(CRASH_LOGS_ITEM_ROW, R.drawable.msg_log, getString(R.string.CrashLogs)));
         items.add(UItem.asShadow(null));
         items.add(UItem.asButton(RESTART_ITEM_ROW, R.drawable.msg_retry, getString(R.string.RestartApp)));
         items.add(UItem.asShadow(null));
@@ -58,6 +63,8 @@ public final class AoiOtherSettingsActivity extends BaseAoiSettingsActivity {
             SettingsBackup.export(this);
         } else if (item.id == RESET_ITEM_ROW) {
             showResetAlert();
+        } else if (item.id == CRASH_LOGS_ITEM_ROW) {
+            presentFragment(new AoiCrashLogsActivity());
         } else if (item.id == RESTART_ITEM_ROW) {
             AppUtil.restart(getParentActivity());
         }

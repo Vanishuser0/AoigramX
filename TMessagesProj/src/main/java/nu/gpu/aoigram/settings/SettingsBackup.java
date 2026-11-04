@@ -37,7 +37,7 @@ public final class SettingsBackup {
     static void export(BaseFragment fragment) {
         File file = new File(AndroidUtilities.getCacheDir(), FILE_PREFIX + new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(new Date()) + FILE_SUFFIX);
         try {
-            Files.write(file.toPath(), AoiConfig.exportJson().toString(2).getBytes(StandardCharsets.UTF_8));
+            Files.write(file.toPath(), AoiConfig.exportJson(true).toString(2).getBytes(StandardCharsets.UTF_8));
         } catch (IOException | JSONException e) {
             FileLog.e(e);
             ErrorFeedback.show(getString(R.string.ErrorOccurred), BulletinFactory.of(fragment), fragment::showDialog, true);

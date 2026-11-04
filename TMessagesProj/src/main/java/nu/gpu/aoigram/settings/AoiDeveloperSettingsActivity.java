@@ -2,6 +2,8 @@ package nu.gpu.aoigram.settings;
 
 import static org.telegram.messenger.LocaleController.getString;
 
+import android.view.View;
+
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.UserConfig;
@@ -14,6 +16,8 @@ import nu.gpu.aoigram.config.AoiConfig;
 import nu.gpu.aoigram.config.BoolConfig;
 
 public final class AoiDeveloperSettingsActivity extends BaseAoiSettingsActivity {
+
+    private static final int CRASH_ROW = 1;
 
     @Override
     protected CharSequence getActionBarTitle() {
@@ -33,6 +37,16 @@ public final class AoiDeveloperSettingsActivity extends BaseAoiSettingsActivity 
         items.add(asConfigCheck(AoiConfig.forceCopy, R.string.ForceCopy));
         items.add(asConfigCheck(AoiConfig.allowScreenshots, R.string.AllowScreenshots));
         items.add(UItem.asShadow(null));
+        items.add(UItem.asButton(CRASH_ROW, getString(R.string.TestCrash)).red());
+        items.add(UItem.asShadow(null));
+    }
+
+    @Override
+    protected void onItemClick(UItem item, View view, int position, float x, float y) {
+        if (item.id == CRASH_ROW) {
+            throw new RuntimeException("Test crash");
+        }
+        super.onItemClick(item, view, position, x, y);
     }
 
     @Override

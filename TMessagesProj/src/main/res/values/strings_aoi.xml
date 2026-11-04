@@ -307,6 +307,14 @@
     <string name="ImportSettingsButton">Import</string>
     <string name="ResetSettings">Reset settings</string>
     <string name="ResetSettingsAlert">All settings will be reset to defaults and the app will restart.</string>
+    <string name="CrashLogs">Crash logs</string>
+    <string name="NoCrashLogs">No crash logs</string>
+    <string name="NoCrashLogsInfo">Crash logs will appear here\nif Aoigram crashes.</string>
+    <string name="CrashLogsInfo">Crash logs include device info and your Aoigram settings, excluding text such as API keys and prompts.</string>
+    <string name="ClearCrashLogs">Clear crash logs</string>
+    <string name="TestCrash">Test crash</string>
+    <string name="AppCrashed">Aoigram crashed</string>
+    <string name="AppCrashedHint">Tap to view the crash log and share it with the developer.</string>
     <string name="ToBeginning">To Beginning</string>
     <string name="MyMessages">My Messages</string>
     <string name="DeleteMyMessages">Delete My Messages</string>

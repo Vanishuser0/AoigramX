@@ -34,6 +34,11 @@ public final class DialogsMoreMenu {
             o.dismiss();
             UnreadFirstSort.show(fragment);
         });
+        more.addGap();
+        more.add(R.drawable.msg_stats, getString(R.string.Statistics), Theme.key_actionBarDefaultTitle, () -> {
+            o.dismiss();
+            ChatStatistics.show(fragment);
+        });
         o.addGap();
         o.add(R.drawable.iv_media_dots, getString(R.string.MoreMenu), () -> o.openSwipeback(more));
         o.getLast().setRightIcon(R.drawable.msg_arrowright);

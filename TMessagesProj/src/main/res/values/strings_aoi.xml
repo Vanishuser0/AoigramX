@@ -101,6 +101,10 @@
     <string name="MoreMenu">More…</string>
     <string name="Browser">Browser</string>
     <string name="SortByUnread">Unread First</string>
+    <string name="ChatStatistics">Chat Statistics</string>
+    <string name="ChatStatisticsUnarchived">Unarchived</string>
+    <string name="ChatStatisticsArchived">Archived</string>
+    <string name="ChatStatisticsTotal">Total</string>
     <string name="ShowSenderAvatar">Sender avatar in preview</string>
     <string name="FolderTabStyle">Tab style</string>
     <string name="FolderTabStyleTitle">Title</string>

@@ -41,7 +41,7 @@
     <string name="SkipGiftsTab">Salta scheda Regali</string>
     <string name="SkipGiftsTabInfo">I profili si apriranno direttamente sulla scheda successiva.</string>
     <string name="RemoveArchive">Rimuovi dalla lista chat</string>
-    <string name="DisableUnarchiveSwipe">Disattiva scorrimento per l\'archivio</string>
+    <string name="DisableUnarchiveSwipe">Disattiva scorrimento per estrarre dall\'archivio</string>
     <string name="ArchivedChatsInfo">Le chat archiviate restano accessibili dal menu della lista chat.</string>
     <string name="DownloadSpeedBoost">Accelerazione download</string>
     <string name="DownloadSpeedBoostOff">Disattivata</string>
@@ -99,6 +99,10 @@
     <string name="MoreMenu">Altro…</string>
     <string name="Browser">Browser</string>
     <string name="SortByUnread">Non letti per primi</string>
+    <string name="ChatStatistics">Statistiche chat</string>
+    <string name="ChatStatisticsUnarchived">Non archiviate</string>
+    <string name="ChatStatisticsArchived">Archiviate</string>
+    <string name="ChatStatisticsTotal">Totale</string>
     <string name="ShowSenderAvatar">Avatar del mittente</string>
     <string name="FolderTabStyle">Stile schede</string>
     <string name="FolderTabStyleTitle">Titolo</string>
@@ -227,6 +231,8 @@
     <string name="TranslationProvider">Servizio di traduzione</string>
     <string name="TranslationLanguage">Traduci in</string>
     <string name="TranslationFollowApp">Segui lingua dell\'app</string>
+    <string name="PinnedLanguages">Lingue fissate</string>
+    <string name="PinnedLanguagesInfo">Tieni premuta una lingua per fissarla in cima a tutti gli elenchi delle lingue.</string>
     <string name="TranslationUnsupportedLanguage">La lingua selezionata non è supportata da questo servizio di traduzione.</string>
     <string name="TranslationShowOriginal">Mostra originale</string>
     <string name="TranslationShowOriginalOff">Disattivato</string>
@@ -250,7 +256,11 @@
     <string name="LlmSystemPrompt">Prompt di sistema</string>
     <string name="LlmUserPrompt">Prompt utente</string>
     <string name="LlmRestoreDefault">Ripristina predefinito</string>
+    <string name="PromptCharacters_zero">%1$s caratteri</string>
     <string name="PromptCharacters_one">%1$s carattere</string>
+    <string name="PromptCharacters_two">%1$s caratteri</string>
+    <string name="PromptCharacters_few">%1$s caratteri</string>
+    <string name="PromptCharacters_many">%1$s caratteri</string>
     <string name="PromptCharacters_other">%1$s caratteri</string>
     <string name="LlmPromptUnsaved">Salvare le modifiche a questo prompt prima di uscire?</string>
     <string name="LlmPlaceholdersInfo">**@text** viene sostituito con il testo da tradurre.\n**@toLang** viene sostituito con la lingua di destinazione.\nTocca un segnaposto per inserirlo nel prompt utente.</string>
@@ -269,7 +279,7 @@
     <string name="TranslateArticle">Traduci</string>
     <string name="TranslatingArticle">Traduzione…</string>
     <string name="TranslateArticlePartialFailure">Alcune parti non sono state tradotte.</string>
-    <string name="TranslationDefault">Lingua predefinita</string>
+    <string name="TranslationDefault">Predefinita (%1$s)</string>
     <string name="InputTranslate">Traduci (%1$s)</string>
     <string name="InputTranslateWithAI">Traduci con IA (%1$s)</string>
     <string name="InputTranslationDone">Testo tradotto</string>
@@ -299,6 +309,14 @@
     <string name="ImportSettingsButton">Importa</string>
     <string name="ResetSettings">Ripristina impostazioni</string>
     <string name="ResetSettingsAlert">Tutte le impostazioni verranno riportate ai valori predefiniti e l\'app verrà riavviata.</string>
+    <string name="CrashLogs">Log degli arresti anomali</string>
+    <string name="NoCrashLogs">Nessun log di arresto anomalo</string>
+    <string name="NoCrashLogsInfo">I log degli arresti anomali appariranno qui\nin caso di chiusura imprevista di Aoigram.</string>
+    <string name="CrashLogsInfo">I log degli arresti anomali includono informazioni sul dispositivo e le tue impostazioni di Aoigram, escludendo testi come chiavi API e prompt.</string>
+    <string name="ClearCrashLogs">Cancella log degli arresti anomali</string>
+    <string name="TestCrash">Prova arresto anomalo</string>
+    <string name="AppCrashed">Aoigram si è chiuso in modo imprevisto</string>
+    <string name="AppCrashedHint">Tocca per visualizzare il log dell\'arresto anomalo e condividerlo con lo sviluppatore.</string>
     <string name="ToBeginning">All\'inizio</string>
     <string name="MyMessages">I miei messaggi</string>
     <string name="DeleteMyMessages">Elimina i miei messaggi</string>

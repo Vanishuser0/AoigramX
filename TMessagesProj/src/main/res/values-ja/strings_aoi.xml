@@ -41,7 +41,7 @@
     <string name="SkipGiftsTab">ギフトタブをスキップ</string>
     <string name="SkipGiftsTabInfo">プロフィールを開いた際に次のタブを表示します。</string>
     <string name="RemoveArchive">チャットリストから削除</string>
-    <string name="DisableUnarchiveSwipe">スワイプでのアーカイブ表示を無効化</string>
+    <string name="DisableUnarchiveSwipe">スワイプでのアーカイブ解除を無効化</string>
     <string name="ArchivedChatsInfo">アーカイブ済みチャットはチャットリストのメニューから引き続きアクセスできます。</string>
     <string name="DownloadSpeedBoost">ダウンロード高速化</string>
     <string name="DownloadSpeedBoostOff">オフ</string>
@@ -99,6 +99,10 @@
     <string name="MoreMenu">その他…</string>
     <string name="Browser">ブラウザ</string>
     <string name="SortByUnread">未読を優先</string>
+    <string name="ChatStatistics">チャット統計</string>
+    <string name="ChatStatisticsUnarchived">メイン</string>
+    <string name="ChatStatisticsArchived">アーカイブ</string>
+    <string name="ChatStatisticsTotal">合計</string>
     <string name="ShowSenderAvatar">送信者のアイコンを表示</string>
     <string name="FolderTabStyle">タブのスタイル</string>
     <string name="FolderTabStyleTitle">タイトル</string>
@@ -227,6 +231,8 @@
     <string name="TranslationProvider">翻訳サービス</string>
     <string name="TranslationLanguage">翻訳先の言語</string>
     <string name="TranslationFollowApp">アプリの言語に合わせる</string>
+    <string name="PinnedLanguages">固定した言語</string>
+    <string name="PinnedLanguagesInfo">言語を長押しすると、すべての言語リストの先頭に固定できます。</string>
     <string name="TranslationUnsupportedLanguage">選択された言語はこの翻訳サービスではサポートされていません。</string>
     <string name="TranslationShowOriginal">原文を表示</string>
     <string name="TranslationShowOriginalOff">オフ</string>
@@ -250,7 +256,11 @@
     <string name="LlmSystemPrompt">システムプロンプト</string>
     <string name="LlmUserPrompt">ユーザープロンプト</string>
     <string name="LlmRestoreDefault">デフォルトに戻す</string>
+    <string name="PromptCharacters_zero">%1$s 文字</string>
     <string name="PromptCharacters_one">%1$s 文字</string>
+    <string name="PromptCharacters_two">%1$s 文字</string>
+    <string name="PromptCharacters_few">%1$s 文字</string>
+    <string name="PromptCharacters_many">%1$s 文字</string>
     <string name="PromptCharacters_other">%1$s 文字</string>
     <string name="LlmPromptUnsaved">画面を離れる前にこのプロンプトへの変更を保存しますか？</string>
     <string name="LlmPlaceholdersInfo">**@text** は翻訳対象のテキストに置き換えられます。\n**@toLang** は翻訳先の言語に置き換えられます。\nプレースホルダーをタップするとユーザープロンプトに挿入されます。</string>
@@ -269,7 +279,7 @@
     <string name="TranslateArticle">翻訳</string>
     <string name="TranslatingArticle">翻訳中…</string>
     <string name="TranslateArticlePartialFailure">一部の翻訳に失敗しました。</string>
-    <string name="TranslationDefault">デフォルトの言語</string>
+    <string name="TranslationDefault">デフォルト (%1$s)</string>
     <string name="InputTranslate">翻訳 (%1$s)</string>
     <string name="InputTranslateWithAI">AI で翻訳 (%1$s)</string>
     <string name="InputTranslationDone">テキストを翻訳しました</string>
@@ -299,6 +309,14 @@
     <string name="ImportSettingsButton">インポート</string>
     <string name="ResetSettings">設定をリセット</string>
     <string name="ResetSettingsAlert">すべての設定が初期状態に戻り、アプリが再起動します。</string>
+    <string name="CrashLogs">クラッシュログ</string>
+    <string name="NoCrashLogs">クラッシュログはありません</string>
+    <string name="NoCrashLogsInfo">Aoigram がクラッシュすると、\nここにログが表示されます。</string>
+    <string name="CrashLogsInfo">クラッシュログには端末情報と Aoigram の設定が含まれますが、API キーやプロンプトなどのテキストは除外されます。</string>
+    <string name="ClearCrashLogs">クラッシュログを消去</string>
+    <string name="TestCrash">テストクラッシュ</string>
+    <string name="AppCrashed">Aoigram がクラッシュしました</string>
+    <string name="AppCrashedHint">タップしてクラッシュログを表示し、開発者に共有できます。</string>
     <string name="ToBeginning">先頭へ移動</string>
     <string name="MyMessages">自分のメッセージ</string>
     <string name="DeleteMyMessages">自分のメッセージを削除</string>

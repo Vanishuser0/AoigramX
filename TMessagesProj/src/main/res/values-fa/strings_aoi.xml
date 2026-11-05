@@ -41,7 +41,7 @@
     <string name="SkipGiftsTab">رد کردن تب هدایا</string>
     <string name="SkipGiftsTabInfo">هنگام باز کردن پروفایل، تب بعدی نمایش داده می‌شود.</string>
     <string name="RemoveArchive">حذف از فهرست چت‌ها</string>
-    <string name="DisableUnarchiveSwipe">غیرفعال کردن کشیدن برای باز کردن بایگانی</string>
+    <string name="DisableUnarchiveSwipe">غیرفعال کردن کشیدن برای خارج کردن از بایگانی</string>
     <string name="ArchivedChatsInfo">چت‌های بایگانی‌شده همچنان از منوی فهرست چت‌ها در دسترس خواهند بود.</string>
     <string name="DownloadSpeedBoost">افزایش سرعت دانلود</string>
     <string name="DownloadSpeedBoostOff">خاموش</string>
@@ -99,6 +99,10 @@
     <string name="MoreMenu">بیشتر…</string>
     <string name="Browser">مرورگر</string>
     <string name="SortByUnread">ابتدا خوانده‌نشده‌ها</string>
+    <string name="ChatStatistics">آمار چت‌ها</string>
+    <string name="ChatStatisticsUnarchived">بایگانی‌نشده</string>
+    <string name="ChatStatisticsArchived">بایگانی‌شده</string>
+    <string name="ChatStatisticsTotal">مجموع</string>
     <string name="ShowSenderAvatar">تصویر پروفایل فرستنده</string>
     <string name="FolderTabStyle">سبک تب پوشه‌ها</string>
     <string name="FolderTabStyleTitle">عنوان</string>
@@ -227,6 +231,8 @@
     <string name="TranslationProvider">سرویس ترجمه</string>
     <string name="TranslationLanguage">ترجمه به</string>
     <string name="TranslationFollowApp">پیروی از زبان برنامه</string>
+    <string name="PinnedLanguages">زبان‌های سنجاق‌شده</string>
+    <string name="PinnedLanguagesInfo">یک زبان را نگه دارید تا در بالای همه فهرست‌های زبان سنجاق شود.</string>
     <string name="TranslationUnsupportedLanguage">زبان انتخاب‌شده توسط این سرویس ترجمه پشتیبانی نمی‌شود.</string>
     <string name="TranslationShowOriginal">نمایش متن اصلی</string>
     <string name="TranslationShowOriginalOff">خاموش</string>
@@ -250,7 +256,11 @@
     <string name="LlmSystemPrompt">پرامپت سیستم</string>
     <string name="LlmUserPrompt">پرامپت کاربر</string>
     <string name="LlmRestoreDefault">بازگردانی به پیش‌فرض</string>
+    <string name="PromptCharacters_zero">%1$s نویسه</string>
     <string name="PromptCharacters_one">%1$s نویسه</string>
+    <string name="PromptCharacters_two">%1$s نویسه</string>
+    <string name="PromptCharacters_few">%1$s نویسه</string>
+    <string name="PromptCharacters_many">%1$s نویسه</string>
     <string name="PromptCharacters_other">%1$s نویسه</string>
     <string name="LlmPromptUnsaved">پیش از خروج، تغییرات این پرامپت ذخیره شود؟</string>
     <string name="LlmPlaceholdersInfo">**@text** با متن مورد نظر برای ترجمه جایگزین می‌شود.\n**@toLang** با زبان مقصد جایگزین می‌شود.\nروی هر متغیر ضربه بزنید تا در پرامپت کاربر درج شود.</string>
@@ -269,7 +279,7 @@
     <string name="TranslateArticle">ترجمه</string>
     <string name="TranslatingArticle">در حال ترجمه…</string>
     <string name="TranslateArticlePartialFailure">ترجمه برخی از بخش‌ها انجام نشد.</string>
-    <string name="TranslationDefault">زبان پیش‌فرض</string>
+    <string name="TranslationDefault">پیش‌فرض (%1$s)</string>
     <string name="InputTranslate">ترجمه (%1$s)</string>
     <string name="InputTranslateWithAI">ترجمه با هوش مصنوعی (%1$s)</string>
     <string name="InputTranslationDone">متن ترجمه شد</string>
@@ -299,6 +309,14 @@
     <string name="ImportSettingsButton">درون‌ریزی</string>
     <string name="ResetSettings">بازنشانی تنظیمات</string>
     <string name="ResetSettingsAlert">تمامی تنظیمات به حالت پیش‌فرض بازگشته و برنامه مجدداً راه‌اندازی خواهد شد.</string>
+    <string name="CrashLogs">گزارش‌های کرش</string>
+    <string name="NoCrashLogs">گزارش کرشی وجود ندارد</string>
+    <string name="NoCrashLogsInfo">در صورت بسته شدن ناگهانی Aoigram،\nگزارش‌های کرش در اینجا نمایش داده می‌شوند.</string>
+    <string name="CrashLogsInfo">گزارش‌های کرش شامل اطلاعات دستگاه و تنظیمات Aoigram شما هستند و متن‌هایی مانند کلیدهای API و پرامپت‌ها را شامل نمی‌شوند.</string>
+    <string name="ClearCrashLogs">پاک کردن گزارش‌های کرش</string>
+    <string name="TestCrash">کرش آزمایشی</string>
+    <string name="AppCrashed">Aoigram به طور ناگهانی بسته شد</string>
+    <string name="AppCrashedHint">برای مشاهده گزارش کرش و اشتراک‌گذاری آن با توسعه‌دهنده ضربه بزنید.</string>
     <string name="ToBeginning">رفتن به ابتدا</string>
     <string name="MyMessages">پیام‌های من</string>
     <string name="DeleteMyMessages">حذف پیام‌های من</string>

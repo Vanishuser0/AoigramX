@@ -41,7 +41,7 @@
     <string name="SkipGiftsTab">Pomiń kartę Prezenty</string>
     <string name="SkipGiftsTabInfo">Profile będą otwierane od razu na następnej karcie.</string>
     <string name="RemoveArchive">Usuń z listy czatów</string>
-    <string name="DisableUnarchiveSwipe">Wyłącz gest otwierania archiwum</string>
+    <string name="DisableUnarchiveSwipe">Wyłącz gest przywracania z archiwum</string>
     <string name="ArchivedChatsInfo">Zarchiwizowane czaty pozostają dostępne z menu listy czatów.</string>
     <string name="DownloadSpeedBoost">Przyspieszenie pobierania</string>
     <string name="DownloadSpeedBoostOff">Wył.</string>
@@ -99,6 +99,10 @@
     <string name="MoreMenu">Więcej…</string>
     <string name="Browser">Przeglądarka</string>
     <string name="SortByUnread">Najpierw nieprzeczytane</string>
+    <string name="ChatStatistics">Statystyki czatów</string>
+    <string name="ChatStatisticsUnarchived">Poza archiwum</string>
+    <string name="ChatStatisticsArchived">W archiwum</string>
+    <string name="ChatStatisticsTotal">Łącznie</string>
     <string name="ShowSenderAvatar">Awatar nadawcy</string>
     <string name="FolderTabStyle">Styl kart</string>
     <string name="FolderTabStyleTitle">Tytuł</string>
@@ -227,6 +231,8 @@
     <string name="TranslationProvider">Usługa tłumaczenia</string>
     <string name="TranslationLanguage">Przetłumacz na</string>
     <string name="TranslationFollowApp">Zgodnie z językiem aplikacji</string>
+    <string name="PinnedLanguages">Przypięte języki</string>
+    <string name="PinnedLanguagesInfo">Przytrzymaj język, aby przypiąć go na górze wszystkich list języków.</string>
     <string name="TranslationUnsupportedLanguage">Wybrany język nie jest obsługiwany przez tę usługę tłumaczenia.</string>
     <string name="TranslationShowOriginal">Pokaż oryginał</string>
     <string name="TranslationShowOriginalOff">Wył.</string>
@@ -250,7 +256,9 @@
     <string name="LlmSystemPrompt">Prompt systemowy</string>
     <string name="LlmUserPrompt">Prompt użytkownika</string>
     <string name="LlmRestoreDefault">Przywróć domyślne</string>
+    <string name="PromptCharacters_zero">%1$s znaków</string>
     <string name="PromptCharacters_one">%1$s znak</string>
+    <string name="PromptCharacters_two">%1$s znaków</string>
     <string name="PromptCharacters_few">%1$s znaki</string>
     <string name="PromptCharacters_many">%1$s znaków</string>
     <string name="PromptCharacters_other">%1$s znaków</string>
@@ -271,7 +279,7 @@
     <string name="TranslateArticle">Przetłumacz</string>
     <string name="TranslatingArticle">Tłumaczenie…</string>
     <string name="TranslateArticlePartialFailure">Niektórych części nie udało się przetłumaczyć.</string>
-    <string name="TranslationDefault">Domyślny język</string>
+    <string name="TranslationDefault">Domyślny (%1$s)</string>
     <string name="InputTranslate">Przetłumacz (%1$s)</string>
     <string name="InputTranslateWithAI">Przetłumacz z AI (%1$s)</string>
     <string name="InputTranslationDone">Przetłumaczono tekst</string>
@@ -301,6 +309,14 @@
     <string name="ImportSettingsButton">Importuj</string>
     <string name="ResetSettings">Zresetuj ustawienia</string>
     <string name="ResetSettingsAlert">Wszystkie ustawienia zostaną przywrócone do domyślnych, a aplikacja uruchomi się ponownie.</string>
+    <string name="CrashLogs">Dzienniki awarii</string>
+    <string name="NoCrashLogs">Brak dzienników awarii</string>
+    <string name="NoCrashLogsInfo">Dzienniki awarii pojawią się tutaj,\njeśli Aoigram ulegnie awarii.</string>
+    <string name="CrashLogsInfo">Dzienniki awarii zawierają informacje o urządzeniu oraz ustawienia Aoigram, z wyłączeniem tekstów takich jak klucze API i prompty.</string>
+    <string name="ClearCrashLogs">Wyczyść dzienniki awarii</string>
+    <string name="TestCrash">Testowa awaria</string>
+    <string name="AppCrashed">Aoigram uległ awarii</string>
+    <string name="AppCrashedHint">Dotknij, aby wyświetlić dziennik awarii i udostępnić go programiście.</string>
     <string name="ToBeginning">Na początek</string>
     <string name="MyMessages">Moje wiadomości</string>
     <string name="DeleteMyMessages">Usuń moje wiadomości</string>

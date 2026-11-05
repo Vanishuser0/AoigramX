@@ -41,7 +41,7 @@
     <string name="SkipGiftsTab">Pular aba Presentes</string>
     <string name="SkipGiftsTabInfo">Os perfis serão abertos diretamente na próxima aba.</string>
     <string name="RemoveArchive">Remover da lista de conversas</string>
-    <string name="DisableUnarchiveSwipe">Desativar gesto de abrir arquivadas</string>
+    <string name="DisableUnarchiveSwipe">Desativar gesto de desarquivar</string>
     <string name="ArchivedChatsInfo">As conversas arquivadas continuam acessíveis pelo menu da lista de conversas.</string>
     <string name="DownloadSpeedBoost">Aceleração de download</string>
     <string name="DownloadSpeedBoostOff">Desativado</string>
@@ -99,6 +99,10 @@
     <string name="MoreMenu">Mais…</string>
     <string name="Browser">Navegador</string>
     <string name="SortByUnread">Não lidas primeiro</string>
+    <string name="ChatStatistics">Estatísticas de conversas</string>
+    <string name="ChatStatisticsUnarchived">Não arquivadas</string>
+    <string name="ChatStatisticsArchived">Arquivadas</string>
+    <string name="ChatStatisticsTotal">Total</string>
     <string name="ShowSenderAvatar">Foto do remetente</string>
     <string name="FolderTabStyle">Estilo das abas</string>
     <string name="FolderTabStyleTitle">Título</string>
@@ -227,6 +231,8 @@
     <string name="TranslationProvider">Serviço de tradução</string>
     <string name="TranslationLanguage">Traduzir para</string>
     <string name="TranslationFollowApp">Seguir idioma do app</string>
+    <string name="PinnedLanguages">Idiomas fixados</string>
+    <string name="PinnedLanguagesInfo">Toque e segure um idioma para fixá-lo no topo de todas as listas de idiomas.</string>
     <string name="TranslationUnsupportedLanguage">O idioma selecionado não é compatível com este serviço de tradução.</string>
     <string name="TranslationShowOriginal">Mostrar original</string>
     <string name="TranslationShowOriginalOff">Desativado</string>
@@ -250,7 +256,11 @@
     <string name="LlmSystemPrompt">Prompt do sistema</string>
     <string name="LlmUserPrompt">Prompt do usuário</string>
     <string name="LlmRestoreDefault">Restaurar padrão</string>
+    <string name="PromptCharacters_zero">%1$s caracteres</string>
     <string name="PromptCharacters_one">%1$s caractere</string>
+    <string name="PromptCharacters_two">%1$s caracteres</string>
+    <string name="PromptCharacters_few">%1$s caracteres</string>
+    <string name="PromptCharacters_many">%1$s caracteres</string>
     <string name="PromptCharacters_other">%1$s caracteres</string>
     <string name="LlmPromptUnsaved">Salvar as alterações neste prompt antes de sair?</string>
     <string name="LlmPlaceholdersInfo">**@text** é substituído pelo texto a traduzir.\n**@toLang** é substituído pelo idioma de destino.\nToque em um marcador para inseri-lo no prompt do usuário.</string>
@@ -269,7 +279,7 @@
     <string name="TranslateArticle">Traduzir</string>
     <string name="TranslatingArticle">Traduzindo…</string>
     <string name="TranslateArticlePartialFailure">Algumas partes não puderam ser traduzidas.</string>
-    <string name="TranslationDefault">Idioma padrão</string>
+    <string name="TranslationDefault">Padrão (%1$s)</string>
     <string name="InputTranslate">Traduzir (%1$s)</string>
     <string name="InputTranslateWithAI">Traduzir com IA (%1$s)</string>
     <string name="InputTranslationDone">Texto traduzido</string>
@@ -299,6 +309,14 @@
     <string name="ImportSettingsButton">Importar</string>
     <string name="ResetSettings">Redefinir configurações</string>
     <string name="ResetSettingsAlert">Todas as configurações voltarão ao padrão e o aplicativo será reiniciado.</string>
+    <string name="CrashLogs">Registros de falhas</string>
+    <string name="NoCrashLogs">Nenhum registro de falha</string>
+    <string name="NoCrashLogsInfo">Os registros de falhas aparecerão aqui\nse o Aoigram fechar inesperadamente.</string>
+    <string name="CrashLogsInfo">Os registros de falhas incluem informações do dispositivo e suas configurações do Aoigram, excluindo textos como chaves de API e prompts.</string>
+    <string name="ClearCrashLogs">Limpar registros de falhas</string>
+    <string name="TestCrash">Testar falha</string>
+    <string name="AppCrashed">O Aoigram fechou inesperadamente</string>
+    <string name="AppCrashedHint">Toque para ver o registro de falha e compartilhá-lo com o desenvolvedor.</string>
     <string name="ToBeginning">Ir para o início</string>
     <string name="MyMessages">Minhas mensagens</string>
     <string name="DeleteMyMessages">Apagar minhas mensagens</string>

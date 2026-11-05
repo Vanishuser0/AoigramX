@@ -41,7 +41,7 @@
     <string name="SkipGiftsTab">Пропускать вкладку «Подарки»</string>
     <string name="SkipGiftsTabInfo">При открытии профиля будет сразу открываться следующая вкладка.</string>
     <string name="RemoveArchive">Убрать из списка чатов</string>
-    <string name="DisableUnarchiveSwipe">Отключить жест открытия архива</string>
+    <string name="DisableUnarchiveSwipe">Отключить жест возврата из архива</string>
     <string name="ArchivedChatsInfo">Архивные чаты останутся доступны через меню в списке чатов.</string>
     <string name="DownloadSpeedBoost">Ускорение загрузки</string>
     <string name="DownloadSpeedBoostOff">Выкл</string>
@@ -99,6 +99,10 @@
     <string name="MoreMenu">Ещё…</string>
     <string name="Browser">Браузер</string>
     <string name="SortByUnread">Сначала непрочитанные</string>
+    <string name="ChatStatistics">Статистика чатов</string>
+    <string name="ChatStatisticsUnarchived">Не в архиве</string>
+    <string name="ChatStatisticsArchived">В архиве</string>
+    <string name="ChatStatisticsTotal">Всего</string>
     <string name="ShowSenderAvatar">Аватар отправителя</string>
     <string name="FolderTabStyle">Стиль вкладок</string>
     <string name="FolderTabStyleTitle">Название</string>
@@ -227,6 +231,8 @@
     <string name="TranslationProvider">Сервис перевода</string>
     <string name="TranslationLanguage">Язык перевода</string>
     <string name="TranslationFollowApp">Как в приложении</string>
+    <string name="PinnedLanguages">Закреплённые языки</string>
+    <string name="PinnedLanguagesInfo">Удерживайте язык, чтобы закрепить его вверху всех списков языков.</string>
     <string name="TranslationUnsupportedLanguage">Выбранный язык не поддерживается этим сервисом перевода.</string>
     <string name="TranslationShowOriginal">Показывать оригинал</string>
     <string name="TranslationShowOriginalOff">Выкл</string>
@@ -250,7 +256,9 @@
     <string name="LlmSystemPrompt">Системный промпт</string>
     <string name="LlmUserPrompt">Пользовательский промпт</string>
     <string name="LlmRestoreDefault">По умолчанию</string>
+    <string name="PromptCharacters_zero">%1$s символов</string>
     <string name="PromptCharacters_one">%1$s символ</string>
+    <string name="PromptCharacters_two">%1$s символов</string>
     <string name="PromptCharacters_few">%1$s символа</string>
     <string name="PromptCharacters_many">%1$s символов</string>
     <string name="PromptCharacters_other">%1$s символов</string>
@@ -271,7 +279,7 @@
     <string name="TranslateArticle">Перевести</string>
     <string name="TranslatingArticle">Перевод…</string>
     <string name="TranslateArticlePartialFailure">Некоторые части не удалось перевести.</string>
-    <string name="TranslationDefault">Язык по умолчанию</string>
+    <string name="TranslationDefault">По умолчанию (%1$s)</string>
     <string name="InputTranslate">Перевести (%1$s)</string>
     <string name="InputTranslateWithAI">ИИ-перевод (%1$s)</string>
     <string name="InputTranslationDone">Текст переведён</string>
@@ -301,6 +309,14 @@
     <string name="ImportSettingsButton">Импортировать</string>
     <string name="ResetSettings">Сброс настроек</string>
     <string name="ResetSettingsAlert">Все настройки будут сброшены по умолчанию, а приложение перезапустится.</string>
+    <string name="CrashLogs">Логи сбоев</string>
+    <string name="NoCrashLogs">Нет логов сбоев</string>
+    <string name="NoCrashLogsInfo">Логи появятся здесь,\nесли в Aoigram произойдёт сбой.</string>
+    <string name="CrashLogsInfo">Логи сбоев содержат сведения об устройстве и настройки Aoigram, без текстовых данных вроде API-ключей и промптов.</string>
+    <string name="ClearCrashLogs">Очистить логи сбоев</string>
+    <string name="TestCrash">Тестовый сбой</string>
+    <string name="AppCrashed">В Aoigram произошёл сбой</string>
+    <string name="AppCrashedHint">Нажмите, чтобы просмотреть лог сбоя и отправить его разработчику.</string>
     <string name="ToBeginning">В начало</string>
     <string name="MyMessages">Мои сообщения</string>
     <string name="DeleteMyMessages">Удалить мои сообщения</string>

@@ -258,7 +258,11 @@
     <string name="LlmSystemPrompt">System prompt</string>
     <string name="LlmUserPrompt">User prompt</string>
     <string name="LlmRestoreDefault">Restore default</string>
+    <string name="PromptCharacters_zero">%1$s characters</string>
     <string name="PromptCharacters_one">%1$s character</string>
+    <string name="PromptCharacters_two">%1$s characters</string>
+    <string name="PromptCharacters_few">%1$s characters</string>
+    <string name="PromptCharacters_many">%1$s characters</string>
     <string name="PromptCharacters_other">%1$s characters</string>
     <string name="LlmPromptUnsaved">Save your changes to this prompt before leaving?</string>
     <string name="LlmPlaceholdersInfo">**@text** is replaced with the text to translate.\n**@toLang** is replaced with the target language.\nTap a placeholder to insert it into the user prompt.</string>

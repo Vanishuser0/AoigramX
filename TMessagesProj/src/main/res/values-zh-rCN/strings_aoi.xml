@@ -41,7 +41,7 @@
     <string name="SkipGiftsTab">跳过礼物标签页</string>
     <string name="SkipGiftsTabInfo">打开资料页时默认展示下一个标签页。</string>
     <string name="RemoveArchive">从聊天列表中移除</string>
-    <string name="DisableUnarchiveSwipe">禁用下滑打开归档</string>
+    <string name="DisableUnarchiveSwipe">禁用滑动取消归档</string>
     <string name="ArchivedChatsInfo">仍可通过聊天列表菜单访问已归档聊天。</string>
     <string name="DownloadSpeedBoost">下载加速</string>
     <string name="DownloadSpeedBoostOff">关闭</string>
@@ -99,6 +99,10 @@
     <string name="MoreMenu">更多…</string>
     <string name="Browser">浏览器</string>
     <string name="SortByUnread">未读优先</string>
+    <string name="ChatStatistics">聊天统计</string>
+    <string name="ChatStatisticsUnarchived">未归档</string>
+    <string name="ChatStatisticsArchived">已归档</string>
+    <string name="ChatStatisticsTotal">总计</string>
     <string name="ShowSenderAvatar">显示发送者头像</string>
     <string name="FolderTabStyle">标签栏样式</string>
     <string name="FolderTabStyleTitle">标题</string>
@@ -227,6 +231,8 @@
     <string name="TranslationProvider">翻译服务</string>
     <string name="TranslationLanguage">目标语言</string>
     <string name="TranslationFollowApp">跟随应用</string>
+    <string name="PinnedLanguages">置顶语言</string>
+    <string name="PinnedLanguagesInfo">长按语言可将其置顶到所有语言列表顶部。</string>
     <string name="TranslationUnsupportedLanguage">当前翻译服务不支持所选语言。</string>
     <string name="TranslationShowOriginal">显示原文</string>
     <string name="TranslationShowOriginalOff">关闭</string>
@@ -250,7 +256,11 @@
     <string name="LlmSystemPrompt">系统提示词</string>
     <string name="LlmUserPrompt">用户提示词</string>
     <string name="LlmRestoreDefault">恢复默认</string>
+    <string name="PromptCharacters_zero">%1$s 个字符</string>
     <string name="PromptCharacters_one">%1$s 个字符</string>
+    <string name="PromptCharacters_two">%1$s 个字符</string>
+    <string name="PromptCharacters_few">%1$s 个字符</string>
+    <string name="PromptCharacters_many">%1$s 个字符</string>
     <string name="PromptCharacters_other">%1$s 个字符</string>
     <string name="LlmPromptUnsaved">离开前是否保存对此提示词的更改？</string>
     <string name="LlmPlaceholdersInfo">**@text** 会替换为待翻译文本。\n**@toLang** 会替换为目标语言。\n点按占位符可将其插入到用户提示词中。</string>
@@ -269,7 +279,7 @@
     <string name="TranslateArticle">翻译</string>
     <string name="TranslatingArticle">翻译中…</string>
     <string name="TranslateArticlePartialFailure">部分内容翻译失败。</string>
-    <string name="TranslationDefault">默认语言</string>
+    <string name="TranslationDefault">默认 (%1$s)</string>
     <string name="InputTranslate">翻译 (%1$s)</string>
     <string name="InputTranslateWithAI">AI 翻译 (%1$s)</string>
     <string name="InputTranslationDone">文本已翻译</string>
@@ -299,6 +309,14 @@
     <string name="ImportSettingsButton">导入</string>
     <string name="ResetSettings">重置设置</string>
     <string name="ResetSettingsAlert">所有设置将恢复为默认值，且应用将重启。</string>
+    <string name="CrashLogs">崩溃日志</string>
+    <string name="NoCrashLogs">暂无崩溃日志</string>
+    <string name="NoCrashLogsInfo">如果 Aoigram 发生崩溃，\n崩溃日志将显示在这里。</string>
+    <string name="CrashLogsInfo">崩溃日志包含设备信息和你的 Aoigram 设置，不包含 API 密钥和提示词等文本。</string>
+    <string name="ClearCrashLogs">清除崩溃日志</string>
+    <string name="TestCrash">测试崩溃</string>
+    <string name="AppCrashed">Aoigram 发生了崩溃</string>
+    <string name="AppCrashedHint">点按查看崩溃日志并分享给开发者。</string>
     <string name="ToBeginning">回到顶部</string>
     <string name="MyMessages">我的消息</string>
     <string name="DeleteMyMessages">删除我的消息</string>

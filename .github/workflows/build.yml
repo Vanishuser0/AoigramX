@@ -32,6 +32,8 @@ jobs:
       CCACHE_MAXSIZE: 10G
       AOI_ABI: universal
       RELEASE_CHANNEL: ${{ github.ref_name == vars.STABLE_BRANCH && 'stable' || github.ref_name == vars.BETA_BRANCH && 'beta' || '' }}
+    outputs:
+      release_hook_body: ${{ steps.release_hook.outputs.body }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -104,12 +106,11 @@ jobs:
         with:
           name: universal
           path: TMessagesProj_App/build/outputs/apk/release/*-universal.apk
-      - name: Notify release hook
+      - name: Prepare release hook
+        id: release_hook
         if: env.RELEASE_CHANNEL != ''
         env:
           BUILD_TIMESTAMP: ${{ steps.build.outputs.build_timestamp }}
-          RELEASE_HOOK_URL: ${{ secrets.RELEASE_HOOK_URL }}
-          RELEASE_HOOK_SECRET: ${{ secrets.RELEASE_HOOK_SECRET }}
         run: |
           OUTPUT_DIR=TMessagesProj_App/build/outputs/apk/release
           METADATA="$OUTPUT_DIR/output-metadata.json"
@@ -127,6 +128,20 @@ jobs:
             --argjson version_code "$(jq '.elements[0].versionCode' "$METADATA")" \
             --argjson apks "$APKS" \
             '$ARGS.named')
+          echo "body=$BODY" >> "$GITHUB_OUTPUT"
+
+  notify:
+    name: Notify release hook
+    needs: build
+    if: needs.build.outputs.release_hook_body != ''
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify release hook
+        env:
+          BODY: ${{ needs.build.outputs.release_hook_body }}
+          RELEASE_HOOK_URL: ${{ secrets.RELEASE_HOOK_URL }}
+          RELEASE_HOOK_SECRET: ${{ secrets.RELEASE_HOOK_SECRET }}
+        run: |
           SIGNATURE=$(printf '%s' "$BODY" | openssl dgst -sha256 -hmac "$RELEASE_HOOK_SECRET" | cut -d ' ' -f 2)
           curl --fail-with-body -sS -X POST \
             -H 'Content-Type: application/json' \

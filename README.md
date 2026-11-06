@@ -4,7 +4,7 @@ An unofficial Telegram client for Android.
 
 ## Download
 
-Requires Android 12 or later.
+Requires Android 10 or later.
 
 - [Telegram Channel](https://t.me/Aoigram)
 - [GitHub Releases](https://github.com/risin42/Aoigram/releases)

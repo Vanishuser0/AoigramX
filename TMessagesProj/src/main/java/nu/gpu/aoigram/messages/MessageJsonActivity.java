@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.ExclusionStrategy;
@@ -407,7 +408,7 @@ public final class MessageJsonActivity extends BaseAoiSettingsActivity {
         public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
             super.onInitializeAccessibilityNodeInfo(info);
             if (node.start == null && (node.childCount > 0 || node.isString())) {
-                info.setStateDescription(getString(node.expanded ? R.string.AccDescrExpanded : R.string.AccDescrCollapsed));
+                AccessibilityNodeInfoCompat.wrap(info).setStateDescription(getString(node.expanded ? R.string.AccDescrExpanded : R.string.AccDescrCollapsed));
             }
         }
 

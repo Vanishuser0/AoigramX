@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.os.Build;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -76,8 +77,13 @@ public abstract class BaseAoiSettingsActivity extends BaseFragment {
     private final RectF iBlur3PositionActionBar = new RectF();
 
     protected BaseAoiSettingsActivity() {
-        scrollableViewNoiseSuppressor = new DownscaleScrollableNoiseSuppressor();
-        iBlur3SourceGlassFrosted = new BlurredBackgroundSourceRenderNode(null);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            scrollableViewNoiseSuppressor = new DownscaleScrollableNoiseSuppressor();
+            iBlur3SourceGlassFrosted = new BlurredBackgroundSourceRenderNode(null);
+        } else {
+            scrollableViewNoiseSuppressor = null;
+            iBlur3SourceGlassFrosted = null;
+        }
         iBlur3Positions.add(iBlur3PositionActionBar);
     }
 
@@ -90,7 +96,7 @@ public abstract class BaseAoiSettingsActivity extends BaseFragment {
 
                 int width = getMeasuredWidth();
                 int height = getMeasuredHeight();
-                if (!iBlur3SourceGlassFrosted.inRecording()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !iBlur3SourceGlassFrosted.inRecording()) {
                     Canvas recordingCanvas = iBlur3SourceGlassFrosted.beginRecording(width, height);
                     recordingCanvas.drawColor(getThemedColor(Theme.key_windowBackgroundWhite));
                     if (SharedConfig.chatBlurEnabled()) {
@@ -104,7 +110,7 @@ public abstract class BaseAoiSettingsActivity extends BaseFragment {
 
             @Override
             public void drawBlurRect(Canvas canvas, float y, Rect rect, Paint blurScrimPaint, boolean top) {
-                if (!SharedConfig.chatBlurEnabled()) {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || !SharedConfig.chatBlurEnabled()) {
                     canvas.drawRect(rect, blurScrimPaint);
                     return;
                 }
@@ -158,7 +164,9 @@ public abstract class BaseAoiSettingsActivity extends BaseFragment {
                 if (listView.getScrollState() == RecyclerView.SCROLL_STATE_DRAGGING) {
                     AndroidUtilities.hideKeyboard(fragmentView);
                 }
-                scrollableViewNoiseSuppressor.onScrolled(dx, dy);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    scrollableViewNoiseSuppressor.onScrolled(dx, dy);
+                }
                 blur3InvalidateBlur();
             }
         });
@@ -446,7 +454,7 @@ public abstract class BaseAoiSettingsActivity extends BaseFragment {
     }
 
     private void blur3InvalidateBlur() {
-        if (fragmentView == null) {
+        if (fragmentView == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
             return;
         }
 

@@ -21,6 +21,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
+import androidx.core.view.ViewCompat;
 import androidx.exifinterface.media.ExifInterface;
 
 import org.telegram.messenger.AndroidUtilities;
@@ -345,6 +346,7 @@ public final class MessageDetailsActivity extends BaseAoiSettingsActivity implem
         items.add(UItem.asShadow(downloadName == null ? null : !checkedFile || loading ? getString(R.string.MessageDetailsReading) : localFile == null ? getString(R.string.MessageDetailsNotDownloaded) : null));
     }
 
+    @SuppressLint("InlinedApi")
     private void fillLocalFileItems(ArrayList<UItem> items) {
         items.add(UItem.asHeader(getString(R.string.MessageDetailsLocalMedia)));
         add(items, R.string.MessageDetailsPath, localFile.getAbsolutePath());
@@ -656,7 +658,7 @@ public final class MessageDetailsActivity extends BaseAoiSettingsActivity implem
         }
 
         void setExpanded(boolean expanded, boolean animated) {
-            setStateDescription(getString(expanded ? R.string.AccDescrExpanded : R.string.AccDescrCollapsed));
+            ViewCompat.setStateDescription(this, getString(expanded ? R.string.AccDescrExpanded : R.string.AccDescrCollapsed));
             if (expandAnimator != null) {
                 expandAnimator.cancel();
             }
@@ -687,7 +689,7 @@ public final class MessageDetailsActivity extends BaseAoiSettingsActivity implem
                 int hiddenHeight = layout.getHeight() - layout.getLineTop(6);
                 setMeasuredDimension(getMeasuredWidth(), getMeasuredHeight() - (int) (hiddenHeight * (1 - expandProgress)));
             } else {
-                setStateDescription(null);
+                ViewCompat.setStateDescription(this, null);
             }
         }
 

@@ -25283,7 +25283,6 @@ public class ChatActivity extends BaseFragment implements
         if (messageObject == null || messageObject.messageOwner == null) {
             return false;
         }
-        messageObject.updateTranslation(false);
         boolean updated = false;
         for (MessageObject pinnedMessageObject : pinnedMessageObjects.values()) {
             if (pinnedMessageObject != null && pinnedMessageObject.getId() == messageObject.getId()) {
@@ -25328,7 +25327,7 @@ public class ChatActivity extends BaseFragment implements
                 if (group != null && !groupChecked.contains(group.groupId)) {
                     for (int j = 0; j < group.messages.size(); ++j) {
                         MessageObject groupMessageObject = group.messages.get(j);
-                        if (groupMessageObject != null && groupMessageObject.updateTranslation(false)) {
+                        if (groupMessageObject != null && (groupMessageObject.updateTranslation(false) || groupMessageObject == messageObject)) {
                             update = true;
                         }
                     }
@@ -25347,7 +25346,7 @@ public class ChatActivity extends BaseFragment implements
                 if (update) {
                     if (scroll) {
                         chatLayoutManager.scrollToPositionWithOffset(chatListView.getChildAdapterPosition(child), cell.getTop() - (int) chatListViewPaddingTop, false);
-                    } else if (cellMessageObject.aoiDisplayText != null) {
+                    } else if (messageObject.aoiDisplayText != null) {
                         saveScrollPosition();
                     } else {
                         saveGeneralScroll();
@@ -34010,7 +34009,7 @@ public class ChatActivity extends BaseFragment implements
                 break;
             }
             case OPTION_MESSAGE_DETAILS: {
-                presentFragment(new MessageDetailsActivity(this, selectedObject, currentEncryptedChat != null || isPeerNoForwards()));
+                presentFragment(new MessageDetailsActivity(this, selectedObject, getValidGroupedMessage(selectedObject), currentEncryptedChat != null || isPeerNoForwards()));
                 break;
             }
             case OPTION_MESSAGE_JSON: {
@@ -38480,10 +38479,15 @@ public class ChatActivity extends BaseFragment implements
                         pinnedTop = false;
                     }
 
-                    message.updateTranslation(false);
+                    boolean translationUpdated = message.updateTranslation(false);
                     if (groupedMessages != null) {
                         for (int i = 0; i < groupedMessages.messages.size(); ++i) {
-                            groupedMessages.messages.get(i).updateTranslation(false);
+                            translationUpdated |= groupedMessages.messages.get(i).updateTranslation(false);
+                        }
+                        if (translationUpdated) {
+                            for (int i = 0; i < groupedMessages.messages.size(); ++i) {
+                                groupedMessages.messages.get(i).forceUpdate = true;
+                            }
                         }
                     }
                     if (reversed) {

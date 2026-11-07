@@ -49,7 +49,8 @@ public final class ChatAutoTranslation {
         for (int i = 0; i < entities.size(); i++) {
             TLRPC.MessageEntity entity = entities.get(i);
             if (index < entity.offset || index >= entity.offset + entity.length) continue;
-            if (entity instanceof TLRPC.TL_messageEntityBotCommand
+            if (entity instanceof TLRPC.TL_messageEntityPre
+                    || entity instanceof TLRPC.TL_messageEntityBotCommand
                     || entity instanceof TLRPC.TL_messageEntityEmail
                     || entity instanceof TLRPC.TL_messageEntityUrl
                     || entity instanceof TLRPC.TL_messageEntityMention

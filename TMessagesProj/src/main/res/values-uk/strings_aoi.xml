@@ -41,7 +41,7 @@
     <string name="SkipGiftsTab">Пропускати вкладку «Подарунки»</string>
     <string name="SkipGiftsTabInfo">Під час відкриття профілю одразу відкриватиметься наступна вкладка.</string>
     <string name="RemoveArchive">Прибрати зі списку чатів</string>
-    <string name="DisableUnarchiveSwipe">Вимкнути жест відкриття архіву</string>
+    <string name="DisableUnarchiveSwipe">Вимкнути жест повернення з архіву</string>
     <string name="ArchivedChatsInfo">Архівовані чати залишаться доступними через меню в списку чатів.</string>
     <string name="DownloadSpeedBoost">Прискорення завантаження</string>
     <string name="DownloadSpeedBoostOff">Вимк</string>
@@ -99,6 +99,10 @@
     <string name="MoreMenu">Ще…</string>
     <string name="Browser">Браузер</string>
     <string name="SortByUnread">Спочатку непрочитані</string>
+    <string name="ChatStatistics">Статистика чатів</string>
+    <string name="ChatStatisticsUnarchived">Не в архіві</string>
+    <string name="ChatStatisticsArchived">В архіві</string>
+    <string name="ChatStatisticsTotal">Усього</string>
     <string name="ShowSenderAvatar">Аватар відправника</string>
     <string name="FolderTabStyle">Стиль вкладок</string>
     <string name="FolderTabStyleTitle">Назва</string>
@@ -227,6 +231,8 @@
     <string name="TranslationProvider">Сервіс перекладу</string>
     <string name="TranslationLanguage">Мова перекладу</string>
     <string name="TranslationFollowApp">Як у застосунку</string>
+    <string name="PinnedLanguages">Закріплені мови</string>
+    <string name="PinnedLanguagesInfo">Утримуйте мову, щоб закріпити її вгорі всіх списків мов.</string>
     <string name="TranslationUnsupportedLanguage">Вибрана мова не підтримується цим сервісом перекладу.</string>
     <string name="TranslationShowOriginal">Показувати оригінал</string>
     <string name="TranslationShowOriginalOff">Вимк</string>
@@ -250,7 +256,9 @@
     <string name="LlmSystemPrompt">Системний промпт</string>
     <string name="LlmUserPrompt">Користувацький промпт</string>
     <string name="LlmRestoreDefault">За замовчуванням</string>
+    <string name="PromptCharacters_zero">%1$s символів</string>
     <string name="PromptCharacters_one">%1$s символ</string>
+    <string name="PromptCharacters_two">%1$s символів</string>
     <string name="PromptCharacters_few">%1$s символи</string>
     <string name="PromptCharacters_many">%1$s символів</string>
     <string name="PromptCharacters_other">%1$s символів</string>
@@ -271,7 +279,7 @@
     <string name="TranslateArticle">Перекласти</string>
     <string name="TranslatingArticle">Переклад…</string>
     <string name="TranslateArticlePartialFailure">Деякі частини не вдалося перекласти.</string>
-    <string name="TranslationDefault">Мова за замовчуванням</string>
+    <string name="TranslationDefault">За замовчуванням (%1$s)</string>
     <string name="InputTranslate">Перекласти (%1$s)</string>
     <string name="InputTranslateWithAI">ШІ-переклад (%1$s)</string>
     <string name="InputTranslationDone">Текст перекладено</string>
@@ -284,7 +292,7 @@
     <string name="SendWithoutMarkdown">Надіслати без Markdown</string>
     <string name="PasskeyProviders">Ключі доступу (Passkey) працюють лише з менеджерами паролів, які дозволяють довіряти привілейованим застосункам, наприклад **Bitwarden** і **KeePassDX**.</string>
     <string name="PasskeyNoCredentialAvailable">Немає доступних ключів доступу.</string>
-    <string name="UpdateAoigram">Оновити AoigramX</string>
+    <string name="UpdateAoigramX">Оновити AoigramX</string>
     <string name="Commit">Коміт</string>
     <string name="CheckForUpdates">Перевірити оновлення</string>
     <string name="AutoCheckForUpdates">Перевіряти автоматично</string>
@@ -301,6 +309,14 @@
     <string name="ImportSettingsButton">Імпортувати</string>
     <string name="ResetSettings">Скинути налаштування</string>
     <string name="ResetSettingsAlert">Усі налаштування буде скинуто до стандартних, а застосунок перезапуститься.</string>
+    <string name="CrashLogs">Логи збоїв</string>
+    <string name="NoCrashLogs">Немає логів збоїв</string>
+    <string name="NoCrashLogsInfo">Логи з\'являться тут,\nякщо в AoigramX станеться збій.</string>
+    <string name="CrashLogsInfo">Логи збоїв містять дані про пристрій і налаштування AoigramX, без текстових даних на кшталт API-ключів і промптів.</string>
+    <string name="ClearCrashLogs">Очистити логи збоїв</string>
+    <string name="TestCrash">Тестовий збій</string>
+    <string name="AppCrashed">В AoigramX стався збій</string>
+    <string name="AppCrashedHint">Торкніться, щоб переглянути лог збою та поділитися ним із розробником.</string>
     <string name="ToBeginning">На початок</string>
     <string name="MyMessages">Мої повідомлення</string>
     <string name="DeleteMyMessages">Видалити мої повідомлення</string>

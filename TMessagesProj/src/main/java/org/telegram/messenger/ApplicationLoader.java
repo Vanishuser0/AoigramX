@@ -49,6 +49,8 @@ import org.telegram.ui.LauncherIconController;
 import java.io.File;
 import java.util.Locale;
 
+import nu.gpu.aoigram.utils.CrashLogs;
+
 public class ApplicationLoader extends Application {
 
     public static ApplicationLoader applicationLoaderInstance;
@@ -319,6 +321,7 @@ public class ApplicationLoader extends Application {
             }
             FileLog.d("device = manufacturer=" + Build.MANUFACTURER + ", device=" + Build.DEVICE + ", model=" + Build.MODEL + ", product=" + Build.PRODUCT);
         }
+        CrashLogs.install();
         if (applicationContext == null) {
             applicationContext = getApplicationContext();
         }

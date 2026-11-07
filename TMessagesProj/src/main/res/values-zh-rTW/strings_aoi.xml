@@ -41,7 +41,7 @@
     <string name="SkipGiftsTab">略過禮物分頁</string>
     <string name="SkipGiftsTabInfo">開啟個人資料時預設顯示下一個分頁。</string>
     <string name="RemoveArchive">從聊天列表中移除</string>
-    <string name="DisableUnarchiveSwipe">停用下滑開啟封存</string>
+    <string name="DisableUnarchiveSwipe">停用滑動取消封存</string>
     <string name="ArchivedChatsInfo">仍可透過聊天列表選單存取已封存的聊天室。</string>
     <string name="DownloadSpeedBoost">下載加速</string>
     <string name="DownloadSpeedBoostOff">關閉</string>
@@ -99,6 +99,10 @@
     <string name="MoreMenu">更多…</string>
     <string name="Browser">瀏覽器</string>
     <string name="SortByUnread">未讀優先</string>
+    <string name="ChatStatistics">聊天統計</string>
+    <string name="ChatStatisticsUnarchived">未封存</string>
+    <string name="ChatStatisticsArchived">已封存</string>
+    <string name="ChatStatisticsTotal">總計</string>
     <string name="ShowSenderAvatar">顯示傳送者頭像</string>
     <string name="FolderTabStyle">分頁列樣式</string>
     <string name="FolderTabStyleTitle">標題</string>
@@ -227,6 +231,8 @@
     <string name="TranslationProvider">翻譯服務</string>
     <string name="TranslationLanguage">目標語言</string>
     <string name="TranslationFollowApp">跟隨應用程式</string>
+    <string name="PinnedLanguages">置頂語言</string>
+    <string name="PinnedLanguagesInfo">長按語言可將其置頂至所有語言清單頂部。</string>
     <string name="TranslationUnsupportedLanguage">目前翻譯服務不支援所選語言。</string>
     <string name="TranslationShowOriginal">顯示原文</string>
     <string name="TranslationShowOriginalOff">關閉</string>
@@ -250,7 +256,11 @@
     <string name="LlmSystemPrompt">系統提示詞</string>
     <string name="LlmUserPrompt">使用者提示詞</string>
     <string name="LlmRestoreDefault">恢復預設</string>
+    <string name="PromptCharacters_zero">%1$s 個字元</string>
     <string name="PromptCharacters_one">%1$s 個字元</string>
+    <string name="PromptCharacters_two">%1$s 個字元</string>
+    <string name="PromptCharacters_few">%1$s 個字元</string>
+    <string name="PromptCharacters_many">%1$s 個字元</string>
     <string name="PromptCharacters_other">%1$s 個字元</string>
     <string name="LlmPromptUnsaved">離開前是否儲存對此提示詞的變更？</string>
     <string name="LlmPlaceholdersInfo">**@text** 會替換為待翻譯文字。\n**@toLang** 會替換為目標語言。\n點按預留位置可將其插入至使用者提示詞中。</string>
@@ -269,7 +279,7 @@
     <string name="TranslateArticle">翻譯</string>
     <string name="TranslatingArticle">翻譯中…</string>
     <string name="TranslateArticlePartialFailure">部分內容翻譯失敗。</string>
-    <string name="TranslationDefault">預設語言</string>
+    <string name="TranslationDefault">預設 (%1$s)</string>
     <string name="InputTranslate">翻譯 (%1$s)</string>
     <string name="InputTranslateWithAI">AI 翻譯 (%1$s)</string>
     <string name="InputTranslationDone">文字已翻譯</string>
@@ -282,7 +292,7 @@
     <string name="SendWithoutMarkdown">不解析 Markdown 傳送</string>
     <string name="PasskeyProviders">通行金鑰僅支援允許信任特權應用程式的密碼管理器，例如 **Bitwarden** 和 **KeePassDX**。</string>
     <string name="PasskeyNoCredentialAvailable">沒有可用的通行金鑰。</string>
-    <string name="UpdateAoigram">更新 AoigramX</string>
+    <string name="UpdateAoigramX">更新 AoigramX</string>
     <string name="Commit">提交</string>
     <string name="CheckForUpdates">檢查更新</string>
     <string name="AutoCheckForUpdates">自動檢查更新</string>
@@ -299,6 +309,14 @@
     <string name="ImportSettingsButton">匯入</string>
     <string name="ResetSettings">重設設定</string>
     <string name="ResetSettingsAlert">所有設定將恢復為預設值，且應用程式將重新啟動。</string>
+    <string name="CrashLogs">當機日誌</string>
+    <string name="NoCrashLogs">尚無當機日誌</string>
+    <string name="NoCrashLogsInfo">如果 AoigramX 發生當機，\n當機日誌將會顯示在這裡。</string>
+    <string name="CrashLogsInfo">當機日誌包含裝置資訊與你的 AoigramX 設定，不包含 API 金鑰與提示詞等文字。</string>
+    <string name="ClearCrashLogs">清除當機日誌</string>
+    <string name="TestCrash">測試當機</string>
+    <string name="AppCrashed">AoigramX 發生了當機</string>
+    <string name="AppCrashedHint">點按以檢視當機日誌並分享給開發者。</string>
     <string name="ToBeginning">回到頂部</string>
     <string name="MyMessages">我的訊息</string>
     <string name="DeleteMyMessages">刪除我的訊息</string>

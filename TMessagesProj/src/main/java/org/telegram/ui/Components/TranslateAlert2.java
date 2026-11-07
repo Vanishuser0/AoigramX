@@ -1403,7 +1403,7 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
                 if (localeInfo.code().equals(fromLanguage)) continue;
 
                 ActionBarMenuSubItem button = new ActionBarMenuSubItem(getContext(), 2, first, i == locales.size() - 1, resourcesProvider);
-                button.setText(capitalFirst(languageName(localeInfo.code())));
+                button.setText(TranslationLanguages.label(capitalFirst(languageName(localeInfo.code())), localeInfo.pinned()));
                 button.setChecked(TextUtils.equals(toLanguage, localeInfo.code()));
                 button.setOnClickListener(e -> {
                     if (dismiss[0] != null) {

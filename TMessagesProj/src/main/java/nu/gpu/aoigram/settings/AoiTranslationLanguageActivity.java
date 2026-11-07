@@ -25,7 +25,7 @@ import nu.gpu.aoigram.translate.TranslationOptions;
 public final class AoiTranslationLanguageActivity extends BaseAoiSettingsActivity {
 
     private String query = "";
-    private final ArrayList<TranslationLanguages.Language> languages = TranslationLanguages.list(TranslationOptions.defaultProvider());
+    private ArrayList<TranslationLanguages.Language> languages = TranslationLanguages.list(TranslationOptions.defaultProvider());
 
     @Override
     protected CharSequence getActionBarTitle() {
@@ -58,15 +58,20 @@ public final class AoiTranslationLanguageActivity extends BaseAoiSettingsActivit
         items.add(LanguageRow.of(1, getString(R.string.TranslationFollowApp), "").setChecked(selected.isEmpty()));
         if (!selected.isEmpty()) {
             Locale locale = Locale.forLanguageTag(selectedCode);
-            UItem item = LanguageRow.of(2, locale.getDisplayName(locale), locale.getDisplayName()).setChecked(true);
+            UItem item = LanguageRow.of(3, locale.getDisplayName(locale), locale.getDisplayName()).setChecked(true);
             item.object = selected;
             items.add(item);
         }
-        items.add(UItem.asShadow(null));
+        items.add(UItem.asShadow(getString(R.string.PinnedLanguagesInfo)));
+        boolean pinnedSection = false;
         for (TranslationLanguages.Language language : languages) {
             if (language.code().equals(selectedCode)) continue;
             String search = (language.code() + " " + language.name() + " " + language.nativeName()).toLowerCase(Locale.getDefault());
             if (!search.contains(query)) continue;
+            if (language.pinned() != pinnedSection) {
+                items.add(language.pinned() ? UItem.asHeader(getString(R.string.PinnedLanguages)) : UItem.asShadow(null));
+                pinnedSection = language.pinned();
+            }
             UItem item = LanguageRow.of(2, language.nativeName(), language.name());
             item.object = language.code();
             items.add(item);
@@ -77,6 +82,18 @@ public final class AoiTranslationLanguageActivity extends BaseAoiSettingsActivit
     protected void onItemClick(UItem item, View view, int position, float x, float y) {
         AoiConfig.translationLanguage.set(item.id == 1 ? "" : (String) item.object);
         finishFragment();
+    }
+
+    @Override
+    protected boolean onItemLongClick(UItem item, View view, int position, float x, float y) {
+        if (item.id != 2) {
+            return super.onItemLongClick(item, view, position, x, y);
+        }
+        int provider = TranslationOptions.defaultProvider();
+        TranslationLanguages.togglePinned(provider, (String) item.object);
+        languages = TranslationLanguages.list(provider);
+        listView.adapter.update(true);
+        return true;
     }
 
     private static final class LanguageRow extends UItem.UItemFactory<TextRadioCell> {

@@ -41,7 +41,7 @@
     <string name="SkipGiftsTab">Bỏ qua tab Quà tặng</string>
     <string name="SkipGiftsTabInfo">Khi mở hồ sơ sẽ chuyển thẳng sang tab tiếp theo.</string>
     <string name="RemoveArchive">Ẩn khỏi danh sách trò chuyện</string>
-    <string name="DisableUnarchiveSwipe">Tắt vuốt xuống để mở lưu trữ</string>
+    <string name="DisableUnarchiveSwipe">Tắt vuốt để bỏ lưu trữ</string>
     <string name="ArchivedChatsInfo">Các cuộc trò chuyện lưu trữ vẫn có thể truy cập từ menu danh sách trò chuyện.</string>
     <string name="DownloadSpeedBoost">Tăng tốc tải xuống</string>
     <string name="DownloadSpeedBoostOff">Tắt</string>
@@ -99,6 +99,10 @@
     <string name="MoreMenu">Thêm…</string>
     <string name="Browser">Trình duyệt</string>
     <string name="SortByUnread">Ưu tiên chưa đọc</string>
+    <string name="ChatStatistics">Thống kê trò chuyện</string>
+    <string name="ChatStatisticsUnarchived">Chưa lưu trữ</string>
+    <string name="ChatStatisticsArchived">Đã lưu trữ</string>
+    <string name="ChatStatisticsTotal">Tổng cộng</string>
     <string name="ShowSenderAvatar">Ảnh đại diện người gửi</string>
     <string name="FolderTabStyle">Kiểu thanh tab</string>
     <string name="FolderTabStyleTitle">Tiêu đề</string>
@@ -227,6 +231,8 @@
     <string name="TranslationProvider">Dịch vụ dịch</string>
     <string name="TranslationLanguage">Dịch sang</string>
     <string name="TranslationFollowApp">Theo ngôn ngữ ứng dụng</string>
+    <string name="PinnedLanguages">Ngôn ngữ đã ghim</string>
+    <string name="PinnedLanguagesInfo">Nhấn giữ một ngôn ngữ để ghim lên đầu tất cả danh sách ngôn ngữ.</string>
     <string name="TranslationUnsupportedLanguage">Ngôn ngữ đã chọn không được dịch vụ dịch này hỗ trợ.</string>
     <string name="TranslationShowOriginal">Hiển thị văn bản gốc</string>
     <string name="TranslationShowOriginalOff">Tắt</string>
@@ -250,7 +256,11 @@
     <string name="LlmSystemPrompt">Prompt hệ thống</string>
     <string name="LlmUserPrompt">Prompt người dùng</string>
     <string name="LlmRestoreDefault">Khôi phục mặc định</string>
+    <string name="PromptCharacters_zero">%1$s ký tự</string>
     <string name="PromptCharacters_one">%1$s ký tự</string>
+    <string name="PromptCharacters_two">%1$s ký tự</string>
+    <string name="PromptCharacters_few">%1$s ký tự</string>
+    <string name="PromptCharacters_many">%1$s ký tự</string>
     <string name="PromptCharacters_other">%1$s ký tự</string>
     <string name="LlmPromptUnsaved">Lưu các thay đổi trong prompt này trước khi rời đi?</string>
     <string name="LlmPlaceholdersInfo">**@text** sẽ được thay bằng văn bản cần dịch.\n**@toLang** sẽ được thay bằng ngôn ngữ đích.\nChạm vào biến giữ chỗ để chèn vào prompt người dùng.</string>
@@ -269,7 +279,7 @@
     <string name="TranslateArticle">Dịch</string>
     <string name="TranslatingArticle">Đang dịch…</string>
     <string name="TranslateArticlePartialFailure">Một số phần không thể dịch được.</string>
-    <string name="TranslationDefault">Ngôn ngữ mặc định</string>
+    <string name="TranslationDefault">Mặc định (%1$s)</string>
     <string name="InputTranslate">Dịch (%1$s)</string>
     <string name="InputTranslateWithAI">Dịch bằng AI (%1$s)</string>
     <string name="InputTranslationDone">Đã dịch văn bản</string>
@@ -282,7 +292,7 @@
     <string name="SendWithoutMarkdown">Gửi không định dạng Markdown</string>
     <string name="PasskeyProviders">Passkey chỉ hoạt động với các trình quản lý mật khẩu cho phép tin cậy ứng dụng đặc quyền, chẳng hạn như **Bitwarden** và **KeePassDX**.</string>
     <string name="PasskeyNoCredentialAvailable">Không có passkey khả dụng.</string>
-    <string name="UpdateAoigram">Cập nhật AoigramX</string>
+    <string name="UpdateAoigramX">Cập nhật AoigramX</string>
     <string name="Commit">Commit</string>
     <string name="CheckForUpdates">Kiểm tra cập nhật</string>
     <string name="AutoCheckForUpdates">Tự động kiểm tra</string>
@@ -299,6 +309,14 @@
     <string name="ImportSettingsButton">Nhập</string>
     <string name="ResetSettings">Đặt lại cài đặt</string>
     <string name="ResetSettingsAlert">Tất cả cài đặt sẽ trở về mặc định và ứng dụng sẽ khởi động lại.</string>
+    <string name="CrashLogs">Nhật ký sự cố</string>
+    <string name="NoCrashLogs">Không có nhật ký sự cố</string>
+    <string name="NoCrashLogsInfo">Nhật ký sự cố sẽ xuất hiện tại đây\nnếu AoigramX gặp sự cố.</string>
+    <string name="CrashLogsInfo">Nhật ký sự cố bao gồm thông tin thiết bị và cài đặt AoigramX của bạn, ngoại trừ các văn bản như khóa API và prompt.</string>
+    <string name="ClearCrashLogs">Xóa nhật ký sự cố</string>
+    <string name="TestCrash">Thử gây sự cố</string>
+    <string name="AppCrashed">AoigramX đã gặp sự cố</string>
+    <string name="AppCrashedHint">Chạm để xem nhật ký sự cố và chia sẻ với nhà phát triển.</string>
     <string name="ToBeginning">Lên đầu</string>
     <string name="MyMessages">Tin nhắn của tôi</string>
     <string name="DeleteMyMessages">Xóa tin nhắn của tôi</string>

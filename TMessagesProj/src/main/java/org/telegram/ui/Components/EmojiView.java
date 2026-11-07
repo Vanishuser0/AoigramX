@@ -5611,6 +5611,7 @@ public class EmojiView extends FrameLayout implements
 
         final MediaDataController mediaDataController = MediaDataController.getInstance(currentAccount);
 
+        /*
         SharedPreferences preferences = MessagesController.getEmojiSettings(currentAccount);
         featuredStickerSets.clear();
         ArrayList<TLRPC.StickerSetCovered> featured = mediaDataController.getFeaturedStickerSets();
@@ -5632,6 +5633,7 @@ public class EmojiView extends FrameLayout implements
             trendingTabNum = stickersTabOffset;
             stickersTabOffset++;
         }
+        */
 
         if (!favouriteStickers.isEmpty()) {
             favTabNum = stickersTabOffset;
@@ -7852,6 +7854,7 @@ public class EmojiView extends FrameLayout implements
             }
             ArrayList<Integer> prevRowHashCodes = new ArrayList<>(rowHashCodes);
 
+            /*
             final MediaDataController mediaDataController = MediaDataController.getInstance(currentAccount);
             ArrayList<TLRPC.StickerSetCovered> featured = mediaDataController.getFeaturedEmojiSets();
             featuredEmojiSets.clear();
@@ -7861,6 +7864,7 @@ public class EmojiView extends FrameLayout implements
                     featuredEmojiSets.add(set);
                 }
             }
+            */
 
             processEmoji(updateEmojipack);
             updateRows();

@@ -3,7 +3,6 @@ package nu.gpu.aoigram.settings;
 import static org.telegram.messenger.LocaleController.getString;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -13,8 +12,6 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.ApplicationLoader;
-import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.ActionBar;
@@ -33,6 +30,8 @@ import org.telegram.ui.LauncherIconController.LauncherIcon;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
+
+import nu.gpu.aoigram.utils.AppUtil;
 
 public class AoiSettingsActivity extends BaseAoiSettingsActivity {
 
@@ -117,7 +116,7 @@ public class AoiSettingsActivity extends BaseAoiSettingsActivity {
         subtitleView.setGravity(Gravity.CENTER);
         subtitleView.setSingleLine();
         subtitleView.setEllipsize(TextUtils.TruncateAt.END);
-        subtitleView.setText(getVersionName());
+        subtitleView.setText(AppUtil.getVersionName());
         topView.addView(subtitleView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 156, 0, 0));
     }
 
@@ -210,15 +209,6 @@ public class AoiSettingsActivity extends BaseAoiSettingsActivity {
         }
         if (listView != null) {
             listView.adapter.update(true);
-        }
-    }
-
-    private String getVersionName() {
-        try {
-            PackageInfo packageInfo = ApplicationLoader.applicationContext.getPackageManager().getPackageInfo(ApplicationLoader.applicationContext.getPackageName(), 0);
-            return String.format(Locale.US, "%s (%d)", packageInfo.versionName, packageInfo.getLongVersionCode());
-        } catch (Exception ignore) {
-            return BuildVars.BUILD_VERSION_STRING;
         }
     }
 

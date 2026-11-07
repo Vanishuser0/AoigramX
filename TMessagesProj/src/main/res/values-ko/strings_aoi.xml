@@ -41,7 +41,7 @@
     <string name="SkipGiftsTab">선물 탭 건너뛰기</string>
     <string name="SkipGiftsTabInfo">프로필을 열 때 다음 탭을 대신 표시합니다.</string>
     <string name="RemoveArchive">채팅 목록에서 숨기기</string>
-    <string name="DisableUnarchiveSwipe">스와이프로 보관함 열기 비활성화</string>
+    <string name="DisableUnarchiveSwipe">스와이프로 보관 해제 비활성화</string>
     <string name="ArchivedChatsInfo">보관된 채팅은 채팅 목록 메뉴에서 계속 접근할 수 있습니다.</string>
     <string name="DownloadSpeedBoost">다운로드 속도 향상</string>
     <string name="DownloadSpeedBoostOff">끔</string>
@@ -99,6 +99,10 @@
     <string name="MoreMenu">더보기…</string>
     <string name="Browser">브라우저</string>
     <string name="SortByUnread">읽지 않은 채팅 우선</string>
+    <string name="ChatStatistics">채팅 통계</string>
+    <string name="ChatStatisticsUnarchived">보관 안 됨</string>
+    <string name="ChatStatisticsArchived">보관됨</string>
+    <string name="ChatStatisticsTotal">합계</string>
     <string name="ShowSenderAvatar">발신자 프로필 사진 표시</string>
     <string name="FolderTabStyle">탭 스타일</string>
     <string name="FolderTabStyleTitle">제목</string>
@@ -227,6 +231,8 @@
     <string name="TranslationProvider">번역 서비스</string>
     <string name="TranslationLanguage">번역할 언어</string>
     <string name="TranslationFollowApp">앱 언어 따르기</string>
+    <string name="PinnedLanguages">고정된 언어</string>
+    <string name="PinnedLanguagesInfo">언어를 길게 누르면 모든 언어 목록 상단에 고정됩니다.</string>
     <string name="TranslationUnsupportedLanguage">선택한 언어는 이 번역 서비스에서 지원되지 않습니다.</string>
     <string name="TranslationShowOriginal">원문 표시</string>
     <string name="TranslationShowOriginalOff">끔</string>
@@ -250,7 +256,11 @@
     <string name="LlmSystemPrompt">시스템 프롬프트</string>
     <string name="LlmUserPrompt">사용자 프롬프트</string>
     <string name="LlmRestoreDefault">기본값 복원</string>
+    <string name="PromptCharacters_zero">%1$s자</string>
     <string name="PromptCharacters_one">%1$s자</string>
+    <string name="PromptCharacters_two">%1$s자</string>
+    <string name="PromptCharacters_few">%1$s자</string>
+    <string name="PromptCharacters_many">%1$s자</string>
     <string name="PromptCharacters_other">%1$s자</string>
     <string name="LlmPromptUnsaved">나가기 전에 이 프롬프트의 변경 사항을 저장할까요?</string>
     <string name="LlmPlaceholdersInfo">**@text**는 번역할 텍스트로 대체됩니다.\n**@toLang**은 대상 언어로 대체됩니다.\n플레이스홀더를 탭하면 사용자 프롬프트에 삽입됩니다.</string>
@@ -269,7 +279,7 @@
     <string name="TranslateArticle">번역</string>
     <string name="TranslatingArticle">번역 중…</string>
     <string name="TranslateArticlePartialFailure">일부 내용을 번역하지 못했습니다.</string>
-    <string name="TranslationDefault">기본 언어</string>
+    <string name="TranslationDefault">기본 (%1$s)</string>
     <string name="InputTranslate">번역 (%1$s)</string>
     <string name="InputTranslateWithAI">AI 번역 (%1$s)</string>
     <string name="InputTranslationDone">텍스트가 번역되었습니다</string>
@@ -282,7 +292,7 @@
     <string name="SendWithoutMarkdown">Markdown 없이 보내기</string>
     <string name="PasskeyProviders">패스키는 **Bitwarden** 및 **KeePassDX**처럼 권한 있는 앱을 신뢰하도록 허용하는 비밀번호 관리자에서만 작동합니다.</string>
     <string name="PasskeyNoCredentialAvailable">사용 가능한 패스키가 없습니다.</string>
-    <string name="UpdateAoigram">AoigramX 업데이트</string>
+    <string name="UpdateAoigramX">AoigramX 업데이트</string>
     <string name="Commit">커밋</string>
     <string name="CheckForUpdates">업데이트 확인</string>
     <string name="AutoCheckForUpdates">자동으로 확인</string>
@@ -299,6 +309,14 @@
     <string name="ImportSettingsButton">가져오기</string>
     <string name="ResetSettings">설정 초기화</string>
     <string name="ResetSettingsAlert">모든 설정이 기본값으로 초기화되며 앱이 다시 시작됩니다.</string>
+    <string name="CrashLogs">오류 로그</string>
+    <string name="NoCrashLogs">오류 로그 없음</string>
+    <string name="NoCrashLogsInfo">AoigramX이 비정상 종료되면\n여기에 오류 로그가 표시됩니다.</string>
+    <string name="CrashLogsInfo">오류 로그에는 기기 정보와 AoigramX 설정이 포함되며, API 키 및 프롬프트와 같은 텍스트는 제외됩니다.</string>
+    <string name="ClearCrashLogs">오류 로그 지우기</string>
+    <string name="TestCrash">비정상 종료 테스트</string>
+    <string name="AppCrashed">AoigramX이 비정상 종료되었습니다</string>
+    <string name="AppCrashedHint">탭하여 오류 로그를 확인하고 개발자에게 공유하세요.</string>
     <string name="ToBeginning">맨 위로</string>
     <string name="MyMessages">내 메시지</string>
     <string name="DeleteMyMessages">내 메시지 삭제</string>

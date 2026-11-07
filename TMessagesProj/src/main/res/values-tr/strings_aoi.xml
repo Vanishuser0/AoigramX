@@ -41,7 +41,7 @@
     <string name="SkipGiftsTab">Hediyeler sekmesini atla</string>
     <string name="SkipGiftsTabInfo">Profiller doğrudan bir sonraki sekmede açılır.</string>
     <string name="RemoveArchive">Sohbet listesinden kaldır</string>
-    <string name="DisableUnarchiveSwipe">Arşivi açmak için kaydırmayı devre dışı bırak</string>
+    <string name="DisableUnarchiveSwipe">Arşivden çıkarmak için kaydırmayı devre dışı bırak</string>
     <string name="ArchivedChatsInfo">Arşivlenmiş sohbetlere sohbet listesi menüsünden erişilmeye devam edilebilir.</string>
     <string name="DownloadSpeedBoost">İndirme hızlandırma</string>
     <string name="DownloadSpeedBoostOff">Kapalı</string>
@@ -99,6 +99,10 @@
     <string name="MoreMenu">Daha fazla…</string>
     <string name="Browser">Tarayıcı</string>
     <string name="SortByUnread">Önce okunmamışlar</string>
+    <string name="ChatStatistics">Sohbet İstatistikleri</string>
+    <string name="ChatStatisticsUnarchived">Arşivde değil</string>
+    <string name="ChatStatisticsArchived">Arşivde</string>
+    <string name="ChatStatisticsTotal">Toplam</string>
     <string name="ShowSenderAvatar">Gönderen profil fotoğrafı</string>
     <string name="FolderTabStyle">Sekme stili</string>
     <string name="FolderTabStyleTitle">Başlık</string>
@@ -227,6 +231,8 @@
     <string name="TranslationProvider">Çeviri servisi</string>
     <string name="TranslationLanguage">Çevrilecek dil</string>
     <string name="TranslationFollowApp">Uygulama dilini takip et</string>
+    <string name="PinnedLanguages">Sabitlenmiş diller</string>
+    <string name="PinnedLanguagesInfo">Tüm dil listelerinin en üstüne sabitlemek için bir dile basılı tutun.</string>
     <string name="TranslationUnsupportedLanguage">Seçilen dil bu çeviri servisi tarafından desteklenmiyor.</string>
     <string name="TranslationShowOriginal">Orijinali göster</string>
     <string name="TranslationShowOriginalOff">Kapalı</string>
@@ -250,7 +256,11 @@
     <string name="LlmSystemPrompt">Sistem istemi</string>
     <string name="LlmUserPrompt">Kullanıcı istemi</string>
     <string name="LlmRestoreDefault">Varsayılanı geri yükle</string>
+    <string name="PromptCharacters_zero">%1$s karakter</string>
     <string name="PromptCharacters_one">%1$s karakter</string>
+    <string name="PromptCharacters_two">%1$s karakter</string>
+    <string name="PromptCharacters_few">%1$s karakter</string>
+    <string name="PromptCharacters_many">%1$s karakter</string>
     <string name="PromptCharacters_other">%1$s karakter</string>
     <string name="LlmPromptUnsaved">Çıkmadan önce bu istemdeki değişiklikler kaydedilsin mi?</string>
     <string name="LlmPlaceholdersInfo">**@text** çevrilecek metinle değiştirilir.\n**@toLang** hedef dille değiştirilir.\nKullanıcı istemine eklemek için bir yer tutucuya dokunun.</string>
@@ -269,7 +279,7 @@
     <string name="TranslateArticle">Çevir</string>
     <string name="TranslatingArticle">Çevriliyor…</string>
     <string name="TranslateArticlePartialFailure">Bazı kısımlar çevrilemedi.</string>
-    <string name="TranslationDefault">Varsayılan dil</string>
+    <string name="TranslationDefault">Varsayılan (%1$s)</string>
     <string name="InputTranslate">Çevir (%1$s)</string>
     <string name="InputTranslateWithAI">YZ ile Çevir (%1$s)</string>
     <string name="InputTranslationDone">Metin çevrildi</string>
@@ -282,7 +292,7 @@
     <string name="SendWithoutMarkdown">Markdown olmadan gönder</string>
     <string name="PasskeyProviders">Geçiş anahtarları (Passkey), yalnızca **Bitwarden** ve **KeePassDX** gibi ayrıcalıklı uygulamalara güvenmenize izin veren parola yöneticileriyle çalışır.</string>
     <string name="PasskeyNoCredentialAvailable">Kullanılabilir geçiş anahtarı yok.</string>
-    <string name="UpdateAoigram">AoigramX\'ı Güncelle</string>
+    <string name="UpdateAoigramX">AoigramX\'ı Güncelle</string>
     <string name="Commit">Commit</string>
     <string name="CheckForUpdates">Güncellemeleri kontrol et</string>
     <string name="AutoCheckForUpdates">Otomatik olarak kontrol et</string>
@@ -299,6 +309,14 @@
     <string name="ImportSettingsButton">İçe aktar</string>
     <string name="ResetSettings">Ayarları sıfırla</string>
     <string name="ResetSettingsAlert">Tüm ayarlar varsayılan değerlere sıfırlanacak ve uygulama yeniden başlatılacak.</string>
+    <string name="CrashLogs">Çökme kayıtları</string>
+    <string name="NoCrashLogs">Çökme kaydı yok</string>
+    <string name="NoCrashLogsInfo">AoigramX çökerse çökme kayıtları\nburada görünür.</string>
+    <string name="CrashLogsInfo">Çökme kayıtları cihaz bilgilerini ve AoigramX ayarlarınızı içerir; API anahtarları ve istemler gibi metinler hariç tutulur.</string>
+    <string name="ClearCrashLogs">Çökme kayıtlarını temizle</string>
+    <string name="TestCrash">Çökme testi</string>
+    <string name="AppCrashed">AoigramX çöktü</string>
+    <string name="AppCrashedHint">Çökme kaydını görüntülemek ve geliştiriciyle paylaşmak için dokunun.</string>
     <string name="ToBeginning">Başa Dön</string>
     <string name="MyMessages">Mesajlarım</string>
     <string name="DeleteMyMessages">Mesajlarımı Sil</string>

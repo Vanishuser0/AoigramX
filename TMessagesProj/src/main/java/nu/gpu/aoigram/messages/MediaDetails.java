@@ -1,5 +1,6 @@
 package nu.gpu.aoigram.messages;
 
+import android.annotation.SuppressLint;
 import android.graphics.BitmapFactory;
 import android.media.MediaDataSource;
 import android.media.MediaExtractor;
@@ -29,6 +30,7 @@ public final class MediaDetails {
     public final BitmapFactory.Options image = new BitmapFactory.Options();
     public ExifInterface exif;
 
+    @SuppressLint("InlinedApi")
     public static MediaDetails read(File file, boolean isImage, boolean encrypted) {
         MediaDetails details = new MediaDetails();
         if (isImage) {

@@ -19,6 +19,8 @@ import org.telegram.ui.Components.PopupSwipeBackLayout;
 import org.telegram.ui.Components.blur3.BlurredBackgroundDrawableViewFactory;
 import org.telegram.ui.Components.blur3.drawable.color.impl.BlurredBackgroundProviderImpl;
 
+import java.util.Locale;
+
 import nu.gpu.aoigram.translate.llm.LlmSettings;
 
 public final class TranslationMenu {
@@ -102,12 +104,16 @@ public final class TranslationMenu {
 
     private static ActionBarPopupWindowLayout languagePage(ChatManualTranslation session, BaseFragment fragment, ActionBarPopupWindowLayout parent, MessageObject message, BlurredBackgroundDrawableViewFactory backgroundFactory, Runnable close) {
         ActionBarPopupWindowLayout languages = page(fragment, parent, backgroundFactory);
-        action(fragment, languages, getString(R.string.TranslationDefault), () -> {
+        int provider = TranslationOptions.defaultProvider();
+        String defaultLanguage = TranslationLanguages.map(provider, TranslationOptions.defaultLanguage());
+        Locale locale = Locale.forLanguageTag(defaultLanguage);
+        action(fragment, languages, LocaleController.formatString(R.string.TranslationDefault, locale.getDisplayName(locale)), () -> {
             close.run();
             session.translateDefault(fragment, message);
         });
-        for (TranslationLanguages.Language language : TranslationLanguages.list(TranslationOptions.defaultProvider())) {
-            action(fragment, languages, language.nativeName(), () -> {
+        for (TranslationLanguages.Language language : TranslationLanguages.list(provider)) {
+            if (language.code().equals(defaultLanguage)) continue;
+            action(fragment, languages, TranslationLanguages.label(language.nativeName(), language.pinned()), () -> {
                 close.run();
                 session.translate(fragment, message, TranslationOptions.defaults(language.code()));
             });
@@ -138,7 +144,7 @@ public final class TranslationMenu {
         return page;
     }
 
-    private static ActionBarMenuSubItem action(BaseFragment fragment, ActionBarPopupWindowLayout page, String title, Runnable click) {
+    private static ActionBarMenuSubItem action(BaseFragment fragment, ActionBarPopupWindowLayout page, CharSequence title, Runnable click) {
         ActionBarMenuSubItem item = new ActionBarMenuSubItem(fragment.getContext(), false, false, fragment.getResourceProvider());
         item.setMinimumWidth(dp(200));
         item.setTextAndIcon(title, 0);

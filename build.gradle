@@ -59,7 +59,7 @@ subprojects {
                 android.compileSdk = 36
                 android.buildToolsVersion = '36.0.0'
                 android.ndkVersion = '27.3.13750724'
-                android.defaultConfig.minSdk = 30
+                android.defaultConfig.minSdk = 29
                 android.compileOptions.sourceCompatibility = JavaVersion.VERSION_21
                 android.compileOptions.targetCompatibility = JavaVersion.VERSION_21
 

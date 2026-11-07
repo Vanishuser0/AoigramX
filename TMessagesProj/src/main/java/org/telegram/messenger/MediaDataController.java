@@ -115,6 +115,10 @@ import java.util.regex.Pattern;
 
 @SuppressWarnings("unchecked")
 public class MediaDataController extends BaseController {
+    private int aoiMaxFaveStickersCount() {
+        return getUserConfig().isPremium() ? getMessagesController().stickersFavedLimitPremium : getMessagesController().stickersFavedLimitDefault;
+    }
+
     public final static String
             ATTACH_MENU_BOT_ANIMATED_ICON_KEY = "android_animated",
             ATTACH_MENU_BOT_ANIMATED_ICON_KEY_2 = "android_active_animated",
@@ -981,7 +985,7 @@ public class MediaDataController extends BaseController {
             if (remove) {
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_STICKER, document, StickerSetBulletinLayout.TYPE_REMOVED_FROM_FAVORITES);
             } else {
-                boolean replace = recentStickers[type].size() > getMessagesController().maxFaveStickersCount;
+                boolean replace = recentStickers[type].size() > aoiMaxFaveStickersCount();
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_STICKER, document, replace ? StickerSetBulletinLayout.TYPE_REPLACED_TO_FAVORITES : StickerSetBulletinLayout.TYPE_ADDED_TO_FAVORITES);
             }
             TLRPC.TL_messages_faveSticker req = new TLRPC.TL_messages_faveSticker();
@@ -1000,7 +1004,7 @@ public class MediaDataController extends BaseController {
                     AndroidUtilities.runOnUIThread(() -> getMediaDataController().loadRecents(MediaDataController.TYPE_FAVE, false, false, true));
                 }
             });
-            maxCount = getMessagesController().maxFaveStickersCount;
+            maxCount = aoiMaxFaveStickersCount();
         } else {
             if (type == TYPE_IMAGE && remove) {
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_STICKER, document, StickerSetBulletinLayout.TYPE_REMOVED_FROM_RECENT);
@@ -2092,7 +2096,7 @@ public class MediaDataController extends BaseController {
                         if (type == TYPE_GREETINGS || type == TYPE_PREMIUM_STICKERS) {
                             maxCount = 200;
                         } else if (type == TYPE_FAVE) {
-                            maxCount = getMessagesController().maxFaveStickersCount;
+                            maxCount = aoiMaxFaveStickersCount();
                         } else {
                             maxCount = getMessagesController().maxRecentStickersCount;
                         }

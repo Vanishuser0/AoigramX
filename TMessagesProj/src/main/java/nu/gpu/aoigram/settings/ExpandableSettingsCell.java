@@ -176,7 +176,7 @@ public final class ExpandableSettingsCell extends FrameLayout {
         AccessibilityNodeInfoCompat.wrap(info).setChecked(item.checked ? AccessibilityNodeInfoCompat.CHECKED_STATE_TRUE : AccessibilityNodeInfoCompat.CHECKED_STATE_FALSE);
         info.setContentDescription(group ? item.text + "\n" + LocaleController.formatString(R.string.Of, item.intValue, item.longValue) : item.text);
         if (group) {
-            info.setStateDescription(getString(item.collapsed ? R.string.AccDescrCollapsed : R.string.AccDescrExpanded));
+            AccessibilityNodeInfoCompat.wrap(info).setStateDescription(getString(item.collapsed ? R.string.AccDescrCollapsed : R.string.AccDescrExpanded));
             info.addAction(item.collapsed ? AccessibilityNodeInfo.AccessibilityAction.ACTION_EXPAND : AccessibilityNodeInfo.AccessibilityAction.ACTION_COLLAPSE);
         }
     }

@@ -38,6 +38,7 @@ public final class TranslationDisplay {
         message.aoiDisplayText = null;
         if (message.translated) {
             message.caption = null;
+            message.forceUpdate = true;
         }
         if (translated == null || message.messageOwner.rich_message != null
                 || message.isPoll() || message.isVoiceTranscriptionOpen()

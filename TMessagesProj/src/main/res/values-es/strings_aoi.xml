@@ -41,7 +41,7 @@
     <string name="SkipGiftsTab">Omitir pestaña de Regalos</string>
     <string name="SkipGiftsTabInfo">Los perfiles se abrirán en la siguiente pestaña.</string>
     <string name="RemoveArchive">Quitar de la lista de chats</string>
-    <string name="DisableUnarchiveSwipe">Desactivar deslizar para abrir archivo</string>
+    <string name="DisableUnarchiveSwipe">Desactivar deslizar para desarchivar</string>
     <string name="ArchivedChatsInfo">Los chats archivados seguirán siendo accesibles desde el menú de la lista de chats.</string>
     <string name="DownloadSpeedBoost">Aceleración de descarga</string>
     <string name="DownloadSpeedBoostOff">Desactivado</string>
@@ -99,6 +99,10 @@
     <string name="MoreMenu">Más…</string>
     <string name="Browser">Navegador</string>
     <string name="SortByUnread">No leídos primero</string>
+    <string name="ChatStatistics">Estadísticas de chats</string>
+    <string name="ChatStatisticsUnarchived">No archivados</string>
+    <string name="ChatStatisticsArchived">Archivados</string>
+    <string name="ChatStatisticsTotal">Total</string>
     <string name="ShowSenderAvatar">Avatar del remitente</string>
     <string name="FolderTabStyle">Estilo de pestañas</string>
     <string name="FolderTabStyleTitle">Título</string>
@@ -227,6 +231,8 @@
     <string name="TranslationProvider">Servicio de traducción</string>
     <string name="TranslationLanguage">Traducir a</string>
     <string name="TranslationFollowApp">Seguir idioma de la app</string>
+    <string name="PinnedLanguages">Idiomas fijados</string>
+    <string name="PinnedLanguagesInfo">Mantén pulsado un idioma para fijarlo en la parte superior de todas las listas de idiomas.</string>
     <string name="TranslationUnsupportedLanguage">El idioma seleccionado no es compatible con este servicio de traducción.</string>
     <string name="TranslationShowOriginal">Mostrar original</string>
     <string name="TranslationShowOriginalOff">Desactivado</string>
@@ -250,7 +256,11 @@
     <string name="LlmSystemPrompt">Prompt del sistema</string>
     <string name="LlmUserPrompt">Prompt de usuario</string>
     <string name="LlmRestoreDefault">Restaurar predeterminado</string>
+    <string name="PromptCharacters_zero">%1$s caracteres</string>
     <string name="PromptCharacters_one">%1$s carácter</string>
+    <string name="PromptCharacters_two">%1$s caracteres</string>
+    <string name="PromptCharacters_few">%1$s caracteres</string>
+    <string name="PromptCharacters_many">%1$s caracteres</string>
     <string name="PromptCharacters_other">%1$s caracteres</string>
     <string name="LlmPromptUnsaved">¿Guardar los cambios en este prompt antes de salir?</string>
     <string name="LlmPlaceholdersInfo">**@text** se reemplaza por el texto a traducir.\n**@toLang** se reemplaza por el idioma de destino.\nToca un marcador para insertarlo en el prompt de usuario.</string>
@@ -269,7 +279,7 @@
     <string name="TranslateArticle">Traducir</string>
     <string name="TranslatingArticle">Traduciendo…</string>
     <string name="TranslateArticlePartialFailure">Algunas partes no se pudieron traducir.</string>
-    <string name="TranslationDefault">Idioma predeterminado</string>
+    <string name="TranslationDefault">Predeterminado (%1$s)</string>
     <string name="InputTranslate">Traducir (%1$s)</string>
     <string name="InputTranslateWithAI">Traducir con IA (%1$s)</string>
     <string name="InputTranslationDone">Texto traducido</string>
@@ -282,7 +292,7 @@
     <string name="SendWithoutMarkdown">Enviar sin Markdown</string>
     <string name="PasskeyProviders">Las llaves de acceso (Passkeys) solo funcionan con gestores de contraseñas que permitan confiar en aplicaciones privilegiadas, como **Bitwarden** y **KeePassDX**.</string>
     <string name="PasskeyNoCredentialAvailable">No hay llaves de acceso disponibles.</string>
-    <string name="UpdateAoigram">Actualizar AoigramX</string>
+    <string name="UpdateAoigramX">Actualizar AoigramX</string>
     <string name="Commit">Commit</string>
     <string name="CheckForUpdates">Buscar actualizaciones</string>
     <string name="AutoCheckForUpdates">Buscar automáticamente</string>
@@ -299,6 +309,14 @@
     <string name="ImportSettingsButton">Importar</string>
     <string name="ResetSettings">Restablecer ajustes</string>
     <string name="ResetSettingsAlert">Todos los ajustes volverán a sus valores predeterminados y la aplicación se reiniciará.</string>
+    <string name="CrashLogs">Registros de fallos</string>
+    <string name="NoCrashLogs">Sin registros de fallos</string>
+    <string name="NoCrashLogsInfo">Los registros de fallos aparecerán aquí\nsi AoigramX se cierra inesperadamente.</string>
+    <string name="CrashLogsInfo">Los registros de fallos incluyen información del dispositivo y tus ajustes de AoigramX, excluyendo texto como claves de API y prompts.</string>
+    <string name="ClearCrashLogs">Borrar registros de fallos</string>
+    <string name="TestCrash">Probar fallo</string>
+    <string name="AppCrashed">AoigramX se cerró inesperadamente</string>
+    <string name="AppCrashedHint">Toca para ver el registro de fallos y compartirlo con el desarrollador.</string>
     <string name="ToBeginning">Ir al principio</string>
     <string name="MyMessages">Mis mensajes</string>
     <string name="DeleteMyMessages">Eliminar mis mensajes</string>

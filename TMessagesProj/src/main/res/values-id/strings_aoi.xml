@@ -41,7 +41,7 @@
     <string name="SkipGiftsTab">Lewati tab Hadiah</string>
     <string name="SkipGiftsTabInfo">Profil akan langsung dibuka pada tab berikutnya.</string>
     <string name="RemoveArchive">Hapus dari daftar obrolan</string>
-    <string name="DisableUnarchiveSwipe">Nonaktifkan usap untuk membuka arsip</string>
+    <string name="DisableUnarchiveSwipe">Nonaktifkan usap untuk mengeluarkan dari arsip</string>
     <string name="ArchivedChatsInfo">Obrolan yang diarsipkan tetap dapat diakses melalui menu daftar obrolan.</string>
     <string name="DownloadSpeedBoost">Peningkatan kecepatan unduh</string>
     <string name="DownloadSpeedBoostOff">Mati</string>
@@ -99,6 +99,10 @@
     <string name="MoreMenu">Lainnya…</string>
     <string name="Browser">Browser</string>
     <string name="SortByUnread">Belum dibaca lebih dulu</string>
+    <string name="ChatStatistics">Statistik Obrolan</string>
+    <string name="ChatStatisticsUnarchived">Tidak diarsipkan</string>
+    <string name="ChatStatisticsArchived">Diarsipkan</string>
+    <string name="ChatStatisticsTotal">Total</string>
     <string name="ShowSenderAvatar">Avatar pengirim</string>
     <string name="FolderTabStyle">Gaya tab</string>
     <string name="FolderTabStyleTitle">Judul</string>
@@ -227,6 +231,8 @@
     <string name="TranslationProvider">Layanan terjemahan</string>
     <string name="TranslationLanguage">Terjemahkan ke</string>
     <string name="TranslationFollowApp">Ikuti bahasa aplikasi</string>
+    <string name="PinnedLanguages">Bahasa disematkan</string>
+    <string name="PinnedLanguagesInfo">Tekan lama bahasa untuk menyematkannya ke bagian atas semua daftar bahasa.</string>
     <string name="TranslationUnsupportedLanguage">Bahasa yang dipilih tidak didukung oleh layanan terjemahan ini.</string>
     <string name="TranslationShowOriginal">Tampilkan teks asli</string>
     <string name="TranslationShowOriginalOff">Mati</string>
@@ -250,7 +256,11 @@
     <string name="LlmSystemPrompt">Prompt sistem</string>
     <string name="LlmUserPrompt">Prompt pengguna</string>
     <string name="LlmRestoreDefault">Pulihkan default</string>
+    <string name="PromptCharacters_zero">%1$s karakter</string>
     <string name="PromptCharacters_one">%1$s karakter</string>
+    <string name="PromptCharacters_two">%1$s karakter</string>
+    <string name="PromptCharacters_few">%1$s karakter</string>
+    <string name="PromptCharacters_many">%1$s karakter</string>
     <string name="PromptCharacters_other">%1$s karakter</string>
     <string name="LlmPromptUnsaved">Simpan perubahan pada prompt ini sebelum keluar?</string>
     <string name="LlmPlaceholdersInfo">**@text** diganti dengan teks yang akan diterjemahkan.\n**@toLang** diganti dengan bahasa tujuan.\nKetuk placeholder untuk menyisipkannya ke dalam prompt pengguna.</string>
@@ -269,7 +279,7 @@
     <string name="TranslateArticle">Terjemahkan</string>
     <string name="TranslatingArticle">Menerjemahkan…</string>
     <string name="TranslateArticlePartialFailure">Beberapa bagian tidak dapat diterjemahkan.</string>
-    <string name="TranslationDefault">Bahasa default</string>
+    <string name="TranslationDefault">Default (%1$s)</string>
     <string name="InputTranslate">Terjemahkan (%1$s)</string>
     <string name="InputTranslateWithAI">Terjemahkan dengan AI (%1$s)</string>
     <string name="InputTranslationDone">Teks diterjemahkan</string>
@@ -282,7 +292,7 @@
     <string name="SendWithoutMarkdown">Kirim tanpa Markdown</string>
     <string name="PasskeyProviders">Kunci sandi (Passkey) hanya berfungsi dengan pengelola kata sandi yang mengizinkan kepercayaan aplikasi khusus, seperti **Bitwarden** dan **KeePassDX**.</string>
     <string name="PasskeyNoCredentialAvailable">Tidak ada kunci sandi yang tersedia.</string>
-    <string name="UpdateAoigram">Perbarui AoigramX</string>
+    <string name="UpdateAoigramX">Perbarui AoigramX</string>
     <string name="Commit">Commit</string>
     <string name="CheckForUpdates">Periksa pembaruan</string>
     <string name="AutoCheckForUpdates">Periksa secara otomatis</string>
@@ -299,6 +309,14 @@
     <string name="ImportSettingsButton">Impor</string>
     <string name="ResetSettings">Atur ulang pengaturan</string>
     <string name="ResetSettingsAlert">Semua pengaturan akan dikembalikan ke awal dan aplikasi akan dimulai ulang.</string>
+    <string name="CrashLogs">Log crash</string>
+    <string name="NoCrashLogs">Tidak ada log crash</string>
+    <string name="NoCrashLogsInfo">Log crash akan muncul di sini\njika AoigramX mengalami crash.</string>
+    <string name="CrashLogsInfo">Log crash mencakup info perangkat dan pengaturan AoigramX Anda, tidak termasuk teks seperti kunci API dan prompt.</string>
+    <string name="ClearCrashLogs">Hapus log crash</string>
+    <string name="TestCrash">Uji crash</string>
+    <string name="AppCrashed">AoigramX mengalami crash</string>
+    <string name="AppCrashedHint">Ketuk untuk melihat log crash dan membagikannya kepada pengembang.</string>
     <string name="ToBeginning">Ke Awal</string>
     <string name="MyMessages">Pesan Saya</string>
     <string name="DeleteMyMessages">Hapus Pesan Saya</string>

@@ -41,6 +41,8 @@ jobs:
       CCACHE_MAXSIZE: 10G
       AOI_ABI: ${{ inputs.target_abi || 'universal' }}
       RELEASE_CHANNEL: ${{ github.ref_name == vars.STABLE_BRANCH && 'stable' || github.ref_name == vars.BETA_BRANCH && 'beta' || '' }}
+    outputs:
+      release_hook_body: ${{ steps.release_hook.outputs.body }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -128,13 +130,12 @@ jobs:
           name: all-apks
           path: TMessagesProj_App/build/outputs/apk/release/*.apk
           if-no-files-found: warn
-      - name: Notify release hook
+      - name: Prepare release hook
+        id: release_hook
         continue-on-error: true
         if: env.RELEASE_CHANNEL != ''
         env:
           BUILD_TIMESTAMP: ${{ steps.build.outputs.build_timestamp }}
-          RELEASE_HOOK_URL: ${{ secrets.RELEASE_HOOK_URL }}
-          RELEASE_HOOK_SECRET: ${{ secrets.RELEASE_HOOK_SECRET }}
         run: |
           OUTPUT_DIR=TMessagesProj_App/build/outputs/apk/release
           METADATA="$OUTPUT_DIR/output-metadata.json"
@@ -152,6 +153,25 @@ jobs:
             --argjson version_code "$(jq '.elements[0].versionCode' "$METADATA")" \
             --argjson apks "$APKS" \
             '$ARGS.named')
+          echo "body=$BODY" >> "$GITHUB_OUTPUT"
+
+  notify:
+    name: Notify release hook
+    needs: build
+    if: needs.build.outputs.release_hook_body != ''
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify release hook
+        continue-on-error: true
+        env:
+          BODY: ${{ needs.build.outputs.release_hook_body }}
+          RELEASE_HOOK_URL: ${{ secrets.RELEASE_HOOK_URL }}
+          RELEASE_HOOK_SECRET: ${{ secrets.RELEASE_HOOK_SECRET }}
+        run: |
+          if [ -z "$RELEASE_HOOK_URL" ] || [ -z "$RELEASE_HOOK_SECRET" ]; then
+            echo "Release hook secret or URL not configured, skipping notification."
+            exit 0
+          fi
           SIGNATURE=$(printf '%s' "$BODY" | openssl dgst -sha256 -hmac "$RELEASE_HOOK_SECRET" | cut -d ' ' -f 2)
           curl --fail-with-body -sS -X POST \
             -H 'Content-Type: application/json' \

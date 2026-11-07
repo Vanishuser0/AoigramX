@@ -23,13 +23,11 @@ Android Studio (or the Android SDK with licenses accepted). Gradle provisions JD
    cd Aoigram
    ```
 
-2. Go to the [Firebase Console](https://console.firebase.google.com/), create two Android apps with application IDs `nu.gpu.aoigram` and `nu.gpu.aoigram.debug`, enable Firebase Cloud Messaging, and download `google-services.json`.
+2. Generate a signing keystore named `release.keystore` following the [Android App Signing guide](https://developer.android.com/studio/publish/app-signing).
 
-3. Generate a signing keystore named `release.keystore` following the [Android App Signing guide](https://developer.android.com/studio/publish/app-signing).
+3. Copy your `release.keystore` into `TMessagesProj_App/`.
 
-4. Copy your `google-services.json` and `release.keystore` into `TMessagesProj_App/`.
-
-5. Add your [Telegram API credentials](https://core.telegram.org/api/obtaining_api_id) and signing configuration to `local.properties` (or pass them as environment variables):
+4. Add your [Telegram API credentials](https://core.telegram.org/api/obtaining_api_id) and signing configuration to `local.properties` (or pass them as environment variables):
    ```properties
    APP_ID=
    APP_HASH=

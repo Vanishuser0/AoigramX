@@ -60,12 +60,6 @@ jobs:
         run: |
           : "${RELEASE_KEYSTORE_BASE64:?RELEASE_KEYSTORE_BASE64 secret is required}"
           echo "$RELEASE_KEYSTORE_BASE64" | base64 -d > TMessagesProj_App/release.keystore
-      - name: Restore google-services.json
-        env:
-          GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
-        run: |
-          : "${GOOGLE_SERVICES_JSON_BASE64:?GOOGLE_SERVICES_JSON_BASE64 secret is required}"
-          echo "$GOOGLE_SERVICES_JSON_BASE64" | base64 -d > TMessagesProj_App/google-services.json
       - name: Modify Gradle JVM Args
         run: |
           MEMORY_GB=$(awk '/^MemTotal:/ {print int($2 / 1024 / 1024)}' /proc/meminfo)

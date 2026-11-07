@@ -295,6 +295,7 @@
     <string name="PasskeyProviders">Passkeys only work with password managers that let you trust privileged apps, such as **Bitwarden** and **KeePassDX**.</string>
     <string name="PasskeyNoCredentialAvailable">No passkey available.</string>
     <string name="UpdateAoigramX">Update AoigramX</string>
+    <string name="UpdateAoigram">@string/UpdateAoigramX</string>
     <string name="Commit">Commit</string>
     <string name="CheckForUpdates">Check for updates</string>
     <string name="AutoCheckForUpdates">Check automatically</string>

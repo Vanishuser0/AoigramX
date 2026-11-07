@@ -104,7 +104,7 @@ public class UpdateLayout extends IUpdateLayout {
         updateTextView.setTextColor(0xffffffff);
         updateTextView.setGravity(Gravity.CENTER);
         updateLayout.addView(updateTextView, LayoutHelper.createFrameMatchParent());
-        updateTextView.setText(LocaleController.getString(R.string.UpdateAoigram), false);
+        updateTextView.setText(LocaleController.getString(R.string.UpdateAoigramX), false);
 
         updateLayoutIcon = new RadialProgress2(updateTextView);
         updateLayoutIcon.setColors(0xffffffff, 0xffffffff, Theme.getColor(Theme.key_featuredStickers_addButton), Theme.getColor(Theme.key_featuredStickers_addButton));
@@ -143,7 +143,7 @@ public class UpdateLayout extends IUpdateLayout {
                     showSize = false;
                 } else {
                     updateLayoutIcon.setIcon(MediaActionDrawable.ICON_DOWNLOAD, true, animated);
-                    setUpdateText(LocaleController.getString(R.string.UpdateAoigram), animated);
+                    setUpdateText(LocaleController.getString(R.string.UpdateAoigramX), animated);
                     showSize = true;
                 }
             }

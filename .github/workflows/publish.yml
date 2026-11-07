@@ -39,8 +39,8 @@ jobs:
           merge-multiple: true
       - name: Send to Telegram
         env:
-          APP_ID: ${{ secrets.APP_ID }}
-          APP_HASH: ${{ secrets.APP_HASH }}
+          APP_ID: ${{ secrets.APP_ID || '442495' }}
+          APP_HASH: ${{ secrets.APP_HASH || '873ffaceba76e791ff2491224a3cdb49' }}
           HELPER_BOT_TOKEN: ${{ secrets.HELPER_BOT_TOKEN }}
           CHAT_ID: ${{ github.event.client_payload.channel == 'stable' && vars.STABLE_CHAT || vars.BETA_CHAT }}
           CHANGELOG: ${{ github.event.client_payload.changelog }}

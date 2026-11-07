@@ -282,7 +282,7 @@
     <string name="SendWithoutMarkdown">Markdown なしで送信</string>
     <string name="PasskeyProviders">パスキーは **Bitwarden** や **KeePassDX** など、特権アプリの信頼設定に対応したパスワードマネージャーでのみ動作します。</string>
     <string name="PasskeyNoCredentialAvailable">利用可能なパスキーがありません。</string>
-    <string name="UpdateAoigram">Aoigram を更新</string>
+    <string name="UpdateAoigram">AoigramX を更新</string>
     <string name="Commit">コミット</string>
     <string name="CheckForUpdates">アップデートを確認</string>
     <string name="AutoCheckForUpdates">自動的に確認</string>

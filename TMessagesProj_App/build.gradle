@@ -112,7 +112,7 @@ androidComponents {
         variant.outputs.each { output ->
             def abi = output.filters.find { it.filterType == FilterConfiguration.FilterType.ABI }?.identifier ?: 'universal'
             output.outputFileName.set(output.versionName.zip(output.versionCode) { versionName, versionCode ->
-                "Aoigram-${versionName}-${versionCode}-${abi}.apk".toString()
+                "AoigramX-${versionName}-${versionCode}-${abi}.apk".toString()
             })
         }
     }

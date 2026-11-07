@@ -282,7 +282,7 @@
     <string name="SendWithoutMarkdown">Markdown olmadan gönder</string>
     <string name="PasskeyProviders">Geçiş anahtarları (Passkey), yalnızca **Bitwarden** ve **KeePassDX** gibi ayrıcalıklı uygulamalara güvenmenize izin veren parola yöneticileriyle çalışır.</string>
     <string name="PasskeyNoCredentialAvailable">Kullanılabilir geçiş anahtarı yok.</string>
-    <string name="UpdateAoigram">Aoigram\'ı Güncelle</string>
+    <string name="UpdateAoigram">AoigramX\'ı Güncelle</string>
     <string name="Commit">Commit</string>
     <string name="CheckForUpdates">Güncellemeleri kontrol et</string>
     <string name="AutoCheckForUpdates">Otomatik olarak kontrol et</string>

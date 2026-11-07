@@ -6654,7 +6654,7 @@ public class AndroidUtilities {
     public static String getBuildVersionInfo() {
         try {
             PackageInfo pInfo = ApplicationLoader.applicationContext.getPackageManager().getPackageInfo(ApplicationLoader.applicationContext.getPackageName(), 0);
-            return "Aoigram v" + pInfo.versionName + " (" + pInfo.getLongVersionCode() + ") " + Build.SUPPORTED_ABIS[0].toLowerCase(Locale.ROOT) + (BuildConfig.DEBUG_VERSION ? " debug" : "");
+            return "AoigramX v" + pInfo.versionName + " (" + pInfo.getLongVersionCode() + ") " + Build.SUPPORTED_ABIS[0].toLowerCase(Locale.ROOT) + (BuildConfig.DEBUG_VERSION ? " debug" : "");
         } catch (Exception e) {
             FileLog.e(e);
         }

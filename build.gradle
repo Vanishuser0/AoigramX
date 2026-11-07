@@ -23,9 +23,9 @@ if (localPropertiesFile.exists()) {
 
 ext.envOrLocal = { String name -> providers.environmentVariable(name).orElse(localBuildProperties.getProperty(name, '')).get() }
 def rawAppId = envOrLocal('APP_ID').trim()
-ext.appId = rawAppId ? rawAppId.toInteger() : 6
+ext.appId = rawAppId ? rawAppId.toInteger() : 442495
 def rawAppHash = envOrLocal('APP_HASH').trim()
-ext.appHash = rawAppHash ?: 'eb06d4abfb49dc3eeb1aeb98ae0f581e'
+ext.appHash = rawAppHash ?: '873ffaceba76e791ff2491224a3cdb49'
 ext.commitId = providers.environmentVariable('COMMIT_ID').orElse(providers.exec {
     workingDir rootDir
     commandLine 'git', 'rev-parse', 'HEAD'

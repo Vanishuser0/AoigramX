@@ -282,7 +282,7 @@
     <string name="SendWithoutMarkdown">Markdown 없이 보내기</string>
     <string name="PasskeyProviders">패스키는 **Bitwarden** 및 **KeePassDX**처럼 권한 있는 앱을 신뢰하도록 허용하는 비밀번호 관리자에서만 작동합니다.</string>
     <string name="PasskeyNoCredentialAvailable">사용 가능한 패스키가 없습니다.</string>
-    <string name="UpdateAoigram">Aoigram 업데이트</string>
+    <string name="UpdateAoigram">AoigramX 업데이트</string>
     <string name="Commit">커밋</string>
     <string name="CheckForUpdates">업데이트 확인</string>
     <string name="AutoCheckForUpdates">자동으로 확인</string>

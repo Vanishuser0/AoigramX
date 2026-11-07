@@ -1,4 +1,4 @@
-# Aoigram
+# AoigramX
 
 An unofficial Telegram client for Android.
 
@@ -7,7 +7,7 @@ An unofficial Telegram client for Android.
 Requires Android 11 or later.
 
 - [Telegram Channel](https://t.me/Aoigram)
-- [GitHub Releases](https://github.com/risin42/Aoigram/releases)
+- [GitHub Releases](https://github.com/Vanishuser0/AoigramX/releases)
 
 ## Compilation Guide
 
@@ -19,8 +19,8 @@ Android Studio (or the Android SDK with licenses accepted). Gradle provisions JD
 
 1. Clone the repository along with its submodules:
    ```bash
-   git clone --recursive --shallow-submodules https://github.com/risin42/Aoigram.git
-   cd Aoigram
+   git clone --recursive --shallow-submodules https://github.com/Vanishuser0/AoigramX.git
+   cd AoigramX
    ```
 
 2. Generate a signing keystore named `release.keystore` following the [Android App Signing guide](https://developer.android.com/studio/publish/app-signing).

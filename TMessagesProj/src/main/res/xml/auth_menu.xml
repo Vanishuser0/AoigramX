@@ -5,8 +5,8 @@
     <PreferenceScreen android:key="account_settings"
         android:title="@string/AccountSettings"
         android:summary="">
-        <intent android:action="nu.gpu.aoigram.OPEN_ACCOUNT"
-            android:targetPackage="nu.gpu.aoigram"
+        <intent android:action="nu.gpu.aoigramx.OPEN_ACCOUNT"
+            android:targetPackage="nu.gpu.aoigramx"
             android:targetClass="org.telegram.ui.LaunchActivity"/>
     </PreferenceScreen>
 </PreferenceScreen>

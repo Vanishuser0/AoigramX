@@ -282,7 +282,7 @@
     <string name="SendWithoutMarkdown">Invia senza Markdown</string>
     <string name="PasskeyProviders">Le passkey funzionano solo con i gestori di password che consentono di autorizzare app privilegiate, come **Bitwarden** e **KeePassDX**.</string>
     <string name="PasskeyNoCredentialAvailable">Nessuna passkey disponibile.</string>
-    <string name="UpdateAoigram">Aggiorna Aoigram</string>
+    <string name="UpdateAoigram">Aggiorna AoigramX</string>
     <string name="Commit">Commit</string>
     <string name="CheckForUpdates">Controlla aggiornamenti</string>
     <string name="AutoCheckForUpdates">Controlla automaticamente</string>

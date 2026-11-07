@@ -282,7 +282,7 @@
     <string name="SendWithoutMarkdown">不解析 Markdown 傳送</string>
     <string name="PasskeyProviders">通行金鑰僅支援允許信任特權應用程式的密碼管理器，例如 **Bitwarden** 和 **KeePassDX**。</string>
     <string name="PasskeyNoCredentialAvailable">沒有可用的通行金鑰。</string>
-    <string name="UpdateAoigram">更新 Aoigram</string>
+    <string name="UpdateAoigram">更新 AoigramX</string>
     <string name="Commit">提交</string>
     <string name="CheckForUpdates">檢查更新</string>
     <string name="AutoCheckForUpdates">自動檢查更新</string>

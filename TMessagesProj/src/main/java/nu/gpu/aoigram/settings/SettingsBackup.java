@@ -31,7 +31,8 @@ import nu.gpu.aoigram.utils.ErrorFeedback;
 
 public final class SettingsBackup {
 
-    private static final String FILE_PREFIX = "aoigram-settings-";
+    private static final String FILE_PREFIX = "aoigramx-settings-";
+    private static final String LEGACY_FILE_PREFIX = "aoigram-settings-";
     private static final String FILE_SUFFIX = ".json";
 
     static void export(BaseFragment fragment) {
@@ -50,7 +51,7 @@ public final class SettingsBackup {
 
     public static boolean isBackup(MessageObject message) {
         String name = message.getDocumentName();
-        return name.startsWith(FILE_PREFIX) && name.endsWith(FILE_SUFFIX);
+        return (name.startsWith(FILE_PREFIX) || name.startsWith(LEGACY_FILE_PREFIX)) && name.endsWith(FILE_SUFFIX);
     }
 
     public static void showImportAlert(BaseFragment fragment, MessageObject message) {

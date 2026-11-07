@@ -284,7 +284,7 @@
     <string name="SendWithoutMarkdown">Wyślij bez Markdown</string>
     <string name="PasskeyProviders">Klucze dostępu (Passkeys) działają tylko z menedżerami haseł, które pozwalają ufać uprzywilejowanym aplikacjom, takimi jak **Bitwarden** i **KeePassDX**.</string>
     <string name="PasskeyNoCredentialAvailable">Brak dostępnych kluczy dostępu.</string>
-    <string name="UpdateAoigram">Aktualizuj Aoigram</string>
+    <string name="UpdateAoigram">Aktualizuj AoigramX</string>
     <string name="Commit">Commit</string>
     <string name="CheckForUpdates">Sprawdź aktualizacje</string>
     <string name="AutoCheckForUpdates">Sprawdzaj automatycznie</string>

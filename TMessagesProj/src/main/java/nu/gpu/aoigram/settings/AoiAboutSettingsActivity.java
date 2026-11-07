@@ -34,7 +34,7 @@ public final class AoiAboutSettingsActivity extends BaseAoiSettingsActivity {
     private static final int COMMIT_ROW = 3;
     private static final int CHANNEL_ROW = 4;
     private static final int DISCUSSION_ROW = 5;
-    private static final String REPO_URL = "https://github.com/risin42/Aoigram";
+    private static final String REPO_URL = "https://github.com/Vanishuser0/AoigramX";
     private static final String CHANNEL_USERNAME = "Aoigram";
     private static final String DISCUSSION_USERNAME = "AoigramChat";
 
@@ -57,7 +57,7 @@ public final class AoiAboutSettingsActivity extends BaseAoiSettingsActivity {
 
     @Override
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
-        items.add(UItem.asButton(GITHUB_ROW, R.drawable.github, "GitHub", "Aoigram"));
+        items.add(UItem.asButton(GITHUB_ROW, R.drawable.github, "GitHub", "AoigramX"));
         items.add(UItem.asButton(COMMIT_ROW, R.drawable.git_commit, getString(R.string.Commit), BuildConfig.COMMIT_ID.substring(0, 7)));
         items.add(UItem.asButton(CHANNEL_ROW, R.drawable.msg_channel, getString(R.string.ProfileChannel), "@" + CHANNEL_USERNAME));
         items.add(UItem.asButton(DISCUSSION_ROW, R.drawable.msg_discussion, getString(R.string.Discussion), "@" + DISCUSSION_USERNAME));

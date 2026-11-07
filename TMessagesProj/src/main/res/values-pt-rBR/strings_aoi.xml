@@ -282,7 +282,7 @@
     <string name="SendWithoutMarkdown">Enviar sem Markdown</string>
     <string name="PasskeyProviders">Chaves de acesso (Passkeys) só funcionam com gerenciadores de senhas que permitem confiar em apps privilegiados, como **Bitwarden** e **KeePassDX**.</string>
     <string name="PasskeyNoCredentialAvailable">Nenhuma chave de acesso disponível.</string>
-    <string name="UpdateAoigram">Atualizar Aoigram</string>
+    <string name="UpdateAoigram">Atualizar AoigramX</string>
     <string name="Commit">Commit</string>
     <string name="CheckForUpdates">Verificar atualizações</string>
     <string name="AutoCheckForUpdates">Verificar automaticamente</string>

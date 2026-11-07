@@ -282,7 +282,7 @@
     <string name="SendWithoutMarkdown">Kirim tanpa Markdown</string>
     <string name="PasskeyProviders">Kunci sandi (Passkey) hanya berfungsi dengan pengelola kata sandi yang mengizinkan kepercayaan aplikasi khusus, seperti **Bitwarden** dan **KeePassDX**.</string>
     <string name="PasskeyNoCredentialAvailable">Tidak ada kunci sandi yang tersedia.</string>
-    <string name="UpdateAoigram">Perbarui Aoigram</string>
+    <string name="UpdateAoigram">Perbarui AoigramX</string>
     <string name="Commit">Commit</string>
     <string name="CheckForUpdates">Periksa pembaruan</string>
     <string name="AutoCheckForUpdates">Periksa secara otomatis</string>

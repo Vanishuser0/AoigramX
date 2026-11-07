@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="AppNameAoi" translatable="false">Aoigram</string>
+    <string name="AppNameAoi" translatable="false">AoigramX</string>
     <string name="AppIconInverted">Inverted</string>
     <string name="AppIconSora">Sora</string>
     <string name="AppIconUmi">Umi</string>
@@ -284,7 +284,7 @@
     <string name="SendWithoutMarkdown">Send without Markdown</string>
     <string name="PasskeyProviders">Passkeys only work with password managers that let you trust privileged apps, such as **Bitwarden** and **KeePassDX**.</string>
     <string name="PasskeyNoCredentialAvailable">No passkey available.</string>
-    <string name="UpdateAoigram">Update Aoigram</string>
+    <string name="UpdateAoigram">Update AoigramX</string>
     <string name="Commit">Commit</string>
     <string name="CheckForUpdates">Check for updates</string>
     <string name="AutoCheckForUpdates">Check automatically</string>

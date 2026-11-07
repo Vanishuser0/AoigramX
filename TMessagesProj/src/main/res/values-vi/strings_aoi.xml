@@ -282,7 +282,7 @@
     <string name="SendWithoutMarkdown">Gửi không định dạng Markdown</string>
     <string name="PasskeyProviders">Passkey chỉ hoạt động với các trình quản lý mật khẩu cho phép tin cậy ứng dụng đặc quyền, chẳng hạn như **Bitwarden** và **KeePassDX**.</string>
     <string name="PasskeyNoCredentialAvailable">Không có passkey khả dụng.</string>
-    <string name="UpdateAoigram">Cập nhật Aoigram</string>
+    <string name="UpdateAoigram">Cập nhật AoigramX</string>
     <string name="Commit">Commit</string>
     <string name="CheckForUpdates">Kiểm tra cập nhật</string>
     <string name="AutoCheckForUpdates">Tự động kiểm tra</string>

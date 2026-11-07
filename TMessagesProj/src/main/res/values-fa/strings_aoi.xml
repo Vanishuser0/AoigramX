@@ -282,7 +282,7 @@
     <string name="SendWithoutMarkdown">ارسال بدون Markdown</string>
     <string name="PasskeyProviders">کلیدهای عبور (Passkeys) تنها با مدیران گذرواژه‌ای کار می‌کنند که اجازه اعتماد به برنامه‌های دارای دسترسی ویژه را می‌دهند، مانند **Bitwarden** و **KeePassDX**.</string>
     <string name="PasskeyNoCredentialAvailable">هیچ کلید عبوری در دسترس نیست.</string>
-    <string name="UpdateAoigram">به‌روزرسانی Aoigram</string>
+    <string name="UpdateAoigram">به‌روزرسانی AoigramX</string>
     <string name="Commit">کامیت</string>
     <string name="CheckForUpdates">بررسی به‌روزرسانی‌ها</string>
     <string name="AutoCheckForUpdates">بررسی خودکار</string>

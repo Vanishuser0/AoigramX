@@ -284,7 +284,7 @@
     <string name="SendWithoutMarkdown">Надіслати без Markdown</string>
     <string name="PasskeyProviders">Ключі доступу (Passkey) працюють лише з менеджерами паролів, які дозволяють довіряти привілейованим застосункам, наприклад **Bitwarden** і **KeePassDX**.</string>
     <string name="PasskeyNoCredentialAvailable">Немає доступних ключів доступу.</string>
-    <string name="UpdateAoigram">Оновити Aoigram</string>
+    <string name="UpdateAoigram">Оновити AoigramX</string>
     <string name="Commit">Коміт</string>
     <string name="CheckForUpdates">Перевірити оновлення</string>
     <string name="AutoCheckForUpdates">Перевіряти автоматично</string>

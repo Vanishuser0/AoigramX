@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="AppIconClassic">クラシック</string>
     <string name="AppIconInverted">反転</string>
     <string name="AppIconSora">空</string>
     <string name="AppIconUmi">海</string>

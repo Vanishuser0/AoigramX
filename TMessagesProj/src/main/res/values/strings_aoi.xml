@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="AppNameAoi" translatable="false">AoigramX</string>
+    <string name="AppIconClassic">Classic</string>
     <string name="AppIconInverted">Inverted</string>
     <string name="AppIconSora">Sora</string>
     <string name="AppIconUmi">Umi</string>

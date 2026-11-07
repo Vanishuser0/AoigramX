@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="AppIconClassic">Классическая</string>
     <string name="AppIconInverted">Инвертированная</string>
     <string name="AppIconSora">Sora</string>
     <string name="AppIconUmi">Umi</string>

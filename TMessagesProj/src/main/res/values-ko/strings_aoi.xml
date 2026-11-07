@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="AppIconClassic">클래식</string>
     <string name="AppIconInverted">반전</string>
     <string name="AppIconSora">Sora</string>
     <string name="AppIconUmi">Umi</string>

@@ -265,12 +265,13 @@ public class AoiSettingsActivity extends BaseAoiSettingsActivity {
     @Override
     protected void updateCustomColors() {
         int res = switch (launcherIcon) {
+            case CLASSIC -> Theme.isCurrentThemeDark() ? R.mipmap.icon_aoi_inverted_launcher : R.mipmap.icon_aoi_classic_launcher;
             case INVERTED -> R.mipmap.icon_aoi_inverted_launcher;
             case SORA -> R.mipmap.icon_aoi_sora_launcher;
             case UMI -> R.mipmap.icon_aoi_umi_launcher;
             case SAKURA -> R.mipmap.icon_aoi_sakura_launcher;
             case YORU -> R.mipmap.icon_aoi_yoru_launcher;
-            default -> Theme.isCurrentThemeDark() ? R.mipmap.icon_aoi_inverted_launcher : R.mipmap.ic_launcher;
+            default -> R.mipmap.ic_launcher;
         };
         if (logoRes != res) {
             logoRes = res;

@@ -19,7 +19,7 @@ public class LauncherIconController {
         setIcon(icon);
         if (Build.VERSION.SDK_INT >= 33) {
             int theme = switch (icon) {
-                case DEFAULT, INVERTED -> Resources.ID_NULL;
+                case DEFAULT, CLASSIC, INVERTED -> Resources.ID_NULL;
                 case SORA -> R.style.Theme_TMessages_Start_Sora;
                 case UMI -> R.style.Theme_TMessages_Start_Umi;
                 case SAKURA -> R.style.Theme_TMessages_Start_Sakura;
@@ -47,7 +47,7 @@ public class LauncherIconController {
 
     private static boolean isOfficial(LauncherIcon icon) {
         return switch (icon) {
-            case DEFAULT, INVERTED, SORA, UMI, SAKURA, YORU -> false;
+            case DEFAULT, CLASSIC, INVERTED, SORA, UMI, SAKURA, YORU -> false;
             default -> true;
         };
     }
@@ -79,7 +79,8 @@ public class LauncherIconController {
     }
 
     public enum LauncherIcon {
-        DEFAULT("DefaultIcon", R.drawable.icon_aoi_background, R.drawable.icon_aoi_foreground, R.string.AppIconDefault),
+        DEFAULT("DefaultIcon", R.drawable.icon_aoi_background, R.mipmap.icon_aoi_default_foreground, R.string.AppIconDefault),
+        CLASSIC("ClassicIcon", R.drawable.icon_aoi_background, R.drawable.icon_aoi_foreground, R.string.AppIconClassic),
         INVERTED("InvertedIcon", R.drawable.icon_aoi_inverted_background, R.drawable.icon_aoi_inverted_foreground, R.string.AppIconInverted),
         SORA("SoraIcon", R.drawable.icon_aoi_sora_background, R.drawable.icon_aoi_inverted_foreground, R.string.AppIconSora),
         UMI("UmiIcon", R.drawable.icon_aoi_umi_background, R.drawable.icon_aoi_inverted_foreground, R.string.AppIconUmi),

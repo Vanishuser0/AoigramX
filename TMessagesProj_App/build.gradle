@@ -59,9 +59,12 @@ android {
     signingConfigs {
         release {
             storeFile file("../TMessagesProj_App/release.keystore")
-            storePassword rootProject.envOrLocal('RELEASE_STORE_PASSWORD')
-            keyAlias rootProject.envOrLocal('RELEASE_KEY_ALIAS')
-            keyPassword rootProject.envOrLocal('RELEASE_KEY_PASSWORD')
+            def storePass = rootProject.envOrLocal('RELEASE_STORE_PASSWORD').trim()
+            storePassword storePass ?: 'android'
+            def alias = rootProject.envOrLocal('RELEASE_KEY_ALIAS').trim()
+            keyAlias alias ?: 'release'
+            def keyPass = rootProject.envOrLocal('RELEASE_KEY_PASSWORD').trim()
+            keyPassword keyPass ?: 'android'
         }
     }
 

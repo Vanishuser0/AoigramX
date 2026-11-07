@@ -25283,7 +25283,6 @@ public class ChatActivity extends BaseFragment implements
         if (messageObject == null || messageObject.messageOwner == null) {
             return false;
         }
-        messageObject.updateTranslation(false);
         boolean updated = false;
         for (MessageObject pinnedMessageObject : pinnedMessageObjects.values()) {
             if (pinnedMessageObject != null && pinnedMessageObject.getId() == messageObject.getId()) {
@@ -25328,7 +25327,7 @@ public class ChatActivity extends BaseFragment implements
                 if (group != null && !groupChecked.contains(group.groupId)) {
                     for (int j = 0; j < group.messages.size(); ++j) {
                         MessageObject groupMessageObject = group.messages.get(j);
-                        if (groupMessageObject != null && groupMessageObject.updateTranslation(false)) {
+                        if (groupMessageObject != null && (groupMessageObject.updateTranslation(false) || groupMessageObject == messageObject)) {
                             update = true;
                         }
                     }
@@ -25347,7 +25346,7 @@ public class ChatActivity extends BaseFragment implements
                 if (update) {
                     if (scroll) {
                         chatLayoutManager.scrollToPositionWithOffset(chatListView.getChildAdapterPosition(child), cell.getTop() - (int) chatListViewPaddingTop, false);
-                    } else if (cellMessageObject.aoiDisplayText != null) {
+                    } else if (messageObject.aoiDisplayText != null) {
                         saveScrollPosition();
                     } else {
                         saveGeneralScroll();

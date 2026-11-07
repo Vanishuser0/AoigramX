@@ -13,6 +13,12 @@
         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
     </style>
 
+    <style name="Theme.TMessages.Start.Sora" parent="Theme.TMessages.Start" />
+    <style name="Theme.TMessages.Start.Umi" parent="Theme.TMessages.Start" />
+    <style name="Theme.TMessages.Start.Sakura" parent="Theme.TMessages.Start" />
+    <style name="Theme.TMessages.Start.Yoru" parent="Theme.TMessages.Start" />
+    <style name="Theme.TMessages.Start.Official" parent="Theme.TMessages.Start" />
+
     <style name="Theme.TMessages" parent="Theme.AppCompat.Light">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>

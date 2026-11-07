@@ -44,7 +44,7 @@ public class PermissionRequest {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             boolean granted = false;
             for (String permission : checkPermissions) {
-                if (activity.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
+                if (hasPermission(permission)) {
                     granted = true;
                     break;
                 }
@@ -55,7 +55,7 @@ public class PermissionRequest {
             }
             boolean needsPermissionRationale = false;
             for (String permission : checkPermissions) {
-                if (!activity.shouldShowRequestPermissionRationale(permission)) {
+                if (!canAskPermission(permission)) {
                     needsPermissionRationale = true;
                     break;
                 }
@@ -82,7 +82,7 @@ public class PermissionRequest {
             requestPermissions(requestPermissions, ids -> {
                 boolean now_granted = false;
                 for (String permission : requestPermissions) {
-                    if (activity.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
+                    if (hasPermission(permission)) {
                         now_granted = true;
                         break;
                     }
@@ -107,7 +107,7 @@ public class PermissionRequest {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             boolean granted = true;
             for (String permission : checkPermissions) {
-                if (activity.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+                if (!hasPermission(permission)) {
                     granted = false;
                     break;
                 }
@@ -118,7 +118,7 @@ public class PermissionRequest {
             }
             boolean needsPermissionRationale = false;
             for (String permission : checkPermissions) {
-                if (activity.shouldShowRequestPermissionRationale(permission)) {
+                if (canAskPermission(permission)) {
                     needsPermissionRationale = true;
                     break;
                 }
@@ -145,7 +145,7 @@ public class PermissionRequest {
             requestPermissions(requestPermissions, ids -> {
                 boolean now_granted = true;
                 for (String permission : requestPermissions) {
-                    if (activity.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+                    if (!hasPermission(permission)) {
                         now_granted = false;
                         break;
                     }
@@ -170,6 +170,25 @@ public class PermissionRequest {
         final Activity activity = _activity;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                java.util.List<String> list = new java.util.ArrayList<>();
+                for (String p : permissions) {
+                    if (!Manifest.permission.BLUETOOTH_CONNECT.equals(p)) {
+                        list.add(p);
+                    }
+                }
+                if (list.isEmpty()) {
+                    if (whenDone != null) {
+                        int[] res = new int[permissions.length];
+                        java.util.Arrays.fill(res, PackageManager.PERMISSION_GRANTED);
+                        whenDone.run(res);
+                    }
+                    return;
+                }
+                if (list.size() < permissions.length) {
+                    permissions = list.toArray(new String[0]);
+                }
+            }
             final int code = lastId++;
             NotificationCenter.NotificationCenterDelegate[] observer = new NotificationCenter.NotificationCenterDelegate[1];
             observer[0] = new NotificationCenter.NotificationCenterDelegate() {
@@ -200,6 +219,10 @@ public class PermissionRequest {
     }
 
     public static boolean hasPermission(String permission) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S && Manifest.permission.BLUETOOTH_CONNECT.equals(permission)) {
+            return true;
+        }
+
         Activity _activity = LaunchActivity.instance;
         if (_activity == null) _activity = AndroidUtilities.findActivity(ApplicationLoader.applicationContext);
         if (_activity == null) return false;
@@ -213,6 +236,10 @@ public class PermissionRequest {
     }
 
     public static boolean canAskPermission(String permission) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S && Manifest.permission.BLUETOOTH_CONNECT.equals(permission)) {
+            return false;
+        }
+
         Activity _activity = LaunchActivity.instance;
         if (_activity == null) _activity = AndroidUtilities.findActivity(ApplicationLoader.applicationContext);
         if (_activity == null) return false;

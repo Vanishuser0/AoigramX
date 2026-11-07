@@ -38479,10 +38479,15 @@ public class ChatActivity extends BaseFragment implements
                         pinnedTop = false;
                     }
 
-                    message.updateTranslation(false);
+                    boolean translationUpdated = message.updateTranslation(false);
                     if (groupedMessages != null) {
                         for (int i = 0; i < groupedMessages.messages.size(); ++i) {
-                            groupedMessages.messages.get(i).updateTranslation(false);
+                            translationUpdated |= groupedMessages.messages.get(i).updateTranslation(false);
+                        }
+                        if (translationUpdated) {
+                            for (int i = 0; i < groupedMessages.messages.size(); ++i) {
+                                groupedMessages.messages.get(i).forceUpdate = true;
+                            }
                         }
                     }
                     if (reversed) {

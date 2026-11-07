@@ -42,6 +42,7 @@ import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.TextDetailCell;
+import org.telegram.ui.Components.AlertsCreator;
 import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
@@ -67,6 +68,8 @@ import nu.gpu.aoigram.settings.BaseAoiSettingsActivity;
 public final class MessageDetailsActivity extends BaseAoiSettingsActivity implements NotificationCenter.NotificationCenterDelegate {
 
     private final MessageObject message;
+    private final ArrayList<MessageObject> album;
+    private final int albumIndex;
     private final TLRPC.Document document;
     private final TLRPC.Photo photo;
     private final TLRPC.PhotoSize photoSize;
@@ -87,8 +90,20 @@ public final class MessageDetailsActivity extends BaseAoiSettingsActivity implem
     private boolean textExpanded;
     private String language;
 
-    public MessageDetailsActivity(BaseFragment parent, MessageObject message, boolean protectedContent) {
+    public MessageDetailsActivity(BaseFragment parent, MessageObject message, MessageObject.GroupedMessages group, boolean protectedContent) {
+        this(parent, message, group == null ? null : new ArrayList<>(group.messages), protectedContent);
+    }
+
+    private MessageDetailsActivity(BaseFragment parent, MessageObject message, ArrayList<MessageObject> album, boolean protectedContent) {
         this.message = message;
+        this.album = album;
+        int index = -1;
+        for (int i = 0; album != null && i < album.size(); i++) {
+            if (album.get(i).getId() == message.getId()) {
+                index = i;
+            }
+        }
+        albumIndex = index;
         this.protectedContent = protectedContent;
         setCurrentAccount(parent.getCurrentAccount());
         setResourceProvider(parent.getResourceProvider());
@@ -249,6 +264,9 @@ public final class MessageDetailsActivity extends BaseAoiSettingsActivity implem
         }
         if (owner.grouped_id != 0) {
             add(items, R.string.MessageDetailsAlbumId, Long.toString(owner.grouped_id));
+            if (album != null) {
+                add(items, R.string.Album, albumLabel(albumIndex));
+            }
         }
         addPositive(items, R.string.MessageDetailsViews, owner.views);
         addPositive(items, R.string.MessageDetailsForwards, owner.forwards);
@@ -474,6 +492,11 @@ public final class MessageDetailsActivity extends BaseAoiSettingsActivity implem
         items.add(UItem.asShadow(mediaDetails.image.outWidth <= 0 ? getString(R.string.MessageDetailsUnsupported) : null));
     }
 
+    private String albumLabel(int index) {
+        String label = (index + 1) + "/" + album.size();
+        return TextUtils.isEmpty(album.get(index).messageOwner.message) ? label : label + " · " + getString(R.string.Caption);
+    }
+
     private void addPeer(ArrayList<UItem> items, int title, long peerId) {
         if (peerId == 0) {
             return;
@@ -597,6 +620,16 @@ public final class MessageDetailsActivity extends BaseAoiSettingsActivity implem
     protected void onItemClick(UItem item, View view, int position, float x, float y) {
         if (item.id == R.string.ViewAsJson) {
             MessageJsonActivity.open(this, message.messageOwner, protectedContent);
+        } else if (item.id == R.string.Album) {
+            String[] labels = new String[album.size()];
+            for (int i = 0; i < labels.length; i++) {
+                labels[i] = album.get(i).getId() + " · " + albumLabel(i);
+            }
+            showDialog(AlertsCreator.createSingleChoiceDialog(getParentActivity(), labels, getString(R.string.Album), albumIndex, (dialog, which) -> {
+                if (which != albumIndex) {
+                    presentFragment(new MessageDetailsActivity(this, album.get(which), album, protectedContent), true);
+                }
+            }));
         } else if (item.id == R.string.MessageDetailsText && ((DetailCell) view).arrowView.getVisibility() == View.VISIBLE) {
             item.checked = textExpanded = !textExpanded;
             ((DetailCell) view).setExpanded(textExpanded, true);

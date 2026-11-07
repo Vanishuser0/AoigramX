@@ -34009,7 +34009,7 @@ public class ChatActivity extends BaseFragment implements
                 break;
             }
             case OPTION_MESSAGE_DETAILS: {
-                presentFragment(new MessageDetailsActivity(this, selectedObject, currentEncryptedChat != null || isPeerNoForwards()));
+                presentFragment(new MessageDetailsActivity(this, selectedObject, getValidGroupedMessage(selectedObject), currentEncryptedChat != null || isPeerNoForwards()));
                 break;
             }
             case OPTION_MESSAGE_JSON: {

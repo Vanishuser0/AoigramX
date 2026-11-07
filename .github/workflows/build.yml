@@ -73,9 +73,12 @@ jobs:
           KEY_PASS: ${{ secrets.RELEASE_KEY_PASSWORD }}
         run: |
           if [ -n "$RELEASE_KEYSTORE_BASE64" ]; then
+            echo "Restoring keystore from RELEASE_KEYSTORE_BASE64 secret..."
             echo "$RELEASE_KEYSTORE_BASE64" | base64 -d > TMessagesProj_App/release.keystore
+          elif [ -f TMessagesProj_App/release.keystore ]; then
+            echo "Using tracked release.keystore from repository..."
           else
-            echo "RELEASE_KEYSTORE_BASE64 not set, generating a temporary release.keystore for CI..."
+            echo "RELEASE_KEYSTORE_BASE64 not set and no keystore in repo, generating fallback..."
             keytool -genkey -v -keystore TMessagesProj_App/release.keystore \
               -alias "${KEY_ALIAS:-release}" -keyalg RSA -keysize 2048 -validity 10000 \
               -storepass "${STORE_PASS:-android}" -keypass "${KEY_PASS:-android}" \

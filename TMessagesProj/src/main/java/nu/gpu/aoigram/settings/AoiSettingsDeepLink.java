@@ -109,12 +109,10 @@ public final class AoiSettingsDeepLink {
             fragment = new AoiSpeechToTextActivity();
         } else if (TRANSCRIPTION_PROMPT_PAGE.equalsIgnoreCase(pageKey)) {
             fragment = AoiPromptActivity.transcriptionPrompt();
-        } else if (OTHER_PAGE.equalsIgnoreCase(pageKey)) {
+        } else if (OTHER_PAGE.equalsIgnoreCase(pageKey) || DEVELOPER_PAGE.equalsIgnoreCase(pageKey)) {
             fragment = new AoiOtherSettingsActivity();
         } else if (ABOUT_PAGE.equalsIgnoreCase(pageKey)) {
             fragment = new AoiAboutSettingsActivity();
-        } else if (DEVELOPER_PAGE.equalsIgnoreCase(pageKey)) {
-            fragment = new AoiDeveloperSettingsActivity();
         } else {
             return null;
         }

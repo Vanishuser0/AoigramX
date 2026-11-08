@@ -327,4 +327,33 @@
     <string name="DeleteMyMessagesAdmin">使用管理員權限</string>
     <string name="MyMessagesDeleted">已刪除你的訊息</string>
     <string name="NoMessagesToDelete">沒有可刪除的訊息</string>
+
+<!-- Cloud Settings -->
+    <string name="CloudConfig">雲端同步設定</string>
+    <string name="CloudConfigDesc">使用 Telegram 雲端儲存服務安全同步您的 AoigramX 設定。</string>
+    <string name="CloudConfigSyncDate">上次同步：%s，雲端：%s</string>
+    <string name="CloudConfigSyncDateNever">從未</string>
+    <string name="CloudConfigSync">立即同步到雲端</string>
+    <string name="CloudConfigSyncShort">同步</string>
+    <string name="CloudConfigRestore">從雲端還原</string>
+    <string name="CloudConfigRestoreShort">還原</string>
+    <string name="CloudConfigSyncing">正在同步...</string>
+    <string name="CloudConfigAutoSync">自動同步</string>
+    <string name="CloudConfigAutoSyncDesc">修改 AoigramX 設定後自動同步到雲端。</string>
+    <string name="CloudConfigSyncFailed">無法將設定同步到雲端。</string>
+    <string name="CloudConfigRestoreFailed">無法從雲端還原設定。</string>
+    <string name="CloudConfigSynced">設定已成功同步到雲端。</string>
+    <string name="CloudConfigRestored">設定已成功從雲端還原。</string>
+
+    <!-- App Update & Announcement -->
+    <string name="AppUpdateTitle">發現新版本</string>
+    <string name="AppUpdateNow">立即更新</string>
+    <string name="AppUpdateLater">稍後</string>
+    <string name="AppUpdateFailed">檢查更新失敗，請稍後重試。</string>
+    <string name="DynamicAnnouncement">動態公告</string>
+    <string name="DynamicAnnouncementLatest">查看最新公告</string>
+    <string name="DynamicAnnouncementNoNew">暫無最新公告</string>
+    <string name="DynamicAnnouncementDetail">查看詳情</string>
+    <string name="Dismiss">我知道了</string>
+    <string name="CloudflareWorkerUrl">Worker 後端位址</string>
 </resources>

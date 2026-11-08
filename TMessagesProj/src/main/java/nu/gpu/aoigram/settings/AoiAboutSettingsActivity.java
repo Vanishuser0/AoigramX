@@ -24,6 +24,8 @@ import org.telegram.ui.LaunchActivity;
 import java.util.ArrayList;
 
 import nu.gpu.aoigram.config.AoiConfig;
+import nu.gpu.aoigram.remote.AoiAnnouncementHelper;
+import nu.gpu.aoigram.remote.AoiUpdateHelper;
 import nu.gpu.aoigram.remote.AppUpdates;
 
 public final class AoiAboutSettingsActivity extends BaseAoiSettingsActivity {
@@ -34,6 +36,7 @@ public final class AoiAboutSettingsActivity extends BaseAoiSettingsActivity {
     private static final int COMMIT_ROW = 3;
     private static final int CHANNEL_ROW = 4;
     private static final int DISCUSSION_ROW = 5;
+    private static final int ANNOUNCEMENT_ROW = 6;
     private static final String REPO_URL = "https://github.com/Vanishuser0/AoigramX";
     private static final String CHANNEL_USERNAME = "Aoigram";
     private static final String DISCUSSION_USERNAME = "AoigramChat";
@@ -61,6 +64,7 @@ public final class AoiAboutSettingsActivity extends BaseAoiSettingsActivity {
         items.add(UItem.asButton(COMMIT_ROW, R.drawable.git_commit, getString(R.string.Commit), BuildConfig.COMMIT_ID.substring(0, 7)));
         items.add(UItem.asButton(CHANNEL_ROW, R.drawable.msg_channel, getString(R.string.ProfileChannel), "@" + CHANNEL_USERNAME));
         items.add(UItem.asButton(DISCUSSION_ROW, R.drawable.msg_discussion, getString(R.string.Discussion), "@" + DISCUSSION_USERNAME));
+        items.add(UItem.asButton(ANNOUNCEMENT_ROW, R.drawable.msg_channel, getString(R.string.DynamicAnnouncement), getString(R.string.DynamicAnnouncementLatest)));
         items.add(UItem.asShadow(null));
         UItem channelItem = UItem.asButton(0, R.drawable.msg_download_settings, getString(R.string.UpdateChannel), AppUpdates.getLabel(AoiConfig.updateChannel.get()));
         channelItem.object = AoiConfig.updateChannel;
@@ -83,6 +87,8 @@ public final class AoiAboutSettingsActivity extends BaseAoiSettingsActivity {
             getMessagesController().openByUserName(CHANNEL_USERNAME, this, 1);
         } else if (item.id == DISCUSSION_ROW) {
             getMessagesController().openByUserName(DISCUSSION_USERNAME, this, 1);
+        } else if (item.id == ANNOUNCEMENT_ROW) {
+            AoiAnnouncementHelper.checkAnnouncement(getParentActivity(), true);
         } else if (item.id == CHECK_UPDATE_ROW) {
             checkUpdate();
         } else if (item.object == AoiConfig.updateChannel) {
@@ -130,9 +136,9 @@ public final class AoiAboutSettingsActivity extends BaseAoiSettingsActivity {
         }
         checkingUpdate = true;
         listView.adapter.update(true);
-        ((LaunchActivity) getParentActivity()).checkAppUpdate(true, new Browser.Progress(null, () -> {
+        AoiUpdateHelper.checkUpdate(getParentActivity(), true, hasUpdate -> {
             checkingUpdate = false;
             listView.adapter.update(true);
-        }));
+        });
     }
 }

@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import nu.gpu.aoigram.utils.AppUtil;
+import nu.gpu.aoigram.cloud.AoiCloudSettingsHelper;
 
 public class AoiSettingsActivity extends BaseAoiSettingsActivity {
 
@@ -50,6 +51,7 @@ public class AoiSettingsActivity extends BaseAoiSettingsActivity {
     private TextView subtitleView;
     private EmptyTextProgressView searchEmptyView;
     private ActionBarMenuItem searchItem;
+    private ActionBarMenuItem syncItem;
     private ArrayList<AoiSettingsSearchItem> searchItems;
     private ArrayList<AoiSettingsSearchItem> searchResults;
 
@@ -129,6 +131,19 @@ public class AoiSettingsActivity extends BaseAoiSettingsActivity {
         searchEmptyView.showTextView();
 
         ActionBarMenu menu = actionBar.createMenu();
+        actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
+            @Override
+            public void onItemClick(int id) {
+                if (id == -1) {
+                    finishFragment();
+                } else if (id == 1) {
+                    AoiCloudSettingsHelper.getInstance().showDialog(AoiSettingsActivity.this);
+                }
+            }
+        });
+        syncItem = menu.addItem(1, R.drawable.cloud_sync, getResourceProvider());
+        syncItem.setContentDescription(getString(R.string.CloudConfig));
+        syncItem.setOnClickListener(v -> AoiCloudSettingsHelper.getInstance().showDialog(this));
         searchItem = menu.addItem(0, R.drawable.outline_header_search, getResourceProvider())
                 .setIsSearchField(true)
                 .setActionBarMenuItemSearchListener(new ActionBarMenuItem.ActionBarMenuItemSearchListener() {
@@ -281,6 +296,9 @@ public class AoiSettingsActivity extends BaseAoiSettingsActivity {
         subtitleView.setTextColor(getThemedColor(Theme.key_windowBackgroundWhiteGrayText));
         searchEmptyView.setTextColor(getThemedColor(Theme.key_emptyListPlaceholder));
         searchItem.updateColor();
+        if (syncItem != null) {
+            syncItem.updateColor();
+        }
     }
 
     @Override

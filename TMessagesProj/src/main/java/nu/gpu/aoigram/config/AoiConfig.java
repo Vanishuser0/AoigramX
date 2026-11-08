@@ -170,10 +170,16 @@ public final class AoiConfig {
             }
         }
         editor.commit();
+        for (ConfigItem<?> item : items) {
+            item.load();
+        }
     }
 
     public static void reset() {
         preferences.edit().clear().commit();
+        for (ConfigItem<?> item : items) {
+            item.load();
+        }
     }
 
     private static <C extends ConfigItem<?>> C register(C item) {

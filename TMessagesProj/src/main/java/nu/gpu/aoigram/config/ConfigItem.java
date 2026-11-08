@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import nu.gpu.aoigram.cloud.AoiCloudSettingsHelper;
+
 public abstract class ConfigItem<T> {
 
     private final String key;
@@ -33,6 +35,7 @@ public abstract class ConfigItem<T> {
         write(editor, value);
         editor.apply();
         this.value = value;
+        AoiCloudSettingsHelper.getInstance().doAutoSync();
     }
 
     final void load() {

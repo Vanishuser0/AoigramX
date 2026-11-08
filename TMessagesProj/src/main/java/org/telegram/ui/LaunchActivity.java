@@ -7135,6 +7135,10 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             showUpdateActivity(UserConfig.selectedAccount, SharedConfig.pendingAppUpdate, true);
         }
         checkAppUpdate(false, null);
+        nu.gpu.aoigram.remote.AoiAnnouncementHelper.checkAnnouncement(this, false);
+        if (nu.gpu.aoigram.config.AoiConfig.autoCheckUpdates.get()) {
+            nu.gpu.aoigram.remote.AoiUpdateHelper.checkUpdate(this, false, null);
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             ApplicationLoader.canDrawOverlays = Settings.canDrawOverlays(this);

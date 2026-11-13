@@ -350,13 +350,11 @@
 
     <!-- App Update & Announcement -->
     <string name="AppUpdateTitle">New Version Available</string>
-    <string name="AppUpdateNow">Update Now</string>
     <string name="AppUpdateLater">Later</string>
     <string name="AppUpdateFailed">Failed to check for updates.</string>
     <string name="DynamicAnnouncement">Announcement</string>
     <string name="DynamicAnnouncementLatest">Latest Announcement</string>
     <string name="DynamicAnnouncementNoNew">No new announcement</string>
     <string name="DynamicAnnouncementDetail">View Details</string>
-    <string name="Dismiss">Dismiss</string>
     <string name="CloudflareWorkerUrl">Cloudflare Worker URL</string>
 </resources>
